@@ -1,5 +1,6 @@
 const {
-
+    client,
+    createUser
 } = require("./index");
 
 async function buildTables() {
@@ -28,7 +29,7 @@ async function buildTables() {
                 card_title VARCHAR(255) NOT NULL,
                 description VARCHAR(255) NOT NULL,
                 price INT NULL,
-                card_image BYTEA NULL,
+                card_img BYTEA NULL,
                 creation_date DATE NOT NULL DEFAULT CURRENT_DATE
             );
             CREATE TABLE tags(
@@ -41,6 +42,12 @@ async function buildTables() {
                 "userId" INT REFERENCES users(ID),
                 UNIQUE("cardId", "userId")
             );
+            CREATE TABLE img(
+                ID SERIAL PRIMARY KEY,
+                "cardId" INT REFENCES cards(ID),
+                name TEXT,
+                img TEXT
+            )
         `)
     } catch (error) {
         throw error
@@ -49,7 +56,24 @@ async function buildTables() {
 
 async function populateInitialData() {
     try {
+        console.log("creating intial users")
+        await createUser({
+            username: "Eman",
+            password: "CodingGod"
+        })
+        console.log("finished creating intial users")
 
+        await createCard({
+            card_title: "Lebron James Topps Rookie",
+            description: "mint condition LBJ rookie card",
+            price: "$1200",
+            card_img: "",         
+        })
+
+        console.log("creating initial tags")
+        await createTags("Pokemon")
+        await createTags("Basketball")
+        console.log("finished creating intial tags")
     } catch(error) {
         throw error
     }
