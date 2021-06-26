@@ -9,6 +9,8 @@ async function buildTables() {
         console.log("starting to drop tables");
         //DROP TABLE will go in here
         await client.query(`
+        DROP TABLE IF EXISTS cart;
+        DROP TABLE IF EXISTS tags;
         DROP TABLE IF EXISTS cards;
         DROP TABLE IF EXISTS users;
         `)
