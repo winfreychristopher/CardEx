@@ -15,6 +15,9 @@ async function buildTables() {
         //DROP TABLE will go in here
         await client.query(`
         DROP TABLE IF EXISTS img;
+        DROP TABLE IF EXISTS order_cards;
+        DROP TABLE IF EXISTS cart_products;
+        DROP TABLE IF EXISTS user_order;
         DROP TABLE IF EXISTS cart;
         DROP TABLE IF EXISTS card_tags;
         DROP TABLE IF EXISTS tags;
@@ -60,9 +63,29 @@ async function buildTables() {
             );
             CREATE TABLE cart(
                 ID SERIAL PRIMARY KEY,
-                "cardId" INT REFERENCES cards(ID),
+                "userId" INT REFERENCES users(ID),
                 active BOOLEAN DEFAULT TRUE,
-                UNIQUE("cardId")
+                UNIQUE("userId")
+            );
+            CREATE TABLE user_order(
+                ID SERIAL PRIMARY KEY,
+                "userId" INT REFERENCES users(ID),
+                "cartId" INT REFERENCES cart(ID),
+                UNIQUE ("userId", "cartId")
+            );
+            CREATE TABLE cart_products(
+                ID SERIAL PRIMARY KEY,
+                "cartId" INT REFERENCES cart(ID),
+                "cardId" INT REFERENCES cards(ID),
+                quanitity INTEGER NOT NULL,
+                active BOOLEAN DEFAULT TRUE,
+                UNIQUE("cartId", "cardId")
+            );
+            CREATE TABLE order_cards(
+                ID SERIAL PRIMARY KEY,
+                "orderId" INT REFERENCES user_order(ID),
+                "cardId" INT REFERENCES cards(ID),
+                quantity INT NOT NULL
             );
             CREATE TABLE img(
                 ID SERIAL PRIMARY KEY,
@@ -172,7 +195,7 @@ async function populateInitialData() {
         await createTags("Football")
         console.log("finished creating intial tags")
 
-        await createCardTag(1, 1)
+        await createCardTag(1, 2)
     } catch(error) {
         throw error
     }
