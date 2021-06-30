@@ -15,6 +15,7 @@ async function buildTables() {
         //DROP TABLE will go in here
         await client.query(`
         DROP TABLE IF EXISTS img;
+        DROP TABLE IF EXISTS order_cards;
         DROP TABLE IF EXISTS cart_products;
         DROP TABLE IF EXISTS user_order;
         DROP TABLE IF EXISTS cart;
@@ -48,7 +49,6 @@ async function buildTables() {
                 price INT NULL,
                 view_count INT NULL,
                 card_img TEXT NOT NULL,
-                tags 
                 creation_date DATE NOT NULL DEFAULT CURRENT_DATE
             );
             CREATE TABLE tags(
