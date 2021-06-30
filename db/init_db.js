@@ -4,7 +4,8 @@ const {
     createCard,
     createTags,
     getTagByContent,
-    createCardTag
+    createCardTag,
+    createGuest
 } = require("./index");
 
 async function buildTables() {
@@ -102,6 +103,13 @@ async function buildTables() {
 async function populateInitialData() {
     try {
         console.log("creating intial users")
+        const adminUser = {
+            username: "admin",
+            password: "adminPassword123",
+            admin: true
+        }
+        await createUser(adminUser);
+
         await createUser({
             username: "Eman",
             password: "CodingGod69"
@@ -115,6 +123,17 @@ async function populateInitialData() {
             password: "CW123"
         })
         console.log("finished creating intial users")
+
+        console.log("creating initial guests")
+        await createGuest({
+            email: "FooBar@gmail.com",
+            name: "Mr. Foobar"
+        });
+        await createGuest({
+            email: "DefoBuck@goColts.com",
+            name: "Deforest Buckner"
+        });
+        console.log("finished creating intial guests")
 
         console.log("creating new card listing")
         await createCard({
@@ -190,9 +209,7 @@ async function populateInitialData() {
         console.log("finished creating new card listing")
 
         console.log("creating initial tags")
-        await createTags("Pokemon")
-        await createTags("Basketball")
-        await createTags("Football")
+        await createTags(["Pokemon", "Basketball", "Football"])
         console.log("finished creating intial tags")
 
         await createCardTag(1, 2)
