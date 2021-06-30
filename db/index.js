@@ -81,6 +81,7 @@ async function createCard({
   price,
   card_img,
   view_count,
+  tags = [],
 }) {
   try {
     const {
@@ -93,27 +94,104 @@ async function createCard({
         `,
       [card_title, description, price, card_img, view_count]
     );
+    const taglist = await createTags(tags);
+    return await addTagsToCards(card.id, taglist);
+  } catch (error) {
+    throw error;
+  }
+}
 
+async function getCardsById(cardId) {
+  try {
+    const {
+      rows: [card],
+    } = await client.query(
+      `
+      SELECT *
+      FROM cards
+      WHERE id=$1;
+    `,
+      [cardId]
+    );
+    if (!card) {
+      throw {
+        name: "CardNotFound",
+        message: "Could not find a card with that id",
+      };
+    }
+    const { rows: tags } = await client.query(
+      `
+      SELECT tags.*
+      FROM tags
+      JOIN card_tags ON tags.id=card_tags."tagId"
+      WHERE card_tags."cardId"=$1
+    `,
+      [cardId]
+    );
+    card.tags = tags;
     return card;
   } catch (error) {
     throw error;
   }
 }
 
-async function createTags(tag_content) {
+async function getCardsBytagName(tagName) {
   try {
-    const {
-      rows: [tags],
-    } = await client.query(
+    const { rows: cards } = await client.query(
       `
-        INSERT INTO tags(tag_content)
-        VALUES ($1)
-        RETURNING *;
-        `,
-      [tag_content]
+      SELECT cards.id
+      FROM cards
+      JOIN card_tags ON cards.id=card_tags."cardId"
+      JOIN tags ON tags.id=card_tags."tagId"
+      WHERE tags.tag_content=$1
+    `,
+      [tagName]
     );
 
-    return tags;
+    return await Promise.all(cards.map((card) => getCardsById(card.id)));
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function createTags(tagslist) {
+  if (tagsList.length === 0) {
+    return;
+  }
+
+  const insertValues = tagslist.map((_, index) => `$${index + 1}`).join("), (");
+  const selectValues = tagslist.map((_, index) => `$${index + 1}`).join(", ");
+
+  try {
+    await client.query(
+      `
+      INSERT INTO tags(tags_content)
+      VALUES (${insertValues})
+      ON CONFLICT (tags_content) DO NOTHING;
+    `,
+      tagslist
+    );
+
+    const { rows } = await client.query(
+      `
+      SELECT * FROM tags
+      WHERE tags_content
+      IN (${selectValues});
+    `,
+      tagslist
+    );
+
+    return rows;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function addTagsToCards(cardId, taglist = []) {
+  try {
+    const createCardTags = taglist.map((tag) => createCardTag(cardId, tag.id));
+    await Promise.all(createCardTags);
+    return await getCardsById(cardId);
   } catch (error) {
     throw error;
   }
@@ -159,4 +237,6 @@ module.exports = {
   getUserByUsername,
   getUser,
   getUserById,
+  getCardsById,
+  getCardsBytagName,
 };
