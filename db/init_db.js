@@ -48,6 +48,7 @@ async function buildTables() {
                 price INT NULL,
                 view_count INT NULL,
                 card_img TEXT NOT NULL,
+                tags 
                 creation_date DATE NOT NULL DEFAULT CURRENT_DATE
             );
             CREATE TABLE tags(
