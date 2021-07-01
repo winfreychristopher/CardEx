@@ -19,7 +19,7 @@ apiRouter.get("/health", async (req, res, next) => {
 });
 
 apiRouter.use(async (req, res, next) => {
-  const prefix = "Beater";
+  const prefix = "Bearer";
   const auth = req.header("Authorization");
 
   if (!auth) {
