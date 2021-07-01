@@ -17,7 +17,7 @@ const PlayingCards = ({cards}) => {
             <img src="#" />
           </div>
           <div className="detailsCard">
-            <h2> {} </h2> 
+            <h2> {title} </h2> 
             <p> </p>
             <ul>
               <li></li>
