@@ -96,8 +96,7 @@ async function createCard({
   description,
   price,
   card_img,
-  view_count,
-  tags = [],
+  view_count
 }) {
   try {
     const {
@@ -110,8 +109,8 @@ async function createCard({
         `,
       [card_title, description, price, card_img, view_count]
     );
-    const taglist = await createTags(tags);
-    return await addTagsToCards(card.id, taglist);
+    
+    return card;
   } catch (error) {
     throw error;
   }
