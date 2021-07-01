@@ -75,6 +75,19 @@ async function getUser({ username, password }) {
   }
 }
 
+async function getAllUsers() {
+    try {
+        const { rows } = await client.query(`
+        SELECT * FROM users;
+        `)
+
+        return rows;
+    } catch (error) {
+        console.log("could not get all users from the db/index")
+        throw error
+    }
+}
+
 async function createGuest({email, name}) {
     try {
         const {rows: [guests]} = await client.query(`
@@ -114,6 +127,19 @@ async function createCard({
   } catch (error) {
     throw error;
   }
+}
+
+async function getAllCards() {
+    try {
+        const { rows } = await client.query(`
+        SELECT * FROM cards;
+        `)
+
+        return rows;
+    } catch (error) {
+        console.error("Could not get all cards in the db")
+        throw error;
+    }
 }
 
 async function getCardsById(cardId) {
@@ -167,6 +193,27 @@ async function getCardsBytagName(tagName) {
   } catch (error) {
     throw error;
   }
+}
+
+async function patchCards(cardId, fields = {}) {
+    const setString = Object.keys(fields)
+    .map((key, index) => `"${key}"=$${index + 1}`)
+    .join(", ");
+    try {
+        if (setString.length > 0) {
+            await client.query(`
+            UPDATE cards
+            SET ${setString}
+            WHERE id=${cardId}
+            RETURNING *;
+            `, Object.values(fields))
+        }
+
+        return await getCardsById(cardId)
+    } catch (error) {
+        console.error("Could not patch product in db/index")
+        throw error
+    }
 }
 
 async function createTags(tagslist) {
@@ -327,5 +374,8 @@ module.exports = {
   getCardsById,
   getCardsBytagName,
   createCartItem,
-  addCardToCart
+  addCardToCart,
+  getAllCards,
+  patchCards,
+  getAllUsers
 };
