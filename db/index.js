@@ -155,7 +155,7 @@ async function getCardsBytagName(tagName) {
 }
 
 async function createTags(tagslist) {
-  if (tagsList.length === 0) {
+  if (tagslist.length === 0) {
     return;
   }
 
@@ -165,9 +165,9 @@ async function createTags(tagslist) {
   try {
     await client.query(
       `
-      INSERT INTO tags(tags_content)
+      INSERT INTO tags(tag_content)
       VALUES (${insertValues})
-      ON CONFLICT (tags_content) DO NOTHING;
+      ON CONFLICT (tag_content) DO NOTHING;
     `,
       tagslist
     );
@@ -175,7 +175,7 @@ async function createTags(tagslist) {
     const { rows } = await client.query(
       `
       SELECT * FROM tags
-      WHERE tags_content
+      WHERE tag_content
       IN (${selectValues});
     `,
       tagslist
