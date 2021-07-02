@@ -12,15 +12,16 @@ export const getToken = () => {
     return localStorage.getItem("token")
 };
 
-export async function getCards() {
+export async function getAllCards() {
     try {
         const { data } = await axios.get("/api/cards");
-        console.log(data)
+        console.log( "EMAN" , data)
         return data;
     } catch (error) {
         throw error;
     }
 }
+getAllCards();
 
 export async function getUsers() {
     try {
@@ -31,6 +32,7 @@ export async function getUsers() {
         throw error;      
     }
 }
+getUsers()
 
 export async function userLogin(username, password) {
     try {
