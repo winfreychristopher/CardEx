@@ -182,72 +182,6 @@ async function getAllCardTags() {
   }
 }
 
-// async function getTagByContent(tag_content) {
-//   try {
-//     const { rows: [tag] } = await client.query(`
-//     SELECT * FROM tags
-//     WHERE tag_content = '${tag_content}';
-//     `)
-
-//     return tag;
-//   } catch (error) {
-//     throw error
-//   }
-// }
-
-// async function getCardsById(cardId) {
-//   try {
-//     const {
-//       rows: [card],
-//     } = await client.query(
-//       `
-//       SELECT *
-//       FROM cards
-//       WHERE id=$1;
-//     `,
-//       [cardId]
-//     );
-//     if (!card) {
-//       throw {
-//         name: "CardNotFound",
-//         message: "Could not find a card with that id",
-//       };
-//     }
-//     const { rows: tags } = await client.query(
-//       `
-//       SELECT tags.*
-//       FROM tags
-//       JOIN card_tags ON tags.id=card_tags."tagId"
-//       WHERE card_tags."cardId"=$1
-//     `,
-//       [cardId]
-//     );
-//     card.tags = tags;
-//     return card;
-//   } catch (error) {
-//     throw error;
-//   }
-// }
-
-// async function getCardsBytagName(tagName) {
-//   try {
-//     const { rows: cards } = await client.query(
-//       `
-//       SELECT cards.id
-//       FROM cards
-//       JOIN card_tags ON cards.id=card_tags."cardId"
-//       JOIN tags ON tags.id=card_tags."tagId"
-//       WHERE tags.tag_content=$1
-//     `,
-//       [tagName]
-//     );
-
-//     return await Promise.all(cards.map((card) => getCardsById(card.id)));
-//   } catch (error) {
-//     throw error;
-//   }
-// }
-
 async function patchCards(cardId, fields = {}) {
     const setString = Object.keys(fields)
     .map((key, index) => `"${key}"=$${index + 1}`)
@@ -269,38 +203,6 @@ async function patchCards(cardId, fields = {}) {
     }
 }
 
-// async function createTags(tagslist) {
-//   if (tagslist.length === 0) {
-//     return;
-//   }
-
-//   const insertValues = tagslist.map((_, index) => `$${index + 1}`).join("), (");
-//   const selectValues = tagslist.map((_, index) => `$${index + 1}`).join(", ");
-
-//   try {
-//     await client.query(
-//       `
-//       INSERT INTO tags(tag_content)
-//       VALUES (${insertValues})
-//       ON CONFLICT (tag_content) DO NOTHING;
-//     `,
-//       tagslist
-//     );
-
-//     const { rows } = await client.query(
-//       `
-//       SELECT * FROM tags
-//       WHERE tag_content
-//       IN (${selectValues});
-//     `,
-//       tagslist
-//     );
-
-//     return rows;
-//   } catch (error) {
-//     throw error;
-//   }
-// }
 
 async function addTagsToCards(cardId, taglist = []) {
   try {
@@ -496,6 +398,7 @@ module.exports = {
   getAllCards,
   patchCards,
   getAllUsers,
+  getAllTags,
   addTagsToCards,
   getAllCardTags,
   getAllCardsWithTags,
