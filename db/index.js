@@ -75,22 +75,18 @@ async function getUser({ username, password }) {
   }
 }
 
-<<<<<<< HEAD
-=======
 async function getAllUsers() {
-    try {
-        const { rows } = await client.query(`
+  try {
+    const { rows } = await client.query(`
         SELECT * FROM users;
-        `)
+        `);
 
-        return rows;
-    } catch (error) {
-        console.log("could not get all users from the db/index")
-        throw error
-    }
+    return rows;
+  } catch (error) {
+    console.log("could not get all users from the db/index");
+    throw error;
+  }
 }
-
-
 
 async function createGuest({ email, name }) {
   try {
@@ -114,17 +110,12 @@ async function createGuest({ email, name }) {
   }
 }
 
->>>>>>> c925e72c54183591900cc4faf16b54ad404a12e6
 async function createCard({
   card_title,
   description,
   price,
   card_img,
   view_count,
-<<<<<<< HEAD
-  tags = [],
-=======
->>>>>>> c925e72c54183591900cc4faf16b54ad404a12e6
 }) {
   try {
     const {
@@ -137,29 +128,24 @@ async function createCard({
         `,
       [card_title, description, price, card_img, view_count]
     );
-<<<<<<< HEAD
-    const taglist = await createTags(tags);
-    return await addTagsToCards(card.id, taglist);
-=======
 
     return card;
->>>>>>> c925e72c54183591900cc4faf16b54ad404a12e6
   } catch (error) {
     throw error;
   }
 }
 
 async function getAllCards() {
-    try {
-        const { rows } = await client.query(`
+  try {
+    const { rows } = await client.query(`
         SELECT * FROM cards;
-        `)
+        `);
 
-        return rows;
-    } catch (error) {
-        console.error("Could not get all cards in the db")
-        throw error;
-    }
+    return rows;
+  } catch (error) {
+    console.error("Could not get all cards in the db");
+    throw error;
+  }
 }
 
 async function getCardsById(cardId) {
@@ -228,24 +214,27 @@ async function getCardsBytagName(tagName) {
 }
 
 async function patchCards(cardId, fields = {}) {
-    const setString = Object.keys(fields)
+  const setString = Object.keys(fields)
     .map((key, index) => `"${key}"=$${index + 1}`)
     .join(", ");
-    try {
-        if (setString.length > 0) {
-            await client.query(`
+  try {
+    if (setString.length > 0) {
+      await client.query(
+        `
             UPDATE cards
             SET ${setString}
             WHERE id=${cardId}
             RETURNING *;
-            `, Object.values(fields))
-        }
-
-        return await getCardsById(cardId)
-    } catch (error) {
-        console.error("Could not patch product in db/index")
-        throw error
+            `,
+        Object.values(fields)
+      );
     }
+
+    return await getCardsById(cardId);
+  } catch (error) {
+    console.error("Could not patch product in db/index");
+    throw error;
+  }
 }
 
 async function createTags(tagslist) {
@@ -321,8 +310,6 @@ async function createCardTag(cardId, tagId) {
   }
 }
 
-<<<<<<< HEAD
-=======
 async function createCartItem(userId, cardId) {
   try {
     const usersCart = await getCartByUserId(userId);
@@ -408,7 +395,6 @@ async function addCardToCart(userId, cardId) {
 //     }
 // }
 
->>>>>>> c925e72c54183591900cc4faf16b54ad404a12e6
 module.exports = {
   client,
   createUser,
@@ -421,12 +407,9 @@ module.exports = {
   getUserById,
   getCardsById,
   getCardsBytagName,
-<<<<<<< HEAD
-=======
   createCartItem,
   addCardToCart,
   getAllCards,
   patchCards,
-  getAllUsers
->>>>>>> c925e72c54183591900cc4faf16b54ad404a12e6
+  getAllUsers,
 };
