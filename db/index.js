@@ -5,19 +5,19 @@ const client = new Client(DB_URL);
 const bcrypt = require("bcrypt");
 const SALT_COUNT = 10;
 
-async function createUser({ username, password, admin = false }) {
+async function createUser({ username, password }) {
   try {
     const hashedPassword = await bcrypt.hash(password, SALT_COUNT);
     const {
       rows: [user],
     } = await client.query(
       `
-            INSERT INTO users (username, password, admin)
-            VALUES($1, $2, $3)
+            INSERT INTO users (username, password)
+            VALUES($1, $2)
             ON CONFLICT (username) DO NOTHING
             RETURNING id, username;
         `,
-      [username, hashedPassword, admin]
+      [username, hashedPassword]
     );
 
     return user;
@@ -76,19 +76,17 @@ async function getUser({ username, password }) {
 }
 
 async function getAllUsers() {
-    try {
-        const { rows } = await client.query(`
+  try {
+    const { rows } = await client.query(`
         SELECT * FROM users;
-        `)
+        `);
 
-        return rows;
-    } catch (error) {
-        console.log("could not get all users from the db/index")
-        throw error
-    }
+    return rows;
+  } catch (error) {
+    console.log("could not get all users from the db/index");
+    throw error;
+  }
 }
-
-
 
 async function createGuest({ email, name }) {
   try {
@@ -138,16 +136,16 @@ async function createCard({
 }
 
 async function getAllCards() {
-    try {
-        const { rows } = await client.query(`
+  try {
+    const { rows } = await client.query(`
         SELECT * FROM cards;
-        `)
+        `);
 
-        return rows;
-    } catch (error) {
-        console.error("Could not get all cards in the db")
-        throw error;
-    }
+    return rows;
+  } catch (error) {
+    console.error("Could not get all cards in the db");
+    throw error;
+  }
 }
 
 async function getCardsById(cardId) {
@@ -216,24 +214,27 @@ async function getCardsBytagName(tagName) {
 }
 
 async function patchCards(cardId, fields = {}) {
-    const setString = Object.keys(fields)
+  const setString = Object.keys(fields)
     .map((key, index) => `"${key}"=$${index + 1}`)
     .join(", ");
-    try {
-        if (setString.length > 0) {
-            await client.query(`
+  try {
+    if (setString.length > 0) {
+      await client.query(
+        `
             UPDATE cards
             SET ${setString}
             WHERE id=${cardId}
             RETURNING *;
-            `, Object.values(fields))
-        }
-
-        return await getCardsById(cardId)
-    } catch (error) {
-        console.error("Could not patch product in db/index")
-        throw error
+            `,
+        Object.values(fields)
+      );
     }
+
+    return await getCardsById(cardId);
+  } catch (error) {
+    console.error("Could not patch product in db/index");
+    throw error;
+  }
 }
 
 async function createTags(tagslist) {
@@ -300,7 +301,7 @@ async function createCardTag(cardId, tagId) {
       `
         INSERT INTO card_tags("cardId", "tagId")
         VALUES ($1, $2)
-        ON CONFLICT ("cardId", "tagId") DO NOTHING;
+        ON CONFLICT ("cardId", "tagId") DO NOTHING
         `,
       [cardId, tagId]
     );
@@ -403,7 +404,6 @@ module.exports = {
   createCardTag,
   getUserByUsername,
   getUser,
-  createGuest,
   getUserById,
   getCardsById,
   getCardsBytagName,
@@ -411,5 +411,5 @@ module.exports = {
   addCardToCart,
   getAllCards,
   patchCards,
-  getAllUsers
+  getAllUsers,
 };
