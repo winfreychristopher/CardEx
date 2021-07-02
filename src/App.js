@@ -31,13 +31,12 @@ function App() {
       <HomeBanner />
       <body>
         <LeftNavBar />
-        <PlayingCards/>
+        <PlayingCards cards={cards} setCards={setCards}/>
       </body>
    
       {/* <h1>Hello World - CardEx</h1> */}
     </div>
   );
 }
-
 
 export default App;

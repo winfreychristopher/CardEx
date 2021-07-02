@@ -6,8 +6,8 @@ import "../Cards/Card.css";
 
 
 
-const PlayingCards = ({props}) => {
-  const cards = getAllCards();
+const PlayingCards = ({cards}) => {
+  // const cards = getAllCards();
   console.log(cards)
 
   return cards.map((card, index) => {
