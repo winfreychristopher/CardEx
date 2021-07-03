@@ -2,7 +2,7 @@ const express = require("express");
 const usersRouter = express.Router();
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = process.env;
-const { requireUser } = require("./utils");
+const { requireUser, requireAdmin } = require("./utils");
 const {
   createUser,
   getUser,
@@ -74,6 +74,15 @@ usersRouter.post("/login", async (req, res, next) => {
     );
 
     res.send({ message: "You're Logged In!", token, user: user });
+  } catch (error) {
+    next(error);
+  }
+});
+
+usersRouter.get("/me", requireUser, async (req, res, next) => {
+  try {
+    console.log(req.user);
+    res.send(req.user);
   } catch (error) {
     next(error);
   }
