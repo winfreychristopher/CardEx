@@ -6,19 +6,19 @@ const bcrypt = require("bcrypt");
 const { isCompositeComponent } = require("react-dom/test-utils");
 const SALT_COUNT = 10;
 
-async function createUser({ username, password, admin = false }) {
+async function createUser({ username, password }) {
   try {
     const hashedPassword = await bcrypt.hash(password, SALT_COUNT);
     const {
       rows: [user],
     } = await client.query(
       `
-            INSERT INTO users (username, password, admin)
-            VALUES($1, $2, $3)
+            INSERT INTO users (username, password)
+            VALUES($1, $2)
             ON CONFLICT (username) DO NOTHING
             RETURNING id, username;
         `,
-      [username, hashedPassword, admin]
+      [username, hashedPassword]
     );
 
     return user;
@@ -77,32 +77,38 @@ async function getUser({ username, password }) {
 }
 
 async function getAllUsers() {
-    try {
-        const { rows } = await client.query(`
+  try {
+    const { rows } = await client.query(`
         SELECT * FROM users;
-        `)
+        `);
 
-        return rows;
-    } catch (error) {
-        console.log("could not get all users from the db/index")
-        throw error
-    }
+    return rows;
+  } catch (error) {
+    console.log("could not get all users from the db/index");
+    throw error;
+  }
 }
 
-async function createGuest({email, name}) {
-    try {
-        const {rows: [guests]} = await client.query(`
+async function createGuest({ email, name }) {
+  try {
+    const {
+      rows: [guests],
+    } = await client.query(
+      `
+
         INSERT INTO guests(email, name)
         VALUES($1, $2)
         ON CONFLICT (email) DO NOTHING
         RETURNING *;
-        `, [email, name])
+        `,
+      [email, name]
+    );
 
-        return guests;
-    } catch (error) {
-        console.error("Couldn't create guests")
-        throw error
-    }
+    return guests;
+  } catch (error) {
+    console.error("Couldn't create guests");
+    throw error;
+  }
 }
 
 async function createCard({
@@ -110,7 +116,7 @@ async function createCard({
   description,
   price,
   card_img,
-  view_count
+  view_count,
 }) {
   try {
     const {
@@ -123,7 +129,7 @@ async function createCard({
         `,
       [card_title, description, price, card_img, view_count]
     );
-    
+
     return card;
   } catch (error) {
     throw error;
@@ -131,16 +137,16 @@ async function createCard({
 }
 
 async function getAllCards() {
-    try {
-        const { rows } = await client.query(`
+  try {
+    const { rows } = await client.query(`
         SELECT * FROM cards;
-        `)
+        `);
 
-        return rows;
-    } catch (error) {
-        console.error("Could not get all cards in the db")
-        throw error;
-    }
+    return rows;
+  } catch (error) {
+    console.error("Could not get all cards in the db");
+    throw error;
+  }
 }
 
 async function getCardsById(cardId) {
@@ -178,7 +184,20 @@ async function getAllTags() {
   }
 }
 
+async function getAllCards() {
+  try {
+    const { rows } = await client.query(`
+      SELECT * FROM cards;
+      `);
+    return rows;
+  } catch (error) {
+    console.error("Could not get all cards in the db");
+    throw error;
+  }
+}
+
 async function createTags(tag_content) {
+
   try {
     const {rows: [tag]} = await client.query(`
     INSERT INTO tags(tag_content)
@@ -205,24 +224,27 @@ async function getAllCardTags() {
 }
 
 async function patchCards(cardId, fields = {}) {
-    const setString = Object.keys(fields)
+  const setString = Object.keys(fields)
     .map((key, index) => `"${key}"=$${index + 1}`)
     .join(", ");
-    try {
-        if (setString.length > 0) {
-            await client.query(`
+  try {
+    if (setString.length > 0) {
+      await client.query(
+        `
             UPDATE cards
             SET ${setString}
             WHERE id=${cardId}
             RETURNING *;
-            `, Object.values(fields))
-        }
-
-        return await getCardsById(cardId)
-    } catch (error) {
-        console.error("Could not patch product in db/index")
-        throw error
+            `,
+        Object.values(fields)
+      );
     }
+
+    return await getCardsById(cardId);
+  } catch (error) {
+    console.error("Could not patch product in db/index");
+    throw error;
+  }
 }
 
 
@@ -359,6 +381,7 @@ async function getCartByUserId(userId) {
     try {
         const {rows: [cart]} = await client.query(`
         SELECT * FROM cart
+
         WHERE "userId"=$1 AND active=true;
         `, [userId])
 
@@ -367,9 +390,12 @@ async function getCartByUserId(userId) {
         console.error("Couldn't get cart by user id")
         throw error
     }
+
+  
 }
 
 async function addCardToCart(userId, cardId) {
+
     try {
       console.log("Initial query")
         const {rows: [card]} = await client.query(`
@@ -445,7 +471,6 @@ async function deleteCard(id) {
     WHERE id=$1
     RETURNING *;
     `, [id])
-
     return rows;
   } catch (error) {
     throw error
@@ -461,7 +486,6 @@ module.exports = {
   createCardTag,
   getUserByUsername,
   getUser,
-  createGuest,
   getUserById,
   createCartItem,
   addCardToCart,

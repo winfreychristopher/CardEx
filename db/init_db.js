@@ -19,11 +19,12 @@ const {
 } = require("./index");
 
 async function buildTables() {
-    try {
-        // client.connect()
+  try {
+    client.connect();
 
-        console.log("starting to drop tables");
-        await client.query(`
+    console.log("starting to drop tables");
+    //DROP TABLE will go in here
+    await client.query(`
         DROP TABLE IF EXISTS img;
         DROP TABLE IF EXISTS order_cards;
         DROP TABLE IF EXISTS cart_products;
@@ -34,11 +35,11 @@ async function buildTables() {
         DROP TABLE IF EXISTS cards;
         DROP TABLE IF EXISTS guests;
         DROP TABLE IF EXISTS users;
-        `)
-        console.log("finished dropping tables")
+        `);
+    console.log("finished dropping tables");
 
-        console.log("Starting to create tables")
-        await client.query(`
+    console.log("Starting to create tables");
+    await client.query(`
             CREATE TABLE users(
                 id SERIAL PRIMARY KEY,
                 username VARCHAR(255) UNIQUE NOT NULL,
@@ -103,14 +104,14 @@ async function buildTables() {
                 name TEXT,
                 img TEXT
             )
-        `)
-    } catch (error) {
-        throw error
-    }
+        `);
+  } catch (error) {
+    throw error;
+  }
 }
 
-
 const createInitialCards = async () => {
+
     console.log("starting to create initial cards")
     try {
         const cardsToCreate = [
@@ -194,38 +195,39 @@ const createInitialCards = async () => {
     }
 }
 
+ 
 const createInitialUsers = async () => {
-    console.log("Starting to create intital users")
-    try {
-        const adminUser = {
-            username: "admin",
-            password: "adminPassword123",
-            admin: true,
-        };
-        await createUser(adminUser)
-        const usersToCreate = [
-            {
-                username: "Eman",
-                password: "CodingGod69",
-            },
-            {
-                username: "Astevens14",
-                password: "GoColts20",
-            },
-            {
-                username: "ChrisTheBoss",
-                password: "CW123"
-            },
-        ];
-        const users = await Promise.all(usersToCreate.map(createUser))
-        console.log("users created:")
-        console.log(users)
-        console.log("Finished creating users")
-    } catch (error) {
-        console.error("there was an issues creating users")
-        throw error
-    }
-}
+  console.log("Starting to create intital users");
+  try {
+    const adminUser = {
+      username: "admin",
+      password: "adminPassword123",
+      admin: true,
+    };
+    await createUser(adminUser);
+    const usersToCreate = [
+      {
+        username: "Eman",
+        password: "CodingGod69",
+      },
+      {
+        username: "Astevens14",
+        password: "GoColts20",
+      },
+      {
+        username: "ChrisTheBoss",
+        password: "CW123",
+      },
+    ];
+    const users = await Promise.all(usersToCreate.map(createUser));
+    console.log("users created:");
+    console.log(users);
+    console.log("Finished creating users");
+  } catch (error) {
+    console.error("there was an issues creating users");
+    throw error;
+  }
+};
 
 const createInitialTags = async () => {
     console.log("Creating Initial Tags")
@@ -265,19 +267,24 @@ async function rebuildDB() {
     } catch (error) {
         throw error
     }
+
+ 
+
 }
 
 async function testDB() {
-    try {
-        console.log("starting to test the database")
-        
-        console.log("calling allCards")
-        const products = await getAllCards()
-        // console.log("Results:", products)
 
-        console.log("getting allUsers")
-        const users = await getAllUsers()
-        console.log("Results:", users)
+  try {
+    console.log("starting to test the database");
+
+    console.log("calling allCards");
+    const products = await getAllCards();
+    console.log("Results:", products);
+
+    console.log("getting allUsers");
+    const users = await getAllUsers();
+    console.log("Results:", users);
+
 
         console.log("getting all tags")
         const theTags = await getAllTags()
@@ -308,9 +315,10 @@ async function testDB() {
         console.log("error during testDB")
         throw error
     }
+
 }
 
 rebuildDB()
-    .then(testDB)
-    .catch(console.error)
-    .finally(() => client.end())
+  .then(testDB)
+  .catch(console.error)
+  .finally(() => client.end());
