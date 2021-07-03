@@ -13,7 +13,9 @@ const {
     addTagsToCards,
     getAllCardTags,
     getAllCardsWithTags,
-    deleteCard
+    deleteCard,
+    getAllTags,
+    createCart
 } = require("./index");
 
 async function buildTables() {
@@ -85,7 +87,7 @@ async function buildTables() {
                 ID SERIAL PRIMARY KEY,
                 "cartId" INT REFERENCES cart(ID),
                 "cardId" INT REFERENCES cards(ID),
-                quanitity INTEGER NOT NULL,
+                quanity INTEGER NOT NULL,
                 active BOOLEAN DEFAULT TRUE,
                 UNIQUE("cartId", "cardId")
             );
@@ -185,7 +187,7 @@ const createInitialCards = async () => {
         ];
         const products = await Promise.all(cardsToCreate.map(createCard))
         console.log("Cards created:")
-        // console.log(products)
+        console.log(products)
         console.log("finished creating cards")
     } catch (error) {
         throw error
@@ -245,9 +247,10 @@ const createInitialCardTags = async () => {
         const cardTag = await createCardTag(1, 1)
         console.log("Tag Results:")
         console.log(cardTag)
+        
         console.log("finished adding tags to cards")
     } catch (error) {
-        
+        throw error
     }
 }
 
@@ -270,11 +273,27 @@ async function testDB() {
         
         console.log("calling allCards")
         const products = await getAllCards()
-        console.log("Results:", products)
+        // console.log("Results:", products)
 
         console.log("getting allUsers")
         const users = await getAllUsers()
         console.log("Results:", users)
+
+        console.log("getting all tags")
+        const theTags = await getAllTags()
+        console.log("Results:", theTags)
+
+        console.log("creating intital cart")
+        const cart = await createCart(1)
+        console.log("created Cart:", cart)
+
+        console.log("adding card to cart")
+        const addCart = await addCardToCart(1, 1)
+        console.log("Cart Results:", addCart)
+
+        // console.log("getting all card tags")
+        // const cardTags = await getAllCardsWithTags()
+        // console.log("Results:", cardTags)
 
         // console.log("adding tags to cards")
         // const cardTags = await createCardTag(1, 1)
