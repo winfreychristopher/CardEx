@@ -1,3 +1,26 @@
 .cardsContainer {
-  background-color: rgba(210, 105, 30, 0.582);
+  display: flex;
+  flex-flow: wrap;
+  width: 800px;
+
+}
+.card {
+  display: flex;
+  flex-direction: row;
+  height: 500px;
+}
+.imgCard {
+  width: 300px;
+}
+ul {
+  list-style-type: none;
+} */
+
+ /* img {
+  height: 100%;
+  width: 75%;
+} */
+
+.detailsCard {
+  width: 40%;
 }

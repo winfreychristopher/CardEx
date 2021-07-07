@@ -1,6 +1,8 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 // import ReactDOM from 'react-dom';
 import { FcSettings } from 'react-icons/fc'
+
 
 import "./Navbar.css";
 
@@ -25,11 +27,13 @@ const Navbar = (props) => {
 								</form>
 						</li>
 						<li id="options">
-								<a href="#">Login/Signup</a>
+								<Link to="/register">
+									<a href="#">Login/Signup</a>
+								</Link>
 								<ul class="subnav">
 									<li><a href="#">User Profile</a></li>
 									<li><a href="#">Settings</a></li>
-									<li><a href="#">Admin Management</a></li>
+									<li><a href="#">Admin</a></li>
 								</ul>
 						</li>
 						<li>

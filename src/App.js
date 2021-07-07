@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar.js";
 import HomeBanner from "./components/Carousel/SlideBanner.js";
 import LeftNavBar from "./components/SideBar/SideBar.js";
@@ -7,13 +8,15 @@ import { getAllCards } from "./api";
 
 import "./App.css";
 
-function App() {
+const App = () => {
+
   const [cards, setCards] = useState([]);
   const retrieveCards = () => {
     getAllCards()
       .then((card) => {
         console.log(card);
         setCards(card);
+        return card;
       })
       .catch((err) => {
         console.log(err);
@@ -24,16 +27,24 @@ function App() {
   }, []);
 
   return (
-    <div className="appContainer">
-      <Navbar />
-      <HomeBanner />
-      <body>
-        <LeftNavBar />
-        <PlayingCards cards={cards} setCards={setCards} />
-      </body>
+    <Router>
+      <Switch>
+        <Route excat path="/">
+        <div className="appContainer">
+          <Navbar />
+          <HomeBanner />
+          <body>
+            <LeftNavBar />
+            <div className="cardsForSaleContainer row m-0 p-1">
+              <PlayingCards cards={cards} setCards={setCards} reset={retrieveCards} />
+            </div>
+          </body>
+        </div>
+        </Route>
+        <Route></Route>
+      </Switch>
+    </Router>
 
-      {/* <h1>Hello World - CardEx</h1> */}
-    </div>
   );
 }
 
