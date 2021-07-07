@@ -35,7 +35,7 @@ const App = () => {
         <div className="appContainer">
         
           <HomeBanner />
-          <body>
+          <body className="frontContainer">
             <LeftNavBar />
             <div className="cardsForSaleContainer row m-0 p-1">
               <PlayingCards cards={cards} setCards={setCards} reset={retrieveCards} />

@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { userRegister } from '../../api/index';
 
 import "./Login.css";
 
@@ -10,7 +11,30 @@ const LoginPage  = () => {
   //   path.includes("register") ?
 
   // }
+
   const userForms = document.getElementById('user_options-forms');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+
+  // const onFormSubmit = async (e) => {
+  //   e.preventDefault();
+
+  // }
+  const SignupUser = async (e, name, pass, mail) => {
+    
+
+    try {
+      const res = await userRegister(name, pass);
+      console.log(res);
+      document.getElementById("errMsg").innerHTML = `${"You have Logged in " + name + "."}`;
+      e.preventDefault();
+      
+    } catch (err) {
+      document.getElementById("errMsg").innerHTML = `${err}`;
+      console.log(err)
+    }
+  }
 
   const rmBounceR = () => {
     userForms.classList.remove('bounceRight');
@@ -55,7 +79,7 @@ const LoginPage  = () => {
         <div class="user_options-forms" id="user_options-forms">
           <div class="user_forms-login">
             <h2 class="forms_title">Login</h2>
-            <div className="errMsg">
+            <div id="errMsg">
        
             </div>
             <form class="forms_form">
@@ -77,28 +101,44 @@ const LoginPage  = () => {
                   type="submit"
                   value="Login"
                   class="forms_buttons-action"
+                  
                 />
               </div>
             </form>
           </div>
           <div class="user_forms-signup">
             <h2 class="forms_title">Sign Up</h2>
-            <div className="errMsg">
+            <div id="errMsg">
             
             </div>
-            <form class="forms_form">
+            <form class="forms_form" onSubmit={(event) => {SignupUser( event, username, password, email)}}>
               <fieldset class="forms_fieldset">
                 <div class="forms_field">
-                  <input type="text" class="forms_field-input" required />
-                  <label class="forms_field-label"> Full Name </label>
+                  <input type="text" class="forms_field-input" required 
+                    onInput={(event) => {
+                      console.log(event.target.value)
+                      setUsername(event.target.value);
+                    }} 
+                  />
+                  <label class="forms_field-label"> Username </label>
                 </div>
                 <div class="forms_field">
-                  <input type="text" class="forms_field-input" required />
+                  <input type="text" class="forms_field-input" required 
+                    onInput={(event) => {
+                      console.log(event.target.value)
+                      setEmail(event.target.value);
+                    }} 
+                  />
                   <label class="forms_field-label">Email</label>
                 </div>
                 <div class="forms_field">
-                  <input type="password" class="forms_field-input" required />
-                  <label class="forms_field-label">Password</label>
+                <label class="forms_field-label">Password</label>
+                  <input type="password" class="forms_field-input" required 
+                    onInput={(event) => {
+                      console.log(event.target.value)
+                      setPassword(event.target.value);                     
+                    }} 
+                  />
                 </div>
                 <div class="forms_field">
                   <input type="password" class="forms_field-input" required />
@@ -110,6 +150,7 @@ const LoginPage  = () => {
                   type="submit"
                   value="Sign up"
                   class="forms_buttons-action"
+                  
                 />
               </div>
             </form>

@@ -51,7 +51,7 @@ export async function userLogin(username, password) {
     }
 }
 
-export async function userRegister(username, password) {
+export async function userRegister(username, password, email) {
     try {
         const { data } = await axios.post("/api/users/register", {
             username,
