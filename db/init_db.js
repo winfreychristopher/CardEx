@@ -15,12 +15,14 @@ const {
     getAllCardsWithTags,
     deleteCard,
     getAllTags,
-    createCart
+    createCart,
+    addCartToUserOrder,
+    createUserOrder
 } = require("./index");
 
 async function buildTables() {
   try {
-    client.connect();
+    // client.connect();
 
     console.log("starting to drop tables");
     //DROP TABLE will go in here
@@ -43,9 +45,10 @@ async function buildTables() {
             CREATE TABLE users(
                 id SERIAL PRIMARY KEY,
                 username VARCHAR(255) UNIQUE NOT NULL,
+                email VARCHAR(255) UNIQUE,
                 password VARCHAR(255) NOT NULL,
                 admin BOOLEAN DEFAULT FALSE,
-                UNIQUE(username)
+                UNIQUE(username, email)
             );
             CREATE TABLE guests(
                 id SERIAL PRIMARY KEY,
@@ -185,6 +188,55 @@ const createInitialCards = async () => {
                 view_count: "211",
                 card_img: "https://i.pinimg.com/originals/5a/c7/9c/5ac79c77896bb53f7c0cb6f900822857.jpg"
             },
+            {
+                card_title: "2005 Topps Chrome Chris Paul Rookie",
+                description: "CP3 topps chrome rookie card, PSA 10 gem mint",
+                price: "1500",
+                view_count: "320",
+                card_img: "https://i.ebayimg.com/images/g/Zj0AAOSwGBtfMAdX/s-l400.jpg",
+            },
+            {
+                card_title: "2015-16 Donruss Devin Booker RPA",
+                description: "Devin Booker Donruss Rookie Patch Auto 05/99 SSP",
+                price: "1350",
+                view_count: "278",
+                card_img: "https://img.beckett.com/images/items/12181139/marketplace/89164669/front.jpg",
+            },
+            {
+                card_title: "2018 Select Darius Leonard Rookie Auto",
+                description: "Darius Leonard Rookie autograph, SSP perfect for any colts collector",
+                price: "110",
+                view_count: "79",
+                card_img: "https://kronozio.blob.core.windows.net/images/card/3fc70f4270cc489dafbb9f30c8aa90fb_front.jpg",
+            },
+            {
+                card_title: "Rainbow Pikachu Vmax",
+                description: "extremely rare pikachu card, the rainbow Pikachu is highly sought after",
+                price: "450",
+                view_count: "934",
+                card_img: "https://www.hillscards.co.uk/images/pokemon-trading-card-game-188-185-pikachu-vmax-rare-rainbow-card-swsh-04-vivid-voltage-p63051-100501_image.jpg",
+            },
+            {
+                card_title: "Magic Black Lotus (beta)",
+                description: "the rarest of all Magic the gathering cards, great condition",
+                price: "55000",
+                view_count: "189",
+                card_img: "https://static.wikia.nocookie.net/mtgsalvation_gamepedia/images/2/24/LEA_Black_Lotus.jpg/revision/latest/scale-to-width-down/672?cb=20190308055024",
+            },
+            {
+                card_title: "Magic Ancestral Recall (alpha)",
+                description: "extremely rare Magic the gathering card",
+                price: "25000",
+                view_count: "669",
+                card_img: "https://c1.scryfall.com/file/scryfall-cards/large/front/4/6/46b0a5c2-ac85-448e-9e87-12fc74fd4147.jpg?1559591672",
+            },
+            {
+                card_title: "Magic Mox Ruby (alpha)",
+                description: "One of the hardest Magic cards to find, great for any collector",
+                price: "10000",
+                view_count: "57",
+                card_img: "https://product-images.tcgplayer.com/fit-in/400x558/9146.jpg",
+            },
         ];
         const products = await Promise.all(cardsToCreate.map(createCard))
         console.log("Cards created:")
@@ -202,6 +254,7 @@ const createInitialUsers = async () => {
     const adminUser = {
       username: "admin",
       password: "adminPassword123",
+      email: "admin@gmail.com",
       admin: true,
     };
     await createUser(adminUser);
@@ -209,14 +262,17 @@ const createInitialUsers = async () => {
       {
         username: "Eman",
         password: "CodingGod69",
+        email: "Eman@hotmail.com",
       },
       {
         username: "Astevens14",
         password: "GoColts20",
+        email: "austinstevens@yahoo.com",
       },
       {
         username: "ChrisTheBoss",
         password: "CW123",
+        email: "ChrisTheBoss@aol.com"
       },
     ];
     const users = await Promise.all(usersToCreate.map(createUser));
@@ -236,6 +292,7 @@ const createInitialTags = async () => {
         await createTags("Pokemon")
         await createTags("Football")
         await createTags("Magic")
+        await createTags("Baseball")
         console.log("tags created:")
         console.log("finished creating tags")
     } catch (error) {
@@ -246,7 +303,24 @@ const createInitialTags = async () => {
 const createInitialCardTags = async () => {
     console.log("creating cards with tags")
     try {
-        const cardTag = await createCardTag(1, 1)
+        await createCardTag(1, 1)
+        await createCardTag(2, 1)
+        await createCardTag(3, 2)
+        await createCardTag(4, 2)
+        await createCardTag(5, 3)
+        await createCardTag(6, 3)
+        await createCardTag(7, 2)
+        await createCardTag(8, 2)
+        await createCardTag(9, 1)
+        await createCardTag(10, 3)
+        await createCardTag(11, 1)
+        await createCardTag(12, 1)
+        await createCardTag(13, 3)
+        await createCardTag(14, 2)
+        await createCardTag(15, 4)
+        await createCardTag(16, 4)
+        await createCardTag(17, 4)
+        const cardTag = await createCardTag(2, 1)
         console.log("Tag Results:")
         console.log(cardTag)
         
@@ -293,10 +367,26 @@ async function testDB() {
         console.log("creating intital cart")
         const cart = await createCart(1)
         console.log("created Cart:", cart)
+        const cartTwo = await createCart(2)
+        console.log("created Cart:", cartTwo)
+        const cartThree = await createCart(3)
+        console.log("Created cart:", cartThree)
 
         console.log("adding card to cart")
-        const addCart = await addCardToCart(1, 1)
+        const addCart = await addCardToCart(1, 2)
         console.log("Cart Results:", addCart)
+        const addCartTwo = await addCardToCart(2, 1)
+        console.log("Cart Two Results:", addCartTwo)
+        const addCartThree = await addCardToCart(3, 5)
+        console.log("Cart Three Results:", addCartThree)
+
+        console.log("adding cart item to the order sheet")
+        const order = await createUserOrder(2, 2)
+        console.log("Order:", order)
+
+        console.log("adding order to user cart")
+        const cartOrder = await addCartToUserOrder(3, 4)
+        console.log("Order in Cart:", cartOrder)
 
         // console.log("getting all card tags")
         // const cardTags = await getAllCardsWithTags()
