@@ -17,6 +17,17 @@ server.use((req, res, next) => {
   res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
+server.use((error, req, res, next) => {
+  console.error("SERVER ERROR: ", error);
+  if (res.statusCode < 400) res.status(500);
+  res.send({
+    error: error.message,
+    name: error.name,
+    message: error.message,
+    table: error.table,
+  });
+});
+
 const { client } = require("./db");
 
 const PORT = process.env.PORT || 5000;

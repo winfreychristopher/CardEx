@@ -151,7 +151,9 @@ async function getAllCards() {
 
 async function getCardsById(cardId) {
   try {
-    const {rows: [cards]} = await client.query(`
+    const {
+      rows: [cards],
+    } = await client.query(`
     SELECT * 
     FROM cards
     WHERE id=${cardId}
@@ -160,14 +162,14 @@ async function getCardsById(cardId) {
     if (!cards) {
       throw {
         name: "CardNotFoundError",
-        message: "Could not find a card with that cardId"
+        message: "Could not find a card with that cardId",
       };
     }
 
     return cards;
   } catch (error) {
-    console.error("Could not grab a product by id in db/index")
-    throw error
+    console.error("Could not grab a product by id in db/index");
+    throw error;
   }
 }
 
@@ -176,11 +178,11 @@ async function getAllTags() {
     const { rows } = await client.query(`
     SELECT *
     FROM tags;
-    `)
+    `);
 
     return rows;
   } catch (error) {
-    throw error
+    throw error;
   }
 }
 
@@ -197,17 +199,21 @@ async function getAllCards() {
 }
 
 async function createTags(tag_content) {
-
   try {
-    const {rows: [tag]} = await client.query(`
+    const {
+      rows: [tag],
+    } = await client.query(
+      `
     INSERT INTO tags(tag_content)
     VALUES ($1)
     RETURNING *;
-    `, [tag_content]);
+    `,
+      [tag_content]
+    );
 
     return tag;
   } catch (error) {
-    throw error 
+    throw error;
   }
 }
 
@@ -216,10 +222,10 @@ async function getAllCardTags() {
     const { rows } = await client.query(`
     SELECT *
     FROM card_tags;
-    `)
+    `);
     return rows;
   } catch (error) {
-    throw error
+    throw error;
   }
 }
 
@@ -246,7 +252,6 @@ async function patchCards(cardId, fields = {}) {
     throw error;
   }
 }
-
 
 async function addTagsToCards(cardId, taglist = []) {
   try {
@@ -278,11 +283,11 @@ async function getAllCardTags() {
     const { rows } = await client.query(`
     SELECT * FROM tags
     WHERE tag_content = '${tag}';
-    `)
+    `);
 
     return rows;
   } catch (error) {
-    throw error
+    throw error;
   }
 }
 
@@ -293,38 +298,43 @@ async function getAllCardsWithTags() {
     FROM cards
     `);
 
-    return await attachTagsToCard(rows)
+    return await attachTagsToCard(rows);
   } catch (error) {
-    throw error
+    throw error;
   }
 }
 
 async function attachTagsToCard(allCards) {
-  const cardIds = allCards.map((card) => card.id)
-  const inString = allCards.map((_, index) => `$${index + 1}`).join(", ")
+  const cardIds = allCards.map((card) => card.id);
+  const inString = allCards.map((_, index) => `$${index + 1}`).join(", ");
 
-  const { rows: tags } = await client.query(`
+  const { rows: tags } = await client.query(
+    `
   SELECT tags.tag_content, card_tags.*
   FROM tags
   JOIN card_tags ON tags.ID = link_tags."tagId"
   WHERE card_tags."cardId" IN (${inString})
-  `, cardIds)
+  `,
+    cardIds
+  );
 
   allCards.forEach((card) => {
     card.tags = [];
     tags.forEach((tag) => {
       if (tag.cardId === card.id) {
-        card.tags.push(tag)
+        card.tags.push(tag);
       }
-    })
-  })
+    });
+  });
 
-  return allCards
+  return allCards;
 }
 
 async function createCardTag(cardId, tagId) {
   try {
-    const {rows: [cardtag]} = await client.query(
+    const {
+      rows: [cardtag],
+    } = await client.query(
       `
         INSERT INTO card_tags("cardId", "tagId")
         VALUES ($1, $2)
@@ -341,76 +351,90 @@ async function createCardTag(cardId, tagId) {
 }
 
 async function createCartItem(userId, cardId, quanity = 1) {
-    try {
-        const usersCart = await getCartByUserId(userId)
-        if (usersCart === null) {
-            userCart = createCart(userId)
-        }
-        console.log(usersCart)
-        console.log(usersCart.id)
-        const {rows} = await client.query(`
+  try {
+    const usersCart = await getCartByUserId(userId);
+    if (usersCart === null) {
+      userCart = createCart(userId);
+    }
+    console.log(usersCart);
+    console.log(usersCart.id);
+    const { rows } = await client.query(
+      `
         INSERT INTO cart_products("cartId", "cardId", quanity)
         VALUES ($1, $2, $3)
         RETURNING *;
-        `, [usersCart.id, cardId, quanity]);
-        
-        return rows;
-    } catch (error) {
-        console.error("could not put card into the cart")
-        throw error
-    }
+        `,
+      [usersCart.id, cardId, quanity]
+    );
+
+    return rows;
+  } catch (error) {
+    console.error("could not put card into the cart");
+    throw error;
+  }
 }
 
 async function createCart(userId) {
-    try {
-        const {rows} = await client.query(`
+  try {
+    const { rows } = await client.query(
+      `
         INSERT INTO cart("userId")
         VALUES ($1)
         ON CONFLICT ("userId") DO NOTHING
         RETURNING *;
-        `, [userId]);
+        `,
+      [userId]
+    );
 
-        return rows;
-    } catch (error) {
-        console.error("couldn't create cart item")
-        throw error
-    }
+    return rows;
+  } catch (error) {
+    console.error("couldn't create cart item");
+    throw error;
+  }
 }
 
 async function getCartByUserId(userId) {
-    try {
-        const {rows: [cart]} = await client.query(`
+  try {
+    const {
+      rows: [cart],
+    } = await client.query(
+      `
         SELECT * FROM cart
 
         WHERE "userId"=$1 AND active=true;
-        `, [userId])
 
-        return cart;
-    } catch (error) {
-        console.error("Couldn't get cart by user id")
-        throw error
-    }
+        `,
+      [userId]
+    );
 
-  
+    return cart;
+  } catch (error) {
+    console.error("Couldn't get cart by user id");
+    throw error;
+  }
 }
 
 async function addCardToCart(userId, cardId) {
-
-    try {
-      console.log("Initial query")
-        const {rows: [card]} = await client.query(`
+  try {
+    console.log("Initial query");
+    const {
+      rows: [card],
+    } = await client.query(
+      `
         SELECT *
         FROM cards
         WHERE id=$1;
-        `, [cardId]);
-        console.log("create cart item")
-        await createCartItem(userId, card.id);
-        console.log("get card by user Id")
-        return await getCardUserById(userId);
-    } catch (error) {
-        console.error("couldn't add cart item for user")
-        throw error;
-    }
+        `,
+      [cardId]
+    );
+    console.log("create cart item");
+    await createCartItem(userId, card.id);
+    console.log("get card by user Id");
+    return await getCardUserById(userId);
+  } catch (error) {
+    console.error("couldn't add cart item for user");
+    throw error;
+  }
 }
 
 async function deleteCardFromCart(userId, cardId) {
@@ -432,65 +456,104 @@ async function deleteCardFromCart(userId, cardId) {
 
 async function getCardUserById(userId) {
   try {
-    const {rows: [user]} = await client.query(`
+    const {
+      rows: [user],
+    } = await client.query(
+      `
     SELECT *
     FROM users
     WHERE id=$1
-    `, [userId]);
+    `,
+      [userId]
+    );
 
     if (!user) {
       throw {
         name: "UserNotFound",
-        message: "Could not find a user with that id"
-      }
+        message: "Could not find a user with that id",
+      };
     }
 
-    const {rows: cards} = await client.query(`
+    const { rows: cards } = await client.query(
+      `
     SELECT *
     FROM cards
     JOIN cart_products ON cards.Id=cart_products."cardId"
     JOIN cart ON "cartId"="userId"
     WHERE cart."userId"=$1;
-    `, [userId])
+    `,
+      [userId]
+    );
 
-    user.cart = cards
+    user.cart = cards;
 
     return user;
   } catch (error) {
-    throw error
+    throw error;
   }
 }
 
 async function updateViewCount(cardId, count) {
   try {
-    const { rows } = await client.query(`
+    const { rows } = await client.query(
+      `
     UPDATE cards
     SET view_count = $1
     WHERE ID = $2
     RETURNING *;
-    `, [++count, cardId])
+    `,
+      [++count, cardId]
+    );
 
     return rows;
   } catch (error) {
-    throw error
+    throw error;
   }
 }
 
 async function deleteCard(id) {
   try {
-    await client.query(`
+    await client.query(
+      `
     DELETE FROM card_tags
     WHERE "cardId"=$1
-    `, [id])
+    `,
+      [id]
+    );
 
-    const { rows } = await client.query(`
+    const { rows } = await client.query(
+      `
     DELETE FROM cards
     WHERE id=$1
     RETURNING *;
-    `, [id])
+    `,
+      [id]
+    );
     return rows;
   } catch (error) {
-    throw error
+    throw error;
+  }
+}
+
+async function deleteCardFromCart(userId, cardId) {
+  try {
+    const userCart = await getCartByUserId(userId);
+    console.log("USER CART", userCart);
+    const {
+      rows: [deletedCard],
+    } = await client.query(
+      `
+    DELETE FROM cart_products
+    WHERE cartId = $(1) AND cardId = ($2)
+    RETURNING *;
+    `,
+      userCart[0].id,
+      cardId
+    );
+    return deletedCard;
+  } catch (error) {
+    console.error("Could not delete card");
+    throw error;
   }
 }
 
@@ -577,6 +640,10 @@ module.exports = {
   deleteCard,
   updateViewCount,
   createCart,
+  getCartByUserId,
+  deleteCardFromCart,
+  getCardsById,
+  getCardUserById,
   deleteCardFromCart,
   addCartToUserOrder,
   createUserOrder
