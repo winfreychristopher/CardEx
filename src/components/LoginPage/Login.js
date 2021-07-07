@@ -56,7 +56,7 @@ const LoginPage  = () => {
           <div class="user_forms-login">
             <h2 class="forms_title">Login</h2>
             <div className="errMsg">
-              Error Message: 
+       
             </div>
             <form class="forms_form">
               <fieldset class="forms_fieldset">
@@ -84,7 +84,7 @@ const LoginPage  = () => {
           <div class="user_forms-signup">
             <h2 class="forms_title">Sign Up</h2>
             <div className="errMsg">
-              Error Message: 
+            
             </div>
             <form class="forms_form">
               <fieldset class="forms_fieldset">
