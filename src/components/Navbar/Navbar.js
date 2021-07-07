@@ -34,8 +34,12 @@ const Navbar = (props) => {
 									<li><Link to="/admin"  style={{color: "red"}}>Admin Mgmt.</Link></li>
 								</ul>
 						</li>
-						<li>
+						<li id="options" className="cartList">
 							<a href="#">Cart</a>
+							<ul class="subnav cart">
+								<li><a href="#">Lebron Card</a></li>
+								<li><a href="#">Api Call here</a></li>
+							</ul>
 						</li>
 				</ul>
 
