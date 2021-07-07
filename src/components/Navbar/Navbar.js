@@ -1,6 +1,8 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 // import ReactDOM from 'react-dom';
 import { FcSettings } from 'react-icons/fc'
+
 
 import "./Navbar.css";
 
@@ -13,10 +15,10 @@ const Navbar = (props) => {
 							<a href="#"> <FcSettings /> </a>
 						</li> */}
 						<li>
-							<a href="#">CardEx US</a>
+							<a href="/">CardEx US</a>
 						</li>
 						<li>
-							<a href="#">Sell Cards</a>
+							<a href="/sellcards">Sell Cards</a>
 						</li>
 						<li id="search">
 								<form action="" method="get">
@@ -25,15 +27,19 @@ const Navbar = (props) => {
 								</form>
 						</li>
 						<li id="options">
-								<a href="#">Login/Signup</a>
+								<Link to="/register"> Login/Signup </Link>
 								<ul class="subnav">
 									<li><a href="#">User Profile</a></li>
 									<li><a href="#">Settings</a></li>
-									<li><a href="#">Admin Management</a></li>
+									<li><Link to="/admin"  style={{color: "red"}}>Admin Mgmt.</Link></li>
 								</ul>
 						</li>
-						<li>
+						<li id="options" className="cartList">
 							<a href="#">Cart</a>
+							<ul class="subnav cart">
+								<li><a href="#">Lebron Card</a></li>
+								<li><a href="#">Api Call here</a></li>
+							</ul>
 						</li>
 				</ul>
 

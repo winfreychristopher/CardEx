@@ -12,6 +12,14 @@ export const getToken = () => {
     return localStorage.getItem("token")
 };
 
+export const loggedAdmin = () => {
+    localStorage.setItem("admin", "isAdmin")
+};
+
+export const clearAdmin = () => {
+    localStorage.removeItem("admin")
+}
+
 export async function getAllCards() {
     try {
         const { data } = await axios.get("/api/cards");
@@ -65,5 +73,79 @@ export async function userRegister(username, password) {
         return data;
     } catch (error) {
         throw error
+    }
+}
+
+export async function changeAdmin(id, admin) {
+    try {
+        let updatedInfo = {
+            admin,
+        };
+
+        const { data } = await axios.patch(`/api/users/${id}`, updatedInfo)
+        console.log(data)
+        return data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export async function createCard(card_title, description, price, card_img, tag_content) {
+    try {
+        const { data } = await axios.post("/api/cards", {
+            card_title,
+            description,
+            price,
+            card_img,
+            tag_content,
+        });
+        alert("Card was successfully listed")
+        return data;
+    } catch (error) {
+        throw error
+    }
+}
+
+export async function getCart(token) {
+    try {
+        const { data } = await axios.get("/api/cart", {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        console.log(data)
+        return data;
+    } catch (error) {
+        console.error("Error getting cart")
+        throw error
+    }
+}
+
+export async function removeItemFromCart(cardId, token) {
+    try {
+        const { data } = await axios.delete(`api/cart/${cardId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return data;
+    } catch (error) {
+        console.error("Error removing card from cart")
+        throw error;
+    }
+}
+
+export async function addItemToCart(cardId, quanity, token) {
+    try {
+        const { data } = await axios.post(`api/cart`,
+        {cardId, quanity},
+        {headers: {
+            Authorization: `Bearer ${token}`
+        }}
+        );
+        return data;
+    } catch (error) {
+        console.error("Error adding to cart")
+        throw error;
     }
 }

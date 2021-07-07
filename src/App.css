@@ -4,3 +4,13 @@
   background-color:rgba(223, 212, 207, 0.644);
   min-height: 100vh;
 }
+
+body {
+  /* display: flex; */
+}
+.cardsForSaleContainer {
+  display: flex;
+  flex-wrap: wrap;
+  width:fit-content;
+ 
+}
