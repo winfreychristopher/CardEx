@@ -54,7 +54,7 @@ const PlayingCards = ({cards, setCards, reset}) => {
                 <li>Item #: <span>{id}</span></li>
                 <li>Views: <span>{view_count}</span></li>   
                 <li>Listing Date: <span>{creation_date}</span></li>
-                <li>Price: <span>{price}</span></li>
+                <li>Price: $<span>{price}</span></li>
               </ul>
             </div>
           </div>

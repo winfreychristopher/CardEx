@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar/Navbar.js";
 import HomeBanner from "./components/Carousel/SlideBanner.js";
 import LeftNavBar from "./components/SideBar/SideBar.js";
 import PlayingCards from "./components/Cards/Cards";
+import { LoginPage, AdminPage } from "./components/index.js";
 import { getAllCards } from "./api";
 
 import "./App.css";
@@ -28,10 +29,11 @@ const App = () => {
 
   return (
     <Router>
+        <Navbar />
       <Switch>
-        <Route excat path="/">
+        <Route exact path="/">
         <div className="appContainer">
-          <Navbar />
+        
           <HomeBanner />
           <body>
             <LeftNavBar />
@@ -41,7 +43,10 @@ const App = () => {
           </body>
         </div>
         </Route>
-        <Route></Route>
+        <Route path="/register" component={LoginPage}>
+        </Route>
+        <Route path="/admin" component={AdminPage} />
+
       </Switch>
     </Router>
 

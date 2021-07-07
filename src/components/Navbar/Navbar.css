@@ -10,6 +10,7 @@
   font-family: 'Source Sans Pro', sans-serif;
   background: url(http://ds2-p.atlusnet.jp/portal_images/bg_01.jpg);
 }
+
 * {
     margin: 0;
     padding: 0;
@@ -19,7 +20,7 @@
   height: 60px;
   display: inline-block;
   width:100%;
-	justify-content: flex-end;
+	justify-content:center;
 }
  
 .nav li {
@@ -50,11 +51,11 @@
 }
 #search {
     /* width: 457px; */
-		width: 557px;
+		width: 470px;
     margin: 4px;
 }
 #search_text{
-    width: 397px;
+    width: 407px;
     padding: 15px 0 15px 20px;
     font-size: 16px;
     font-family: Montserrat, sans-serif;
@@ -107,7 +108,7 @@
     position: absolute;
     top: 110%;
     right: 0;
-    width: 200px;
+    width: 176px;
     height: auto;
     opacity: 0;
     transition: all 0.1s;

@@ -15,10 +15,10 @@ const Navbar = (props) => {
 							<a href="#"> <FcSettings /> </a>
 						</li> */}
 						<li>
-							<a href="#">CardEx US</a>
+							<a href="/">CardEx US</a>
 						</li>
 						<li>
-							<a href="#">Sell Cards</a>
+							<a href="/sellcards">Sell Cards</a>
 						</li>
 						<li id="search">
 								<form action="" method="get">
@@ -27,13 +27,11 @@ const Navbar = (props) => {
 								</form>
 						</li>
 						<li id="options">
-								<Link to="/register">
-									<a href="#">Login/Signup</a>
-								</Link>
+								<Link to="/register"> Login/Signup </Link>
 								<ul class="subnav">
 									<li><a href="#">User Profile</a></li>
 									<li><a href="#">Settings</a></li>
-									<li><a href="#">Admin</a></li>
+									<li><Link to="/admin"  style={{color: "red"}}>Admin Mgmt.</Link></li>
 								</ul>
 						</li>
 						<li>
