@@ -17,7 +17,8 @@ const {
     getAllTags,
     createCart,
     addCartToUserOrder,
-    createUserOrder
+    createUserOrder,
+    createUserAddress
 } = require("./index");
 
 async function buildTables() {
@@ -28,6 +29,7 @@ async function buildTables() {
     //DROP TABLE will go in here
     await client.query(`
         DROP TABLE IF EXISTS img;
+        DROP TABLE IF EXISTS user_address;
         DROP TABLE IF EXISTS order_cards;
         DROP TABLE IF EXISTS cart_products;
         DROP TABLE IF EXISTS user_order;
@@ -100,6 +102,14 @@ async function buildTables() {
                 "orderId" INT REFERENCES user_order(ID),
                 "cardId" INT REFERENCES cards(ID),
                 quantity INT NOT NULL
+            );
+            CREATE TABLE user_address(
+                ID SERIAL PRIMARY KEY,
+                "userId" INT REFERENCES users(id) ON DELETE CASCADE,
+                street VARCHAR(255) NOT NULL,
+                state VARCHAR(2) NOT NULL,
+                zip_code INTEGER NOT NULL,
+                UNIQUE("userId")
             );
             CREATE TABLE img(
                 ID SERIAL PRIMARY KEY,
@@ -288,11 +298,13 @@ const createInitialUsers = async () => {
 const createInitialTags = async () => {
     console.log("Creating Initial Tags")
     try {
+        //Basketball has tagID=1, pokemon has tagId=2 and so on 
         await createTags("Basketball")
         await createTags("Pokemon")
         await createTags("Football")
         await createTags("Magic")
         await createTags("Baseball")
+        await createTags("Super Rare")
         console.log("tags created:")
         console.log("finished creating tags")
     } catch (error) {
@@ -304,6 +316,7 @@ const createInitialCardTags = async () => {
     console.log("creating cards with tags")
     try {
         await createCardTag(1, 1)
+        await createCardTag(1, 6)
         await createCardTag(2, 1)
         await createCardTag(3, 2)
         await createCardTag(4, 2)
@@ -375,7 +388,7 @@ async function testDB() {
         console.log("adding card to cart")
         const addCart = await addCardToCart(1, 2)
         console.log("Cart Results:", addCart)
-        const addCartTwo = await addCardToCart(2, 1)
+        const addCartTwo = await addCardToCart(3, 1)
         console.log("Cart Two Results:", addCartTwo)
         const addCartThree = await addCardToCart(3, 5)
         console.log("Cart Three Results:", addCartThree)
@@ -385,8 +398,17 @@ async function testDB() {
         console.log("Order:", order)
 
         console.log("adding order to user cart")
-        const cartOrder = await addCartToUserOrder(3, 4)
+        const cartOrder = await addCartToUserOrder(2, 2)
         console.log("Order in Cart:", cartOrder)
+
+        console.log("calling createUserAddress")
+        const userAddress = await createUserAddress({
+            userId: 2,
+            street: "2998 Old Taylor Road",
+            state: "MS",
+            zip_code: "38655",
+        });
+        console.log("Address Results:", userAddress)
 
         // console.log("getting all card tags")
         // const cardTags = await getAllCardsWithTags()
