@@ -27,7 +27,7 @@ const Navbar = (props) => {
 								</form>
 						</li>
 						<li id="options">
-								<Link to="/register"> Login/Signup </Link>
+								<Link to="/register">  Login/Signup </Link>
 								<ul class="subnav">
 									<li><a href="#">User Profile</a></li>
 									<li><a href="#">Settings</a></li>
@@ -35,7 +35,7 @@ const Navbar = (props) => {
 								</ul>
 						</li>
 						<li id="options" className="cartList">
-							<a href="#">Cart</a>
+							<a href="/cart">Cart</a>
 							<ul class="subnav cart">
 								<li><a href="#">Lebron Card</a></li>
 								<li><a href="#">Api Call here</a></li>
@@ -47,5 +47,7 @@ const Navbar = (props) => {
 			</div>
     );
 }
+
+
 
 export default Navbar;

@@ -65,6 +65,7 @@ async function getUserById(id) {
 }
 
 async function getUser({ username, password }) {
+  console.log(password)
   try {
     let user = await getUserByUsername(username);
     if (bcrypt.compareSync(password, user.password)) {
@@ -186,17 +187,17 @@ async function getAllTags() {
   }
 }
 
-async function getAllCards() {
-  try {
-    const { rows } = await client.query(`
-      SELECT * FROM cards;
-      `);
-    return rows;
-  } catch (error) {
-    console.error("Could not get all cards in the db");
-    throw error;
-  }
-}
+// async function getAllCards() {
+//   try {
+//     const { rows } = await client.query(`
+//       SELECT * FROM cards;
+//       `);
+//     return rows;
+//   } catch (error) {
+//     console.error("Could not get all cards in the db");
+//     throw error;
+//   }
+// }
 
 async function createTags(tag_content) {
   try {
@@ -217,6 +218,7 @@ async function createTags(tag_content) {
   }
 }
 
+//Duplicate
 async function getAllCardTags() {
   try {
     const { rows } = await client.query(`
@@ -278,18 +280,18 @@ async function getTagByContent(tag_content) {
   }
 }
 
-async function getAllCardTags() {
-  try {
-    const { rows } = await client.query(`
-    SELECT * FROM tags
-    WHERE tag_content = '${tag}';
-    `);
+// async function getAllCardTags() {
+//   try {
+//     const { rows } = await client.query(`
+//     SELECT * FROM tags
+//     WHERE tag_content = '${tag}';
+//     `);
 
-    return rows;
-  } catch (error) {
-    throw error;
-  }
-}
+//     return rows;
+//   } catch (error) {
+//     throw error;
+//   }
+// }
 
 async function getAllCardsWithTags() {
   try {
@@ -350,6 +352,7 @@ async function createCardTag(cardId, tagId) {
   }
 }
 
+//error
 async function createCartItem(userId, cardId, quanity = 1) {
   try {
     const usersCart = await getCartByUserId(userId);
@@ -535,27 +538,27 @@ async function deleteCard(id) {
   }
 }
 
-async function deleteCardFromCart(userId, cardId) {
-  try {
-    const userCart = await getCartByUserId(userId);
-    console.log("USER CART", userCart);
-    const {
-      rows: [deletedCard],
-    } = await client.query(
-      `
-    DELETE FROM cart_products
-    WHERE cartId = $(1) AND cardId = ($2)
-    RETURNING *;
-    `,
-      userCart[0].id,
-      cardId
-    );
-    return deletedCard;
-  } catch (error) {
-    console.error("Could not delete card");
-    throw error;
-  }
-}
+// async function deleteCardFromCart(userId, cardId) {
+//   try {
+//     const userCart = await getCartByUserId(userId);
+//     console.log("USER CART", userCart);
+//     const {
+//       rows: [deletedCard],
+//     } = await client.query(
+//       `
+//     DELETE FROM cart_products
+//     WHERE cartId = $(1) AND cardId = ($2)
+//     RETURNING *;
+//     `,
+//       userCart[0].id,
+//       cardId
+//     );
+//     return deletedCard;
+//   } catch (error) {
+//     console.error("Could not delete card");
+//     throw error;
+//   }
+// }
 
 async function createUserOrder(userId, cartId) {
   try {

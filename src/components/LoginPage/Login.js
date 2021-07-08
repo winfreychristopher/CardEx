@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { userRegister, userLogin } from '../../api/index';
 
 import "./Login.css";
 
@@ -10,13 +11,72 @@ const LoginPage  = () => {
   //   path.includes("register") ?
 
   // }
-  const userForms = document.getElementById('user_options-forms');
 
+  const userForms = document.getElementById('user_options-forms');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [repassword, setRepassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [errMsgText, setErrMsgText] = useState("");
+  // const [msgColor, setMsgColor] = useState("");
+
+
+  // const onFormSubmit = async (e) => {
+  //   e.preventDefault();
+
+  // }
+
+
+  const LoginUser = async (e, name, pass) => {
+    e.preventDefault();
+    setErrMsgText("")
+    try {
+      const res = await userLogin(name, pass);
+      console.log(res);
+      setErrMsgText("Welcome back " + name);
+      return true;
+
+    } catch (err) {
+      setErrMsgText('User does not exist, ' + err);
+      console.log(err);
+      return false;
+     
+    }
+  }
+  
+  const SignupUser = async (e, name, pass, mail) => {
+    console.log(repassword, password)
+    e.preventDefault();
+    setErrMsgText("")
+    if (repassword === password) {    
+      try {
+        const res = await userRegister(name, pass, mail);
+        console.log(res);
+        setErrMsgText("Thank you for signing up.");
+        
+        
+      } catch (err) {
+        setErrMsgText("" + err);
+        console.log(err);
+       
+
+      }
+    } else {   
+      setErrMsgText("Passwords Do not Match");
+      e.preventDefault();
+    }
+  }
+
+  // const colorChange = (color) => {
+  //   document.getElementById("errMsg").style.color = color;
+  // }
   const rmBounceR = () => {
+    setErrMsgText("");
     userForms.classList.remove('bounceRight');
     userForms.classList.add('bounceLeft');
   }
   const rmBounceL = () => {
+    setErrMsgText("");
     userForms.classList.remove('bounceLeft');
     userForms.classList.add('bounceRight');
   }
@@ -55,17 +115,25 @@ const LoginPage  = () => {
         <div class="user_options-forms" id="user_options-forms">
           <div class="user_forms-login">
             <h2 class="forms_title">Login</h2>
-            <div className="errMsg">
-       
-            </div>
-            <form class="forms_form">
+            <div id="errMsg" style={{color: '#ff0808'}} > {errMsgText} </div> 
+
+            {/* The Login Form */}
+            <form class="forms_form" onSubmit={(e) => {LoginUser( e, username, password)}}>
               <fieldset class="forms_fieldset">
                 <div class="forms_field">
-                  <input type="text" class="forms_field-input" required />
-                  <label class="forms_field-label">Email</label>
+                  <input type="text" class="forms_field-input" required 
+                    onChange={(event) => {
+                      setUsername(event.target.value);
+                    }}
+                  />
+                  <label class="forms_field-label">Username</label>
                 </div>
                 <div class="forms_field">
-                  <input type="password" class="forms_field-input" required />
+                  <input type="password" class="forms_field-input" required 
+                    onChange={(event) => {
+                      setPassword(event.target.value);
+                    }}
+                  />
                   <label class="forms_field-label">Password</label>
                 </div>
               </fieldset>
@@ -76,32 +144,48 @@ const LoginPage  = () => {
                 <input
                   type="submit"
                   value="Login"
-                  class="forms_buttons-action"
+                  class="forms_buttons-action"                 
                 />
               </div>
             </form>
           </div>
           <div class="user_forms-signup">
             <h2 class="forms_title">Sign Up</h2>
-            <div className="errMsg">
-            
-            </div>
-            <form class="forms_form">
+            <div id="errMsg" style={{color: '#ff0808'}}> {errMsgText} </div>
+
+            {/* The Sign Up Form */}
+            <form class="forms_form" onSubmit={(event) => {SignupUser( event, username, password, email)}}>
               <fieldset class="forms_fieldset">
                 <div class="forms_field">
-                  <input type="text" class="forms_field-input" required />
-                  <label class="forms_field-label"> Full Name </label>
+                  <input type="text" class="forms_field-input" required 
+                    onChange={(event) => {
+                      setUsername(event.target.value);
+                    }} 
+                  />
+                  <label class="forms_field-label"> Username </label>
                 </div>
                 <div class="forms_field">
-                  <input type="text" class="forms_field-input" required />
+                  <input type="text" class="forms_field-input" required 
+                    onChange={(event) => {
+                      setEmail(event.target.value);
+                    }} 
+                  />
                   <label class="forms_field-label">Email</label>
                 </div>
                 <div class="forms_field">
-                  <input type="password" class="forms_field-input" required />
+                  <input type="password" class="forms_field-input" required 
+                    onChange={(event) => {
+                      setPassword(event.target.value);                     
+                    }} 
+                  />
                   <label class="forms_field-label">Password</label>
                 </div>
                 <div class="forms_field">
-                  <input type="password" class="forms_field-input" required />
+                  <input type="password" class="forms_field-input" required
+                    onChange={(e) => {
+                      setRepassword(e.target.value);
+                    }}
+                  />
                   <label class="forms_field-label">Confirm Password</label>
                 </div>
               </fieldset>
@@ -109,7 +193,7 @@ const LoginPage  = () => {
                 <input
                   type="submit"
                   value="Sign up"
-                  class="forms_buttons-action"
+                  class="forms_buttons-action"                 
                 />
               </div>
             </form>
@@ -117,8 +201,6 @@ const LoginPage  = () => {
         </div>
       </div>
     </section>
-
-
   );
 };
 
