@@ -36,7 +36,7 @@ const Cart = () => {
             <span className="ml-2"><a href="/">Continue Shopping</a></span>
           </div>
           <hr />
-          <h6 className="mb-0">Shopping cart</h6>
+          <h4 className="mb-0">Shopping cart</h4>
           <div className="d-flex justify-content-between">
             <span>You have 4 items in your cart</span>
             <div className="d-flex flex-row align-items-center">
@@ -70,7 +70,7 @@ const Cart = () => {
             </div>
           </div>
 
-          <div className="  d-flex justify-content-between align-items-center mt-3 p-2 items rounded">
+          {/* <div className="  d-flex justify-content-between align-items-center mt-3 p-2 items rounded">
             <div className="d-flex flex-row">
               <img
                 className="rounded"
@@ -90,7 +90,7 @@ const Cart = () => {
               <span className="d-block ml-5 font-weight-bold">$999</span>
               <i className="fa fa-trash-o ml-3 text-black-50" />
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
 
