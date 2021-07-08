@@ -2,13 +2,15 @@ const express = require("express");
 const cardsRouter = express.Router();
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = process.env;
-const { requireUser } = require("./utils");
+const { requireUser, requireAdmin } = require("./utils");
 const {
   getAllCards,
   createCard,
   updateViewCount,
   patchCards,
   getCardsById,
+  getCardUserById,
+  deleteCard,
 } = require("../db");
 
 cardsRouter.use((req, res, next) => {
@@ -26,6 +28,30 @@ cardsRouter.get("/", async (req, res, next) => {
     throw error;
   }
 });
+
+// cardsRouter.get("/:userId", requireUser, async (req, res, next) => {
+//   const { userId } = req.params;
+//   try {
+//     const userCard = await getCardUserById(userId);
+//     if (userId === req.user.id) {
+//       res.send(userCard);
+//     } else {
+//       next(
+//         userCard
+//           ? {
+//               name: "UnauthorizedUserError",
+//               message: "Cannot access other users card data",
+//             }
+//           : {
+//               name: "CardNotFoundError",
+//               message: " A card does not exist under that user id",
+//             }
+//       );
+//     }
+//   } catch ({ name, message }) {
+//     next({ name, message });
+//   }
+// });
 
 cardsRouter.post("/", requireUser, async (req, res, next) => {
   const { card_title, description, price, card_img, view_count } = req.body;
@@ -79,6 +105,15 @@ cardsRouter.patch("/:cardId", requireUser, async (req, res, next) => {
     if (originalCard) {
     }
   } catch (error) {}
+});
+
+cardsRouter.delete("/:cardId", async (req, res, next) => {
+  const { cardId } = req.params;
+  try {
+    const card = await getCardsById(cardId);
+  } catch (error) {
+    throw error;
+  }
 });
 
 module.exports = cardsRouter;
