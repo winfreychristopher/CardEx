@@ -231,7 +231,7 @@ const createInitialCards = async () => {
                 description: "the rarest of all Magic the gathering cards, great condition",
                 price: "55000",
                 view_count: "189",
-                card_img: "https://static.wikia.nocookie.net/mtgsalvation_gamepedia/images/2/24/LEA_Black_Lotus.jpg/revision/latest/scale-to-width-down/672?cb=20190308055024",
+                card_img: "https://th.bing.com/th/id/OIP._e_a5ZxVcLp52zoNebZwPAAAAA?pid=ImgDet&rs=1",
             },
             {
                 card_title: "Magic Ancestral Recall (alpha)",
@@ -246,6 +246,13 @@ const createInitialCards = async () => {
                 price: "10000",
                 view_count: "57",
                 card_img: "https://product-images.tcgplayer.com/fit-in/400x558/9146.jpg",
+            },
+            {
+                card_title: "2020 Donruss Kenny Moore autograph",
+                description: "Donruss autograph from the best Corner in the league, Kenny Moore",
+                price: "25",
+                view_count: "74",
+                card_img: "https://i.ebayimg.com/images/g/IDwAAOSwDphf8OYU/s-l300.jpg",
             },
         ];
         const products = await Promise.all(cardsToCreate.map(createCard))
@@ -333,6 +340,7 @@ const createInitialCardTags = async () => {
         await createCardTag(15, 4)
         await createCardTag(16, 4)
         await createCardTag(17, 4)
+        await createCardTag(18, 3)
         const cardTag = await createCardTag(2, 1)
         console.log("Tag Results:")
         console.log(cardTag)

@@ -106,6 +106,18 @@ export async function createCard(card_title, description, price, card_img, tag_c
     }
 }
 
+export async function updateCard({id, count}) {
+    try {
+        const data = await axios.patch(`/api/cards/${id}`, {
+            count,
+        });
+
+        return data;
+    } catch (error) {
+        throw error
+    }
+}
+
 export async function getCart(token) {
     try {
         const { data } = await axios.get("/api/cart", {
