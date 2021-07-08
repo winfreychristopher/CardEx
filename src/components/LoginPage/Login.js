@@ -18,60 +18,65 @@ const LoginPage  = () => {
   const [repassword, setRepassword] = useState("");
   const [email, setEmail] = useState("");
   const [errMsgText, setErrMsgText] = useState("");
-  const [msgColor, setMsgColor] = useState("");
+  // const [msgColor, setMsgColor] = useState("");
 
-  // let msgColor;
 
   // const onFormSubmit = async (e) => {
   //   e.preventDefault();
 
   // }
+
+
+  const LoginUser = async (e, name, pass) => {
+    e.preventDefault();
+    setErrMsgText("")
+    try {
+      const res = await userLogin(name, pass);
+      console.log(res);
+      setErrMsgText("Welcome back " + name);
+      return true;
+
+    } catch (err) {
+      setErrMsgText('User does not exist, ' + err);
+      console.log(err);
+      return false;
+     
+    }
+  }
   
   const SignupUser = async (e, name, pass, mail) => {
     console.log(repassword, password)
     e.preventDefault();
+    setErrMsgText("")
     if (repassword === password) {    
       try {
         const res = await userRegister(name, pass, mail);
         console.log(res);
-        setMsgColor('green')
         setErrMsgText("Thank you for signing up.");
-        e.preventDefault();
+        
         
       } catch (err) {
-        setErrMsgText(err);
+        setErrMsgText("" + err);
         console.log(err);
-        e.preventDefault();
+       
 
       }
     } else {   
-      setMsgColor('red')
       setErrMsgText("Passwords Do not Match");
       e.preventDefault();
     }
   }
 
-  const LoginUser = async (e, name, pass) => {
-    console.log(name, pass)
-    e.preventDefault();
-    try {
-      const res = await userLogin(name, pass);
-      console.log(res);
-      setMsgColor('green')
-      setErrMsgText("Welcome back " + name);
-      e.preventDefault();
-
-    } catch (err) {
-      console.log(err);
-      e.preventDefault();
-    }
-  }
-
+  // const colorChange = (color) => {
+  //   document.getElementById("errMsg").style.color = color;
+  // }
   const rmBounceR = () => {
+    setErrMsgText("");
     userForms.classList.remove('bounceRight');
     userForms.classList.add('bounceLeft');
   }
   const rmBounceL = () => {
+    setErrMsgText("");
     userForms.classList.remove('bounceLeft');
     userForms.classList.add('bounceRight');
   }
@@ -110,7 +115,7 @@ const LoginPage  = () => {
         <div class="user_options-forms" id="user_options-forms">
           <div class="user_forms-login">
             <h2 class="forms_title">Login</h2>
-            <div id="errMsg" > {errMsgText} </div> 
+            <div id="errMsg" style={{color: '#ff0808'}} > {errMsgText} </div> 
 
             {/* The Login Form */}
             <form class="forms_form" onSubmit={(e) => {LoginUser( e, username, password)}}>
@@ -146,7 +151,7 @@ const LoginPage  = () => {
           </div>
           <div class="user_forms-signup">
             <h2 class="forms_title">Sign Up</h2>
-            <div id="errMsg" style={{ color: msgColor }}> {errMsgText} </div>
+            <div id="errMsg" style={{color: '#ff0808'}}> {errMsgText} </div>
 
             {/* The Sign Up Form */}
             <form class="forms_form" onSubmit={(event) => {SignupUser( event, username, password, email)}}>
@@ -196,8 +201,6 @@ const LoginPage  = () => {
         </div>
       </div>
     </section>
-
-
   );
 };
 

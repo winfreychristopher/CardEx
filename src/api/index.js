@@ -1,24 +1,24 @@
 import axios from "axios";
 
 export const clearToken = () => {
-    localStorage.removeItem("token")
+    localStorage.removeItem("CardEXtoken")
 };
 
 export const setToken = (token) => {
-    localStorage.setItem("token", token)
+    localStorage.setItem("CardEXtoken", token)
 };
 
 export const getToken = () => {
-    return localStorage.getItem("token")
+    return localStorage.getItem("CardEXtoken")
 };
 
-export const loggedAdmin = () => {
-    localStorage.setItem("admin", "isAdmin")
-};
+// export const loggedAdmin = () => {
+//     localStorage.setItem("admin", "isAdmin")
+// };
 
-export const clearAdmin = () => {
-    localStorage.removeItem("admin")
-}
+// export const clearAdmin = () => {
+//     localStorage.removeItem("admin")
+// }
 
 export async function getAllCards() {
     try {
@@ -29,7 +29,6 @@ export async function getAllCards() {
         throw error;
     }
 }
-getAllCards();
 
 export async function getUsers() {
     try {
@@ -40,19 +39,19 @@ export async function getUsers() {
         throw error;      
     }
 }
-getUsers()
 
 export async function userLogin(username, password) {
+    console.log("API " + username, password)
     try {
         const { data } = await axios.post("/api/users/login", {
-            username,
+            username, 
             password,
         });
-    
-        if (data.token) {
-            alert("You are now logged in")
-            setToken(data.token)
+        console.log(data)
+        if (data.token) {  
+         setToken(data.token)
         }
+
         return data;
     } catch (error) {
         throw error;
@@ -64,10 +63,11 @@ export async function userRegister(username, password, email) {
         const { data } = await axios.post("/api/users/register", {
             username,
             password,
+            email,
         });
         console.log(data.token)
         if (data.token) {
-            alert("You have successfully registered, welcome to CardEx");
+            alert("You have successfully registered. Welcome to CardEx!");
             setToken(data.token)
         }
         return data;

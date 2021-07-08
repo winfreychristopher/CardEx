@@ -215,10 +215,10 @@ input[type='submit'] {
   font-weight: bold;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.301);
   letter-spacing: 0.05rem;
-  height: 24px;
+  height: 26px;
+  /* margin-bottom: 7px; */
   text-align: center;
-  text-decoration: underline;
-  font-style: italic;
+
 }
 .user_options-forms .forms_title {
   margin-bottom: 20px;
