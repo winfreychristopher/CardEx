@@ -555,6 +555,38 @@ async function addCartToUserOrder(userId, cardId, cartId) {
   }
 }
 
+async function createUserAddress({userId, street, state, zip_code,}) {
+  try {
+    await client.query(`
+    INSERT INTO user_address("userId", street, state, zip_code)
+    VALUES($1, $2, $3, $4)
+    ON CONFLICT ("userId") DO NOTHING
+    RETURNING *;
+    `, [userId, street, state, zip_code])
+
+    return await joinAddressToUser(userId)
+  } catch (error) {
+    console.error("Could not create users address")
+    throw error
+  }
+}
+
+async function joinAddressToUser(userId) {
+  try {
+    const {rows: userAddress} = await client.query(`
+    SELECT users.id
+    FROM users
+    INNER JOIN user_address ON "userId" = users.id
+    WHERE user_address."userId" = $1;
+    `, [userId])
+
+    return userAddress;
+  } catch (error) {
+    console.error("could not join address to user")
+    throw error
+  }
+}
+
 module.exports = {
   client,
   createUser,
@@ -579,5 +611,6 @@ module.exports = {
   createCart,
   deleteCardFromCart,
   addCartToUserOrder,
-  createUserOrder
+  createUserOrder,
+  createUserAddress
 };
