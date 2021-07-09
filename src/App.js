@@ -32,6 +32,7 @@ const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
   const [errMsgText, setErrMsgText] = useState("");
   const [authenticate, setAuth] = useState(false);
+  const [user, setUser] = useState({})
 
   const retrieveCards = () => {
     getAllCards()
@@ -45,12 +46,16 @@ const App = () => {
       });
   };
   useEffect(() => {
+    const token = localStorage.getItem("CardEXtoken")
+    if (token) {
+      setIsLoggedIn(true)
+    }
     retrieveCards();
   }, []);
 
   return (
     <Router>
-        <Navbar />
+        <Navbar isLoggedIn={isLoggedIn} user={user}/>
       <Switch>
         <Route exact path="/">
         <div className="appContainer">
@@ -65,7 +70,7 @@ const App = () => {
         </div>
         </Route>
         <Route path="/register">
-          <LoginPage />
+          <LoginPage setIsLoggedIn={setIsLoggedIn} setUser={setUser}/>
         </Route>
         <Route path="/cart">
           <Cart />

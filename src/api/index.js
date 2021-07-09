@@ -90,15 +90,15 @@ export async function changeAdmin(id, admin) {
     }
 }
 
-export async function createCard(card_title, description, price, card_img, tag_content) {
+export async function createCard(card_title, description, price, card_img, token) {
     try {
         const { data } = await axios.post("/api/cards", {
             card_title,
             description,
             price,
             card_img,
-            tag_content,
-        });
+            // tag_content,
+        }, {headers: {Authorization: `Bearer ${token}`}});
         alert("Card was successfully listed")
         return data;
     } catch (error) {
