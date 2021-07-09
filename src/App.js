@@ -58,7 +58,7 @@ const App = () => {
           <HomeBanner />
           <body className="frontContainer">
             <LeftNavBar />
-            <div className="cardsForSaleContainer row m-0 p-1">
+            <div className="cardsForSaleContainer r">
               <PlayingCards cards={cards} setCards={setCards} reset={retrieveCards} />
             </div>
           </body>
@@ -74,7 +74,7 @@ const App = () => {
         <Route path="/admin" component={AdminPage} />
 
       </Switch>
-      <footer style={{height: "200px"}}></footer>
+      
     </Router>
 
   );

@@ -1,7 +1,8 @@
 import React from 'react';
 
 import thanosImg from "../../assets/thanosCrown.jpg";
-import cardEXLogo from "../../assets/CardEX name.png"
+import cardEXLogo from "../../assets/CardEX name.png";
+// import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import "./Cart.scss";
 
 const Cart = () => {
@@ -27,16 +28,17 @@ const Cart = () => {
   
 
   return (
+    
   <div className=" cartComponet container mt-5 p-3 rounded cart">
     <div className=" row no-gutters">
       <div className="col-md-8">
         <div className="product-details mr-2">
           <div className="d-flex flex-row align-items-center">
-            <i className="fa fa-long-arrow-left" />
-            <span className="ml-2"><a href="/">Continue Shopping</a></span>
+            {/* {ArrowBackIosIcon} */}
+            <span className=" contShopping ml-2"><a href="/">Continue Shopping</a></span>
           </div>
           <hr />
-          <h4 className="mb-0">Shopping cart</h4>
+          <h4 className=" mb-0">Shopping cart</h4>
           <div className="d-flex justify-content-between">
             <span>You have 4 items in your cart</span>
             <div className="d-flex flex-row align-items-center">

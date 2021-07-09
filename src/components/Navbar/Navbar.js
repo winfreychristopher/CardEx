@@ -37,8 +37,6 @@ const Navbar = (props) => {
 						<li id="options" className="cartList">
 							<a href="/cart">Cart</a>
 							<ul class="subnav cart">
-								<li><a href="#">Lebron Card</a></li>
-								<li><a href="#">Api Call here</a></li>
 							</ul>
 						</li>
 				</ul>

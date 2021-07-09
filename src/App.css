@@ -12,7 +12,8 @@
 .cardsForSaleContainer {
   display: flex;
   flex-wrap: wrap;
-  width:fit-content;
+  width: fit-content;
+  flex-direction: ;
   max-height: 80vh;
   overflow: auto;
  
