@@ -3,11 +3,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&display=swap');
 
 .rootContainer {
-  background-color: coral;
+  background-color: rgb(212, 212, 212);
   margin: 10px;
   padding: 10px;
   border: 1px solid #d3d3d3;
   border-radius: .25rem;
+  flex-grow: 2;
+  .prices {
+    display: flex;
+    margin-right: 10px;
+    justify-content: space-between;
+    padding-right: 10px;
+    align-items: center;
+    margin-top: 10px;
+  }
 }
 .cardContainer {
   display: flex;
@@ -27,9 +36,9 @@
     width: 10vw;
     height: 340px;
     margin-left: 10px;
+    flex-grow: 2;
     h4 {
       font-family: 'Encode Sans SC', sans-serif;
-      border-bottom: 3px black solid;
     }
     .desc {
       font-family: 'Exo 2', sans-serif;
@@ -39,10 +48,13 @@
       line-height: 20px;
     }
     .itemInfo {
-      text-align: right;
       display: flex;
+      flex-flow: row nowrap;
+      align-items: center;
+      justify-content: center;
       flex-flow: column nowrap;
       flex-grow: 1;
+      width: 100%;
       .price {
         margin-top: 20px;
         font-family: 'Dancing Script', cursive;
@@ -96,7 +108,7 @@ ul {
 
 // Button CSS
 #add-to-cart-button {
-  background: #e6a247;
+  background: #ff9609;
   border: none;
   border-radius: 4px;
   -webkit-box-shadow: 0 3px 13px -2px rgba(0,0,0,.15);
@@ -113,14 +125,13 @@ ul {
   text-transform: uppercase;
   transition: 0.4s ease;
   width: auto;
-
+  z-index: 2;
   &:active {
       -webkit-box-shadow: 0 0 0 0.2rem rgba(252, 186, 3,.45);
       box-shadow: 0 0 0 0.2rem rgba(252, 186, 3,.45);
       -webkit-transform: translateY(4px);
       transform: translateY(4px);
   }
-
   &:hover {
       cursor: pointer;
   }
@@ -161,6 +172,10 @@ ul {
           animation: grow 0.6s forwards;
           -webkit-animation: grow 0.6s forwards;
           animation-delay: 0.7s;
+      }
+
+      span {
+        z-index: -5;
       }
 
   }

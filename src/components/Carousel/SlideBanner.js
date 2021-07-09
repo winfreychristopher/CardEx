@@ -2,11 +2,11 @@ import React from "react";
 // import ReactDOM from "react-dom";
 import Carousel from 'react-bootstrap/Carousel';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import "./SlideBanner.css";
+import "./SlideBanner.scss";
 
-import pokeCardsImg from "../../assets/Best-Pokemon-Booster-Box-2021-Banner.jpg";
+import freeShippingImg from "../../assets/freeShipping.jpg";
 import cardMoneyImg from "../../assets/just-collect-value-banner.jpg"
-import vintageCardsImg from "../../assets/vintage-sports-cards-banner.jpg"
+import visaCCBannerImg from "../../assets/VisaCCBanner.png"
 import paniniCardImg from "../../assets/Panini Card-Banner.jpg";
 import shinnyPokeImg from "../../assets/shinning Fates pokemon-banner.jpg";
 
@@ -40,7 +40,7 @@ const HomeBanner = (props) => {
 				<Carousel.Item>
 					<img
 						className="d-block w-100"
-						src={vintageCardsImg}
+						src={freeShippingImg}
 						alt="Third slide"
 					/>
 					<Carousel.Caption>
@@ -50,20 +50,20 @@ const HomeBanner = (props) => {
 				</Carousel.Item>
 				<Carousel.Item>
 					<img
-						className="d-block w-100"
-						src={paniniCardImg}
+						className="visa d-block w-100"
+						src={visaCCBannerImg}
 						alt="Third slide"
 					/>
 					<Carousel.Caption>
-						<h3></h3>
-						<p></p>
+						<h3> We Accept all forms of payment, including PayPal</h3>
+						<div className="subMSG"><h6>"Bitcoin, DogeCoin, Money Order and Cash App"</h6></div>
 					</Carousel.Caption>
 				</Carousel.Item>
 				<Carousel.Item>
 					<img
 						className="d-block w-100"
 						src={shinnyPokeImg}
-						alt="Third slide"
+						alt="Fourth slide"
 					/>
 					<Carousel.Caption>
 						<h3></h3>

@@ -7,7 +7,8 @@ import PlayingCards from "./components/Cards/Cards";
 import Cart from "./components/Cart/Cart"
 import { LoginPage, AdminPage } from "./components/index.js";
 import { getAllCards, userLogin, getToken } from "./api";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import "./App.css";
 
@@ -15,6 +16,8 @@ const App = () => {
   useEffect(() => {
     document.title = `CardEX\u2122 - US`;
   }, []);
+
+  
 
   // useEffect(() => {
   //   if (getToken()) {
@@ -28,11 +31,25 @@ const App = () => {
   //     .catch(console.error);
   // }, []);
 
+  const notifySignup = () => toast.success("Sign Up Successful, redirecting to Home Page!", {
+    position: toast.POSITION.TOP_CENTER
+  });
+  const notifyLogin = () => toast.warn("Welcome back King or Queen, redirecting to Home Page!", {
+    position: toast.POSITION.TOP_CENTER
+  });
+  const notifyLogout = () => toast.warn("Logged out Successfully, redirecting to Login Page!",{
+    position: toast.POSITION.TOP_CENTER
+  });
+
+
   const [cards, setCards] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState();
   const [errMsgText, setErrMsgText] = useState("");
   const [authenticate, setAuth] = useState(false);
-  const [user, setUser] = useState({})
+  const [user, setUser] = useState({});
+
+  // (async () => { JSON.parse(localStorage.getItem("CardEXtoken"))})();
+  
 
   const retrieveCards = () => {
     getAllCards()
@@ -55,7 +72,12 @@ const App = () => {
 
   return (
     <Router>
-        <Navbar isLoggedIn={isLoggedIn} user={user}/>
+      <Navbar 
+        isLoggedIn={isLoggedIn} 
+        setIsLoggedIn={setIsLoggedIn}
+        user={user} 
+        logoutAnim={notifyLogout} />
+      <ToastContainer />
       <Switch>
         <Route exact path="/">
         <div className="appContainer">
@@ -70,7 +92,7 @@ const App = () => {
         </div>
         </Route>
         <Route path="/register">
-          <LoginPage setIsLoggedIn={setIsLoggedIn} setUser={setUser}/>
+          <LoginPage setIsLoggedIn={setIsLoggedIn} setUser={setUser} notifySignup={notifySignup} notifyLogin={notifyLogin} />
         </Route>
         <Route path="/cart">
           <Cart />

@@ -2,12 +2,31 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 // import ReactDOM from 'react-dom';
 import { FcSettings } from 'react-icons/fc'
+import {clearToken, getToken } from '../../api/index';
+import { useHistory } from 'react-router-dom';
 
 
 import "./Navbar.css";
 
-const Navbar = ({isLoggedIn, user}) => {
-    
+const Navbar = ({isLoggedIn, setIsLoggedIn, user, logoutAnim}) => {
+	
+
+	const history = useHistory();
+	
+		const logOut = () => {
+			logoutAnim();
+			setIsLoggedIn(false);
+			clearToken();
+
+			setTimeout(function() {
+				history.push("/register");
+			}, 2000);
+				
+
+
+
+		}
+
     return (
 			<div className="navbarContainer">
 				<ul class="nav">
@@ -27,17 +46,19 @@ const Navbar = ({isLoggedIn, user}) => {
 								</form>
 						</li>
 						<li id="options">
-								{isLoggedIn ? (
+								
 									<>
-									<a href="">Options</a>
-									<ul class="subnav">
-									<li><a href="#">User Profile</a></li>
-									<li><a href="#">Settings</a></li>
-									{user.admin && 
-									<li><Link to="/admin"  style={{color: "red"}}>Admin Mgmt.</Link></li>}	
-								</ul>
-								</>
-								) : <Link to="/register">  Login/Signup </Link>}
+										<a href="">My Account</a>
+										<ul class="subnav">
+											<li><a href="#">User Profile</a></li>
+											<li><a href="#">Settings</a></li>
+											{ !isLoggedIn ? <li><a href="/register">Login</a></li> : "" }
+											{ isLoggedIn ? <li><Link to="#" onClick={logOut} >Logout </Link></li> : ''}
+											{user.admin && 
+												<li><Link to="/admin"  style={{color: "red"}}>Admin Mgmt.</Link></li>
+											}	
+										</ul>
+									</>
 								
 								
 						</li>

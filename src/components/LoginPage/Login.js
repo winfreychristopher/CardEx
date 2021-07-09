@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
-import { Redirect, useLocation } from 'react-router-dom';
+import { Redirect, useLocation, useHistory } from 'react-router-dom';
 import { userRegister, userLogin } from '../../api/index';
+
+
 
 import "./Login.css";
 
-const LoginPage  = ({setIsLoggedIn, setUser}) => {
+const LoginPage  = ({setIsLoggedIn, setUser, notifySignup, notifyLogin}) => {
   // const modalSwitcher = () => {
   //   const { path }  = useLocation();
   // }
   //   path.includes("register") ?
 
   // }
-
+  const history = useHistory();
   const userForms = document.getElementById('user_options-forms');
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -34,15 +36,16 @@ const LoginPage  = ({setIsLoggedIn, setUser}) => {
       const res = await userLogin(name, pass);
       console.log(res);
       setErrMsgText("Welcome back " + name);
-      setIsLoggedIn(true)
-      setUser(res.user)
-      return <Redirect to="/" />;
-
+      setIsLoggedIn(true);
+      setUser(res.user);
+      notifyLogin();
+      setTimeout(function() {
+        history.push("/");
+      }, 2000);
     } catch (err) {
       setErrMsgText('User does not exist, ' + err);
       console.log(err);
-      return false;
-     
+      return false; 
     }
   }
   
@@ -55,16 +58,17 @@ const LoginPage  = ({setIsLoggedIn, setUser}) => {
         const res = await userRegister(name, pass, mail);
         console.log(res);
         setErrMsgText("Thank you for signing up.");
-        
-        
+        notifySignup();
+        setIsLoggedIn(true);
+        setTimeout(function() {
+          history.push("/");
+        }, 2000);
       } catch (err) {
         setErrMsgText("" + err);
         console.log(err);
-       
-
       }
     } else {   
-      setErrMsgText("Passwords Do not Match");
+      setErrMsgText("Minimum 6 characters or Passwords Do not Match.");
       e.preventDefault();
     }
   }
@@ -131,7 +135,7 @@ const LoginPage  = ({setIsLoggedIn, setUser}) => {
                   <label class="forms_field-label">Username</label>
                 </div>
                 <div class="forms_field">
-                  <input type="password" class="forms_field-input" required 
+                  <input type="password" class="forms_field-input" minlength="6" required 
                     onChange={(event) => {
                       setPassword(event.target.value);
                     }}

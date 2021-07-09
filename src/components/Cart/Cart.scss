@@ -46,7 +46,7 @@
 }
 
 .cart {
-  background: rgba(231, 33, 33, 0.712)
+  background: #d4d4d473;
 }
 .p-about {
   font-size: 12px
@@ -59,6 +59,7 @@
 .ItemContainer {
   border-bottom: 2px rgba(0, 0, 0, 0.205) solid;
   background-color: antiquewhite;
+  box-shadow: 2px 3px 7px rgba(0, 0, 0, 0.329);
   transition: all .4s ease-in-out;
   margin-right: 7px;
   &:hover {
