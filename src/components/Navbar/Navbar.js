@@ -6,8 +6,8 @@ import { FcSettings } from 'react-icons/fc'
 
 import "./Navbar.css";
 
-const Navbar = (props) => {
-    console.log(props)
+const Navbar = ({isLoggedIn, user}) => {
+    
     return (
 			<div className="navbarContainer">
 				<ul class="nav">
@@ -27,12 +27,19 @@ const Navbar = (props) => {
 								</form>
 						</li>
 						<li id="options">
-								<Link to="/register">  Login/Signup </Link>
-								<ul class="subnav">
+								{isLoggedIn ? (
+									<>
+									<a href="">Options</a>
+									<ul class="subnav">
 									<li><a href="#">User Profile</a></li>
 									<li><a href="#">Settings</a></li>
-									<li><Link to="/admin"  style={{color: "red"}}>Admin Mgmt.</Link></li>
+									{user.admin && 
+									<li><Link to="/admin"  style={{color: "red"}}>Admin Mgmt.</Link></li>}	
 								</ul>
+								</>
+								) : <Link to="/register">  Login/Signup </Link>}
+								
+								
 						</li>
 						<li id="options" className="cartList">
 							<a href="/cart">Cart</a>

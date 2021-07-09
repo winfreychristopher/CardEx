@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Redirect, useLocation } from 'react-router-dom';
 import { userRegister, userLogin } from '../../api/index';
 
 import "./Login.css";
 
-const LoginPage  = () => {
+const LoginPage  = ({setIsLoggedIn, setUser}) => {
   // const modalSwitcher = () => {
   //   const { path }  = useLocation();
   // }
@@ -34,7 +34,9 @@ const LoginPage  = () => {
       const res = await userLogin(name, pass);
       console.log(res);
       setErrMsgText("Welcome back " + name);
-      return true;
+      setIsLoggedIn(true)
+      setUser(res.user)
+      return <Redirect to="/" />;
 
     } catch (err) {
       setErrMsgText('User does not exist, ' + err);
