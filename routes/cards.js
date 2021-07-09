@@ -29,29 +29,21 @@ cardsRouter.get("/", async (req, res, next) => {
   }
 });
 
-// cardsRouter.get("/:userId", requireUser, async (req, res, next) => {
-//   const { userId } = req.params;
-//   try {
-//     const userCard = await getCardUserById(userId);
-//     if (userId === req.user.id) {
-//       res.send(userCard);
-//     } else {
-//       next(
-//         userCard
-//           ? {
-//               name: "UnauthorizedUserError",
-//               message: "Cannot access other users card data",
-//             }
-//           : {
-//               name: "CardNotFoundError",
-//               message: " A card does not exist under that user id",
-//             }
-//       );
-//     }
-//   } catch ({ name, message }) {
-//     next({ name, message });
-//   }
-// });
+cardsRouter.get("/:cardId", async (req, res, next) => {
+  const { cardId } = req.params;
+
+  try {
+    const card = await getCardsById(cardId);
+    if (!card) {
+      next();
+    } else {
+      console.log(card);
+      res.send(card);
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 
 cardsRouter.post("/", requireUser, async (req, res, next) => {
   const { card_title, description, price, card_img, view_count } = req.body;
@@ -101,18 +93,23 @@ cardsRouter.patch("/:cardId", requireUser, async (req, res, next) => {
   }
 
   try {
-    const originalCard = await getCardsById(cardId);
-    if (originalCard) {
-    }
-  } catch (error) {}
+    const updatedCard = await patchCards(cardId, cardData);
+    console.log(updatedCard);
+    res.send(updatedCard);
+  } catch (error) {
+    next(error);
+  }
 });
 
 cardsRouter.delete("/:cardId", async (req, res, next) => {
   const { cardId } = req.params;
   try {
-    const card = await getCardsById(cardId);
+    // const card = await getCardsById(cardId);
+    const deletedCard = await deleteCard(cardId);
+    console.log(deletedCard);
+    res.send(deletedCard);
   } catch (error) {
-    throw error;
+    next(error);
   }
 });
 
