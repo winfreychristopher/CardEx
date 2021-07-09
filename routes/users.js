@@ -94,13 +94,17 @@ usersRouter.post("/login", async (req, res, next) => {
 
   try {
     const user = await getUser({ username, password });
-    const token = jwt.sign(
-      { id: user.id, username: user.username },
-      JWT_SECRET,
-      { expiresIn: "1w" }
-    );
-
-    res.send({ message: "You're Logged In!", token, user: user });
+    console.log(user)
+    if (!user) { 
+      res.send({ message: "Error: There is no CardEx Account associated with this User." })
+    } else {
+      const token = jwt.sign(
+        { id: user.id, username: user.username },
+        JWT_SECRET,
+        { expiresIn: "1w" }
+      );
+      res.send({ message: "You're Logged In!", token, user: user });
+    }
   } catch (error) {
     next(error);
   }
@@ -114,4 +118,5 @@ usersRouter.get("/me", requireUser, async (req, res, next) => {
     next(error);
   }
 });
+
 module.exports = usersRouter;
