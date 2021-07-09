@@ -8,12 +8,39 @@ const {
   getUser,
   getUserById,
   getUserByUsername,
+  getAllUsers,
 } = require("../db");
 
 usersRouter.use((req, res, next) => {
   console.log("A request is being made to /users");
 
   next();
+});
+
+usersRouter.get("/", async (req, res, next) => {
+  try {
+    const users = await getAllUsers();
+    console.log(users);
+    res.send(users);
+  } catch (error) {
+    throw error;
+  }
+});
+
+usersRouter.get("/:userId", async (req, res, next) => {
+  const { userId } = req.params;
+
+  try {
+    const user = await getUserById(userId);
+    if (!user) {
+      next(error);
+    } else {
+      console.log(user);
+      res.send(user);
+    }
+  } catch (error) {
+    next(error);
+  }
 });
 
 usersRouter.post("/register", async (req, res, next) => {

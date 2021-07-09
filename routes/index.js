@@ -55,9 +55,11 @@ apiRouter.use((req, res, next) => {
 const usersRouter = require("./users");
 const cardsRouter = require("./cards");
 const cartRouter = require("./cart");
+const tagsRouter = require("./tags");
 
 apiRouter.use("/users", usersRouter);
 apiRouter.use("/cards", cardsRouter);
 apiRouter.use("/cart", cartRouter);
+apiRouter.use("/tags", tagsRouter);
 
 module.exports = apiRouter;

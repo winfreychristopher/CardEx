@@ -366,7 +366,7 @@ async function createCartItem(userId, cardId, quanity = 1) {
         `,
       [usersCart.id, cardId, quanity]
     );
-
+    console.log(rows, "THIS IS CREATECART ITEM");
     return rows;
   } catch (error) {
     console.error("could not put card into the cart");
@@ -427,7 +427,7 @@ async function addCardToCart(userId, cardId) {
         `,
       [cardId]
     );
-    console.log("create cart item");
+    console.log("create cart item", card);
     await createCartItem(userId, card.id);
     console.log("get card by user Id");
     return await getCardUserById(userId);
@@ -439,18 +439,24 @@ async function addCardToCart(userId, cardId) {
 
 async function deleteCardFromCart(userId, cardId) {
   try {
-    const userCart = await getCartByUserId(userId)
-    console.log("USER CART", userCart)
-    const {rows: [deletedCard]} = await client.query(`
+    const userCart = await getCartByUserId(userId);
+    console.log("USER CART", userCart);
+    const {
+      rows: [deletedCard],
+    } = await client.query(
+      `
     DELETE FROM cart_products
     WHERE cartId = $(1) AND cardId = ($2)
     RETURNING *;
-    `, userCart[0].id, cardId)
+    `,
+      userCart[0].id,
+      cardId
+    );
 
     return deletedCard;
   } catch (error) {
-    console.error("Could not delete card")
-    throw error
+    console.error("Could not delete card");
+    throw error;
   }
 }
 
@@ -460,7 +466,7 @@ async function getCardUserById(userId) {
       rows: [user],
     } = await client.query(
       `
-    SELECT *
+    SELECT users.ID
     FROM users
     WHERE id=$1
     `,
@@ -478,7 +484,7 @@ async function getCardUserById(userId) {
       `
     SELECT *
     FROM cards
-    JOIN cart_products ON cards.Id=cart_products."cardId"
+    JOIN cart_products ON cards.ID=cart_products."cardId"
     JOIN cart ON "cartId"="userId"
     WHERE cart."userId"=$1;
     `,
@@ -511,23 +517,30 @@ async function updateViewCount(cardId, count) {
   }
 }
 
-async function deleteCard(id) {
+async function deleteCard(cardId) {
   try {
     await client.query(
       `
     DELETE FROM card_tags
     WHERE "cardId"=$1
     `,
-      [id]
+      [cardId]
     );
 
+    await client.query(
+      `
+      DELETE FROM cart_products
+      WHERE "cardId"=$1
+    `,
+      [cardId]
+    );
     const { rows } = await client.query(
       `
     DELETE FROM cards
     WHERE id=$1
     RETURNING *;
     `,
-      [id]
+      [cardId]
     );
     return rows;
   } catch (error) {
@@ -559,62 +572,76 @@ async function deleteCardFromCart(userId, cardId) {
 
 async function createUserOrder(userId, cartId) {
   try {
-    const {rows: order} = await client.query(`
+    const { rows: order } = await client.query(
+      `
     INSERT INTO user_order("userId", "cartId")
     VALUES ($1, $2)
     RETURNING *;
-    `, [userId, cartId])
+    `,
+      [userId, cartId]
+    );
 
     return order;
   } catch (error) {
-    console.error("could not create order for user")
-    throw error
+    console.error("could not create order for user");
+    throw error;
   }
 }
 
 async function getUserByIdForOrders(userId) {
   try {
-    const {rows: [user]} = await client.query(`
+    const {
+      rows: [user],
+    } = await client.query(
+      `
     SELECT *
     FROM users
     WHERE id=$1;
-    `, [userId])
+    `,
+      [userId]
+    );
 
     if (!user) {
       throw {
         name: "userNotFoundError",
-        message: "could not find a user with that userId"
+        message: "could not find a user with that userId",
       };
     }
 
-    const {rows: order} = await client.query(`
+    const { rows: order } = await client.query(
+      `
     SELECT users
     FROM users
     JOIN user_order ON users.id=user_order."userId"
     WHERE user_order."userId"=$1;
-    `, [userId])
+    `,
+      [userId]
+    );
 
-    user.orders = order
+    user.orders = order;
 
     return user;
   } catch (error) {
-    throw error
+    throw error;
   }
 }
 
 async function addCartToUserOrder(userId, cardId, cartId) {
   try {
-    const { rows: card } = await client.query(`
+    const { rows: card } = await client.query(
+      `
     SELECT *
     FROM cards
     WHERE id=$1;
-    `, [cardId])
+    `,
+      [cardId]
+    );
 
     await createUserOrder(cartId, card.id);
     return await getUserByIdForOrders(userId);
   } catch (error) {
-    console.error("Could not add cart item to the order page")
-    throw error
+    console.error("Could not add cart item to the order page");
+    throw error;
   }
 }
 
@@ -646,5 +673,5 @@ module.exports = {
   getCardUserById,
   deleteCardFromCart,
   addCartToUserOrder,
-  createUserOrder
+  createUserOrder,
 };
