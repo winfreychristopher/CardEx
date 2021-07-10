@@ -28,6 +28,15 @@ usersRouter.get("/", requireAdmin, async (req, res, next) => {
   }
 });
 
+usersRouter.get("/profile/me", requireUser, async (req, res, next) => {
+  try {
+    console.log(req.user);
+    res.send(req.user);
+  } catch (error) {
+    next(error);
+  }
+});
+
 usersRouter.get("/:userId", async (req, res, next) => {
   const { userId } = req.params;
 
@@ -45,7 +54,7 @@ usersRouter.get("/:userId", async (req, res, next) => {
 });
 
 usersRouter.post("/register", async (req, res, next) => {
-  const { username, password } = req.body;
+  const { username, password, email } = req.body;
 
   try {
     const _user = await getUserByUsername(username);
@@ -66,6 +75,7 @@ usersRouter.post("/register", async (req, res, next) => {
       const newUser = await createUser({
         username,
         password,
+        email,
       });
       if (!newUser) {
         next({
@@ -74,7 +84,7 @@ usersRouter.post("/register", async (req, res, next) => {
         });
       } else {
         const token = jwt.sign(
-          { id: newUser.id, username: newUser.username },
+          { id: newUser.id, username: newUser.username, email: newUser.email },
           JWT_SECRET,
           { expiresIn: "1w" }
         );
@@ -95,9 +105,11 @@ usersRouter.post("/login", async (req, res, next) => {
 
   try {
     const user = await getUser({ username, password });
-    console.log(user)
-    if (!user) { 
-      res.send({ message: "Error: There is no CardEx Account associated with this User." })
+    console.log(user);
+    if (!user) {
+      res.send({
+        message: "Error: There is no CardEx Account associated with this User.",
+      });
     } else {
       const token = jwt.sign(
         { id: user.id, username: user.username },
@@ -109,16 +121,6 @@ usersRouter.post("/login", async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
-
-usersRouter.post("/me", requireUser, async (req, res, next) => {
-  try {
-    console.log(req.user);
-    res.send(req.user);
-  } catch (error) {
-    next(error);
-  }
-
 });
 
 module.exports = usersRouter;

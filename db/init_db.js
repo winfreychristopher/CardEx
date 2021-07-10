@@ -1,24 +1,24 @@
 const {
-    client,
-    createUser,
-    createCard,
-    createTags,
-    getTagByContent,
-    createCardTag,
-    createGuest,
-    createCartItem,
-    addCardToCart,
-    getAllCards,
-    getAllUsers,
-    addTagsToCards,
-    getAllCardTags,
-    getAllCardsWithTags,
-    deleteCard,
-    getAllTags,
-    createCart,
-    addCartToUserOrder,
-    createUserOrder,
-    createUserAddress
+  client,
+  createUser,
+  createCard,
+  createTags,
+  getTagByContent,
+  createCardTag,
+  createGuest,
+  createCartItem,
+  addCardToCart,
+  getAllCards,
+  getAllUsers,
+  addTagsToCards,
+  getAllCardTags,
+  getAllCardsWithTags,
+  deleteCard,
+  getAllTags,
+  createCart,
+  addCartToUserOrder,
+  createUserOrder,
+  createUserAddress,
 } = require("./index");
 
 async function buildTables() {
@@ -288,7 +288,7 @@ const createInitialUsers = async () => {
       {
         username: "ChrisTheBoss",
         password: "CW123",
-        email: "ChrisTheBoss@aol.com"
+        email: "ChrisTheBoss@aol.com",
       },
     ];
     const users = await Promise.all(usersToCreate.map(createUser));
@@ -302,72 +302,68 @@ const createInitialUsers = async () => {
 };
 
 const createInitialTags = async () => {
-    console.log("Creating Initial Tags")
-    try {
-        //Basketball has tagID=1, pokemon has tagId=2 and so on 
-        await createTags("Basketball")
-        await createTags("Pokemon")
-        await createTags("Football")
-        await createTags("Magic")
-        await createTags("Baseball")
-        await createTags("Super Rare")
-        console.log("tags created:")
-        console.log("finished creating tags")
-    } catch (error) {
-        throw error
-    }
-}
+  console.log("Creating Initial Tags");
+  try {
+    //Basketball has tagID=1, pokemon has tagId=2 and so on
+    await createTags("Basketball");
+    await createTags("Pokemon");
+    await createTags("Football");
+    await createTags("Magic");
+    await createTags("Baseball");
+    await createTags("Super Rare");
+    console.log("tags created:");
+    console.log("finished creating tags");
+  } catch (error) {
+    throw error;
+  }
+};
 
 const createInitialCardTags = async () => {
-    console.log("creating cards with tags")
-    try {
-        await createCardTag(1, 1)
-        await createCardTag(1, 6)
-        await createCardTag(2, 1)
-        await createCardTag(3, 2)
-        await createCardTag(4, 2)
-        await createCardTag(5, 3)
-        await createCardTag(6, 3)
-        await createCardTag(7, 2)
-        await createCardTag(8, 2)
-        await createCardTag(9, 1)
-        await createCardTag(10, 3)
-        await createCardTag(11, 1)
-        await createCardTag(12, 1)
-        await createCardTag(13, 3)
-        await createCardTag(14, 2)
-        await createCardTag(15, 4)
-        await createCardTag(16, 4)
-        await createCardTag(17, 4)
-        await createCardTag(18, 3)
-        const cardTag = await createCardTag(2, 1)
-        console.log("Tag Results:")
-        console.log(cardTag)
-        
-        console.log("finished adding tags to cards")
-    } catch (error) {
-        throw error
-    }
-}
+  console.log("creating cards with tags");
+  try {
+    await createCardTag(1, 1);
+    await createCardTag(1, 6);
+    await createCardTag(2, 1);
+    await createCardTag(3, 2);
+    await createCardTag(4, 2);
+    await createCardTag(5, 3);
+    await createCardTag(6, 3);
+    await createCardTag(7, 2);
+    await createCardTag(8, 2);
+    await createCardTag(9, 1);
+    await createCardTag(10, 3);
+    await createCardTag(11, 1);
+    await createCardTag(12, 1);
+    await createCardTag(13, 3);
+    await createCardTag(14, 2);
+    await createCardTag(15, 4);
+    await createCardTag(16, 4);
+    await createCardTag(17, 4);
+    await createCardTag(18, 3);
+    const cardTag = await createCardTag(2, 1);
+    console.log("Tag Results:");
+    console.log(cardTag);
+
+    console.log("finished adding tags to cards");
+  } catch (error) {
+    throw error;
+  }
+};
 
 async function rebuildDB() {
-    try {
-        client.connect()
-        await buildTables();
-        await createInitialCards();
-        await createInitialUsers();
-        await createInitialTags();
-        await createInitialCardTags();
-    } catch (error) {
-        throw error
-    }
-
- 
-
+  try {
+    client.connect();
+    await buildTables();
+    await createInitialCards();
+    await createInitialUsers();
+    await createInitialTags();
+    await createInitialCardTags();
+  } catch (error) {
+    throw error;
+  }
 }
 
 async function testDB() {
-
   try {
     console.log("starting to test the database");
 
@@ -379,63 +375,56 @@ async function testDB() {
     const users = await getAllUsers();
     console.log("Results:", users);
 
+    console.log("getting all tags");
+    const theTags = await getAllTags();
+    console.log("Results:", theTags);
 
-        console.log("getting all tags")
-        const theTags = await getAllTags()
-        console.log("Results:", theTags)
+    console.log("creating intital cart");
+    const cart = await createCart(1);
+    console.log("created Cart:", cart);
+    const cartTwo = await createCart(2);
+    console.log("created Cart:", cartTwo);
+    const cartThree = await createCart(3);
+    console.log("Created cart:", cartThree);
 
-        console.log("creating intital cart")
-        const cart = await createCart(1)
-        console.log("created Cart:", cart)
-        const cartTwo = await createCart(2)
-        console.log("created Cart:", cartTwo)
-        const cartThree = await createCart(3)
-        console.log("Created cart:", cartThree)
-        await createCart(4)
+    console.log("adding card to cart");
+    const addCart = await addCardToCart(2, 2);
+    console.log("Cart Results:", addCart);
+    const addCartTwo = await addCardToCart(3, 1);
+    console.log("Cart Two Results:", addCartTwo);
+    const addCartThree = await addCardToCart(3, 5);
+    console.log("Cart Three Results:", addCartThree);
 
-        console.log("adding card to cart")
-        const addCart = await addCardToCart(2, 2)
-        console.log("Cart Results:", addCart)
-        const addCartTwo = await addCardToCart(3, 1)
-        console.log("Cart Two Results:", addCartTwo)
-        const addCartThree = await addCardToCart(3, 5)
-        console.log("Cart Three Results:", addCartThree)
+    console.log("adding cart item to the order sheet");
+    const order = await createUserOrder(2, 2);
+    console.log("Order:", order);
 
-        console.log("adding cart item to the order sheet")
-        const order = await createUserOrder(2, 2)
-        console.log("Order:", order)
+    console.log("calling createUserAddress");
+    const userAddress = await createUserAddress({
+      userId: 2,
+      street: "2998 Old Taylor Road",
+      state: "MS",
+      zip_code: "38655",
+    });
+    console.log("Address Results:", userAddress);
 
-        console.log("adding order to user cart")
-        const cartOrder = await addCartToUserOrder(2, 2)
-        console.log("Order in Cart:", cartOrder)
+    // console.log("getting all card tags")
+    // const cardTags = await getAllCardsWithTags()
+    // console.log("Results:", cardTags)
 
-        console.log("calling createUserAddress")
-        const userAddress = await createUserAddress({
-            userId: 2,
-            street: "2998 Old Taylor Road",
-            state: "MS",
-            zip_code: "38655",
-        });
-        console.log("Address Results:", userAddress)
+    // console.log("adding tags to cards")
+    // const cardTags = await createCardTag(1, 1)
+    // console.log("Results:", cardTags)
 
-        // console.log("getting all card tags")
-        // const cardTags = await getAllCardsWithTags()
-        // console.log("Results:", cardTags)
+    // console.log("creating cart item for user 1")
+    // const cartItemOne = await createCart(1)
+    // console.log("Results:", cartItemOne)
 
-        // console.log("adding tags to cards")
-        // const cardTags = await createCardTag(1, 1)
-        // console.log("Results:", cardTags)
-
-        // console.log("creating cart item for user 1")
-        // const cartItemOne = await createCart(1)
-        // console.log("Results:", cartItemOne)
-
-        console.log("Finished database tests")
-    } catch (error) {
-        console.log("error during testDB")
-        throw error
-    }
-
+    console.log("Finished database tests");
+  } catch (error) {
+    console.log("error during testDB");
+    throw error;
+  }
 }
 
 rebuildDB()
