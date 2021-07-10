@@ -161,3 +161,18 @@ export async function addItemToCart(cardId, quanity, token) {
         throw error;
     }
 }
+
+export async function getAllOrders() {
+    try {
+        const {data} = await axios.get(`api/orders/all`)
+        console.log(data)
+        return data;
+    } catch (error) {
+        throw error
+    }
+}
+
+export async function updateOrderStatus(orderId, status) {
+    const updatedOrder = await axios.patch(`/api/order/${orderId}`, {status})
+    return updatedOrder;
+} 

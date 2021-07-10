@@ -5,7 +5,6 @@ const {
     createTags,
     getTagByContent,
     createCardTag,
-    createGuest,
     createCartItem,
     addCardToCart,
     getAllCards,
@@ -16,9 +15,9 @@ const {
     deleteCard,
     getAllTags,
     createCart,
-    addCartToUserOrder,
     createUserOrder,
-    createUserAddress
+    createUserAddress,
+    getAllOrders
 } = require("./index");
 
 async function buildTables() {
@@ -392,6 +391,7 @@ async function testDB() {
         console.log("created Cart:", cartTwo)
         const cartThree = await createCart(3)
         console.log("Created cart:", cartThree)
+        await createCart(4)
 
         console.log("adding card to cart")
         const addCart = await addCardToCart(2, 2)
@@ -400,14 +400,14 @@ async function testDB() {
         console.log("Cart Two Results:", addCartTwo)
         const addCartThree = await addCardToCart(3, 5)
         console.log("Cart Three Results:", addCartThree)
+        await addCardToCart(4, 8);
+        await addCardToCart(4, 9)
+        await addCardToCart(2, 15)
 
         console.log("adding cart item to the order sheet")
         const order = await createUserOrder(2, 2)
         console.log("Order:", order)
 
-        console.log("adding order to user cart")
-        const cartOrder = await addCartToUserOrder(2, 2)
-        console.log("Order in Cart:", cartOrder)
 
         console.log("calling createUserAddress")
         const userAddress = await createUserAddress({

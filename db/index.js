@@ -4,6 +4,7 @@ const DB_URL = process.env.DATABASE_URL || `https://localhost:5432/${DB_NAME}`;
 const client = new Client(DB_URL);
 const bcrypt = require("bcrypt");
 const { isCompositeComponent } = require("react-dom/test-utils");
+const { scryRenderedDOMComponentsWithClass } = require("react-dom/cjs/react-dom-test-utils.production.min");
 const SALT_COUNT = 10;
 
 async function createUser({ username, password, email, admin = false }) {
@@ -457,6 +458,20 @@ async function deleteCardFromCart(userId, cardId) {
   }
 }
 
+async function getUserCartProducts(cartId) {
+  try {
+    const { rows } = await client.query(`
+    SELECT * FROM cart_products
+    WHERE "cartId"=$1
+    RETURNING *;
+    `, [cartId])
+
+    return rows
+  } catch (error) {
+    throw error
+  }
+}
+
 async function getCardUserById(userId) {
   try {
     const {
@@ -560,66 +575,45 @@ async function deleteCard(id) {
 //   }
 // }
 
-async function createUserOrder(userId, cartId) {
+async function createUserOrder(userId) {
   try {
-    const {rows: order} = await client.query(`
+    const getUserCart = await getCartByUserId(userId)
+    // console.log(getUserCart)
+    const {rows} = await client.query(`
     INSERT INTO user_order("userId", "cartId")
-    VALUES ($1, $2)
+    VALUES($1, $2) 
     RETURNING *;
-    `, [userId, cartId])
+    `, [userId, getUserCart.id]);
 
-    return order;
+    await client.query(`
+    UPDATE cart
+    SET active=false
+    WHERE ID=$1;
+    `, [getUserCart.id]);
+
+    // await createCart(userId)
+    return rows;
   } catch (error) {
     console.error("could not create order for user")
     throw error
   }
 }
 
-async function getUserByIdForOrders(userId) {
+async function getAllOrders() {
   try {
-    const {rows: [user]} = await client.query(`
-    SELECT *
-    FROM users
-    WHERE id=$1;
-    `, [userId])
+    const {rows} = await client.query(`
+    SELECT user_order.ID, cards.card_title,cards.card_img,cards.price FROM user_order
+    JOIN cart ON user_order."cartId"=cart.ID
+    JOIN cart_products ON cart.ID=cart_products."cartId"
+    JOIN cards ON cart_products."cardId"=cards.ID
+    `)
 
-    if (!user) {
-      throw {
-        name: "userNotFoundError",
-        message: "could not find a user with that userId"
-      };
-    }
-
-    const {rows: order} = await client.query(`
-    SELECT users
-    FROM users
-    JOIN user_order ON users.id=user_order."userId"
-    WHERE user_order."userId"=$1;
-    `, [userId])
-
-    user.orders = order
-
-    return user;
+    return rows;
   } catch (error) {
     throw error
   }
 }
 
-async function addCartToUserOrder(userId, cardId, cartId) {
-  try {
-    const { rows: card } = await client.query(`
-    SELECT *
-    FROM cards
-    WHERE id=$1;
-    `, [cardId])
-
-    await createUserOrder(cartId, card.id);
-    return await getUserByIdForOrders(userId);
-  } catch (error) {
-    console.error("Could not add cart item to the order page")
-    throw error
-  }
-}
 
 async function createUserAddress({userId, street, state, zip_code,}) {
   try {
@@ -680,7 +674,7 @@ module.exports = {
   getCardsById,
   getCardUserById,
   deleteCardFromCart,
-  addCartToUserOrder,
   createUserOrder,
-  createUserAddress
+  createUserAddress,
+  getAllOrders
 };

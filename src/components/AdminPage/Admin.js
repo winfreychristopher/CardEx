@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import './Admin.css';
 import CreateCard from './createCard';
+import AllOrders from './orders';
 
 const AdminPage = () => {
   return (
@@ -11,6 +12,7 @@ const AdminPage = () => {
       <h1>Create/Patch new Card Listing</h1>
       <CreateCard />
       <h1> Customer Order List</h1>
+      <AllOrders />
     </>
   )
 }
