@@ -118,17 +118,18 @@ async function createCard({
   price,
   card_img,
   view_count,
+  quantity,
 }) {
   try {
     const {
       rows: [card],
     } = await client.query(
       `
-        INSERT INTO cards(card_title, description, price, card_img, view_count)
-        VALUES($1, $2, $3, $4, $5)
+        INSERT INTO cards(card_title, description, price, card_img, view_count, quantity)
+        VALUES($1, $2, $3, $4, $5, $6)
         RETURNING *;
         `,
-      [card_title, description, price, card_img, view_count]
+      [card_title, description, price, card_img, view_count, quantity]
     );
 
     return card;
@@ -352,7 +353,7 @@ async function createCardTag(cardId, tagId) {
   }
 }
 
-async function createCartItem(userId, cardId, quanity = 1) {
+async function createCartItem(userId, cardId, quantity) {
   try {
     let usersCart = await getCartByUserId(userId);
     if (usersCart === undefined) {
@@ -364,11 +365,11 @@ async function createCartItem(userId, cardId, quanity = 1) {
     console.log(usersCart.id);
     const { rows } = await client.query(
       `
-        INSERT INTO cart_products("cartId", "cardId", quanity)
+        INSERT INTO cart_products("cartId", "cardId", quantity)
         VALUES ($1, $2, $3)
         RETURNING *;
         `,
-      [usersCart.id, cardId, quanity]
+      [usersCart.id, cardId, quantity]
     );
 
     // const [test] = rows;
@@ -440,7 +441,7 @@ async function getUserCartProducts(cartId) {
   }
 }
 
-async function addCardToCart(userId, cardId) {
+async function addCardToCart(userId, cardId, quantity) {
   try {
     console.log("------Initial Post.Cart query------");
     const {
@@ -454,7 +455,7 @@ async function addCardToCart(userId, cardId) {
       [cardId]
     );
     console.log("create cart item", card);
-    await createCartItem(userId, card.id);
+    await createCartItem(userId, card.id, quantity);
     console.log("get card by user Id");
     return await getCardUserById(userId);
   } catch (error) {
@@ -487,25 +488,26 @@ async function deleteCardFromCart(userId, cardId) {
 
 async function getCardUserById(userId) {
   try {
-    const {
-      rows: [user],
-    } = await client.query(
-      `
-    SELECT users.ID
-    FROM users
-    WHERE id=$1
-    `,
-      [userId]
-    );
-    console.log(user, "I BEFORE Other");
+    // const {
+    //   rows: [user],
+    // } = await client.query(
+    //   `
+    // SELECT users.ID
+    // FROM users
+    // WHERE id=$1
+    // `,
+    //   [userId]
+    // );
+    // console.log(user, "I BEFORE Other");
 
-    if (!user) {
-      throw {
-        name: "UserNotFound",
-        message: "Could not find a user with that id",
-      };
-    }
-
+    // if (!user) {
+    //   throw {
+    //     name: "UserNotFound",
+    //     message: "Could not find a user with that id",
+    //   };
+    // }
+    console.log(userId, "!@#$!!!");
+    console.log("CHECK FOR ACTIVITY");
     const { rows: cards } = await client.query(
       `
       SELECT *
@@ -523,7 +525,7 @@ async function getCardUserById(userId) {
 
     return user;
   } catch (error) {
-    throw error;
+    throw (error, "THIS GII!!!");
   }
 }
 

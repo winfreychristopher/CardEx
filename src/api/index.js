@@ -155,16 +155,16 @@ export async function createCard(
 }
 
 export async function updateCard(id, cardData) {
-  const { card_title, description, price, card_img, quanity } = cardData;
+  const { card_title, description, price, card_img, quantity } = cardData;
   try {
     const { data } = await axios.patch(
       `api/cards/${id}`,
       {
-        card_title,
-        description,
-        price,
-        card_img,
-        quanity,
+        card_title: card_title,
+        description: description,
+        price: price,
+        card_img: card_img,
+        quantity: quantity,
       },
       {
         headers: {
@@ -182,6 +182,7 @@ export async function updateCard(id, cardData) {
 //Just gives me the Cart and CardID's
 export async function getCart(id, token) {
   try {
+    console.log("TOP!!!");
     const { data } = await axios.get(`/api/cart/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -189,6 +190,7 @@ export async function getCart(id, token) {
     });
     // Old Return that Only returned CardID's not CardObjects
     // return data.data.data;
+    console.log("BOTTOM!!!");
     return data.data.cart;
   } catch (error) {
     console.error("Error getting cart");

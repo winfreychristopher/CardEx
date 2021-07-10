@@ -22,20 +22,20 @@ cartRouter.use((req, res, next) => {
   next();
 });
 
-cartRouter.get("/:cartId", requireUser, async (req, res, next) => {
-  const { cartId } = req.params;
+cartRouter.get("/:userId", requireUser, async (req, res, next) => {
+  const { userId } = req.params;
   try {
     // Old function that only returned the List of Card ID's Not card objects
     // const cart = await getUserCartProducts(cartId);
-    const cart = await getCardUserById(cartId);
+    const cart = await getCardUserById(userId);
     console.log(cart, "ME I SEE");
     res.send({
       message: "Cart retrived Successfully!",
       data: cart,
     });
     return cart;
-  } catch (err) {
-    throw err;
+  } catch (error) {
+    next(error);
   }
 });
 
@@ -53,8 +53,9 @@ cartRouter.post("/:userId", async (req, res, next) => {
 
 cartRouter.post("/:userId/:cardId", async (req, res, next) => {
   const { userId, cardId } = req.params;
+  const { quantity } = req.body;
   try {
-    const cart = await addCardToCart(userId, cardId);
+    const cart = await addCardToCart(userId, cardId, quantity);
     // console.log(cart.cart, "YELLOW");
     // const [test] = cart;
     res.send({
