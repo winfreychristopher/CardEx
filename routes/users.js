@@ -9,6 +9,7 @@ const {
   getUserById,
   getUserByUsername,
   getAllUsers,
+  toggleAdmin,
 } = require("../db");
 
 usersRouter.use((req, res, next) => {
@@ -17,13 +18,19 @@ usersRouter.use((req, res, next) => {
   next();
 });
 
-usersRouter.get("/", async (req, res, next) => {
+usersRouter.get("/", requireUser, async (req, res, next) => {
   try {
     const users = await getAllUsers();
-    console.log(users);
-    res.send(users);
-  } catch (error) {
-    throw error;
+    if (req.user.admin) {
+      console.log(users);
+      res.send(users);
+    }
+    next({
+      name: "AccessError",
+      message: "Must be Administrator to access users",
+    });
+  } catch ({ name, message }) {
+    next({ name, message });
   }
 });
 
@@ -119,6 +126,22 @@ usersRouter.post("/login", async (req, res, next) => {
     }
   } catch (error) {
     next(error);
+  }
+});
+
+usersRouter.patch("/:userId", requireUser, async (req, res, next) => {
+  const { userId } = req.params;
+  const { userId, Boolean } = req.body;
+
+  try {
+    if (!req.user.admin) {
+      next({ name: "Access Error", message: "Must be administrator" });
+    } else {
+      const newAdmin = await toggleAdmin(userId, Boolean);
+      res.send(newAdmin);
+    }
+  } catch ({ name, message }) {
+    next({ name, message });
   }
 });
 

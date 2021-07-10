@@ -93,23 +93,37 @@ cardsRouter.patch("/:cardId", requireUser, async (req, res, next) => {
   }
 
   try {
-    const updatedCard = await patchCards(cardId, cardData);
-    console.log(updatedCard);
-    res.send(updatedCard);
-  } catch (error) {
-    next(error);
+    if (!req.user.admin) {
+      next({
+        name: "Access Error",
+        message: "Must be administrator to delete cards",
+      });
+    } else {
+      const updatedCard = await patchCards(cardId, cardData);
+      console.log(updatedCard);
+      res.send(updatedCard);
+    }
+  } catch ({ name, message }) {
+    next({ name, message });
   }
 });
 
-cardsRouter.delete("/:cardId", async (req, res, next) => {
+cardsRouter.delete("/:cardId", requireUser, async (req, res, next) => {
   const { cardId } = req.params;
   try {
     // const card = await getCardsById(cardId);
-    const deletedCard = await deleteCard(cardId);
-    console.log(deletedCard);
-    res.send(deletedCard);
-  } catch (error) {
-    next(error);
+    if (!req.user.admin) {
+      next({
+        name: "Access Error",
+        message: "Must be administrator to delete cards",
+      });
+    } else {
+      const deletedCard = await deleteCard(cardId);
+      console.log(deletedCard);
+      res.send(deletedCard);
+    }
+  } catch ({ name, message }) {
+    next({ name, message });
   }
 });
 
