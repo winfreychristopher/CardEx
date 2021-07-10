@@ -17,13 +17,19 @@ usersRouter.use((req, res, next) => {
   next();
 });
 
-usersRouter.get("/", async (req, res, next) => {
+usersRouter.get("/", requireUser, async (req, res, next) => {
   try {
     const users = await getAllUsers();
-    console.log(users);
-    res.send(users);
-  } catch (error) {
-    throw error;
+    if (req.user.admin) {
+      console.log(users);
+      res.send(users);
+    }
+    next({
+      name: "AccessError",
+      message: "Must be Administrator to access users",
+    });
+  } catch ({ name, message }) {
+    next({ name, message });
   }
 });
 
