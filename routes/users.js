@@ -18,7 +18,6 @@ usersRouter.use((req, res, next) => {
 });
 
 usersRouter.get("/", async (req, res, next) => {
-  console.log("TESTING THIS CHRIS!!!!");
   try {
     const users = await getAllUsers();
     console.log(users);
@@ -29,7 +28,6 @@ usersRouter.get("/", async (req, res, next) => {
 });
 
 usersRouter.get("/profile/me", requireUser, async (req, res, next) => {
-  console.log("I am here");
   try {
     console.log(req.user);
     res.send(req.user);
@@ -39,7 +37,6 @@ usersRouter.get("/profile/me", requireUser, async (req, res, next) => {
 });
 
 usersRouter.get("/:userId", async (req, res, next) => {
-  console.log("TESTING THIS CHRIS!!!!");
   const { userId } = req.params;
 
   try {
@@ -107,9 +104,11 @@ usersRouter.post("/login", async (req, res, next) => {
 
   try {
     const user = await getUser({ username, password });
-    console.log(user)
-    if (!user) { 
-      res.send({ message: "Error: There is no CardEx Account associated with this User." })
+    console.log(user);
+    if (!user) {
+      res.send({
+        message: "Error: There is no CardEx Account associated with this User.",
+      });
     } else {
       const token = jwt.sign(
         { id: user.id, username: user.username },
@@ -122,7 +121,5 @@ usersRouter.post("/login", async (req, res, next) => {
     next(error);
   }
 });
-
-
 
 module.exports = usersRouter;
