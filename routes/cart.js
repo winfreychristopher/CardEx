@@ -73,9 +73,13 @@ cartRouter.delete("/:cardId", requireUser, async (req, res, next) => {
 
   try {
     const deletedCard = await deleteCardFromCart(id, cardId);
-    res.send(deletedCard);
+    console.log(deletedCard, "Ayy Yoo")
+    res.send({
+      data: deletedCard, 
+      message: "I AM"});
   } catch (error) {
-    next(error);
+    next(error, id, "Witness me");
   }
 });
+
 module.exports = cartRouter;

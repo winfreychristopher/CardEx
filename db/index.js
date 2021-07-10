@@ -469,12 +469,10 @@ async function deleteCardFromCart(userId, cardId) {
       rows: [deletedCard],
     } = await client.query(
       `
-    DELETE FROM cart_products
-    WHERE cartId = $(1) AND cardId = ($2)
-    RETURNING *;
-    `,
-      userCart[0].id,
-      cardId
+        DELETE FROM cart_products
+        WHERE "cartId"=$1 AND "cardId"=$2
+        RETURNING *;
+      `, [userCart.id, cardId]
     );
 
     return deletedCard;

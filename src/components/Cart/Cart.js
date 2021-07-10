@@ -17,10 +17,11 @@ const Cart = ({cart, setCart, userDATA}) => {
   const deleteCartItem =  async (itemID) => {
     const TOKEN = getToken();
     try {
+      console.log(itemID)
       const res = await removeItemFromCart(itemID, TOKEN);
       console.log(res, "This is CART Componenet");
       const updatedCart = await getCart(userDATA.id, TOKEN);
-      setCart(updatedCart);
+      // setCart(updatedCart);
     } catch (err) {
       console.log(err);
     }
@@ -57,6 +58,9 @@ const Cart = ({cart, setCart, userDATA}) => {
   // console.log(cartDivs);
   let cartSize = cart.length;
   let totalPrice = 0;
+  let tax = 0.10;
+  let grandTotal = 0;
+
   const cartDivs = cart.map(function (item, index) {
     const { 
       cardId,
@@ -73,11 +77,12 @@ const Cart = ({cart, setCart, userDATA}) => {
     } = item;
 
     totalPrice = totalPrice + price;
+    grandTotal = totalPrice + (totalPrice * tax) + 9.95;
     console.log(card_title)
     
      
     return ( 
-      <div className=" ItemContainer d-flex justify-content-between align-items-center mt-3 p-2 items rounded" key={index + 1}>
+      <div className=" ItemContainer d-flex justify-content-between align-items-center mt-3 p-2 items rounded" key={index}>
         <div className=" itemInfo d-flex flex-row">
           <img
             className="rounded"
@@ -95,10 +100,7 @@ const Cart = ({cart, setCart, userDATA}) => {
           <div>
             <RiDeleteBin6Fill 
               size={24} 
-              style={
-                {color: 'red', marginRight: '5px'  }
-              }
-              onClick={deleteCartItem(cardId)}
+              style={{color: 'red', marginRight: '5px'  }}
               
             />
           </div>
@@ -109,9 +111,8 @@ const Cart = ({cart, setCart, userDATA}) => {
           </div>
         </div>
       </div>
-    );
-      
-    });
+    );     
+  });
       return (
       <div className=" cartComponet container mt-5 p-3 rounded cart" >
         <div className=" row no-gutters">
@@ -293,11 +294,11 @@ const Cart = ({cart, setCart, userDATA}) => {
                 </div>
                 <div className="d-flex justify-content-between information">
                   <span>Taxes</span>
-                  <span>$ {totalPrice + 9.95}</span>
+                  <span> {totalPrice > 0 ? tax + "%" : "-- %"} </span>
                 </div>
                 <div className="d-flex justify-content-between information">
                   <span>Grand Total</span>
-                  <span style={{color: '#5dff5dcc'}}>$ {totalPrice + 9.95}</span>
+                  <span style={{color: '#5dff5dcc'}}>$ {grandTotal}</span>
                 </div>
               </div>
 
@@ -308,8 +309,7 @@ const Cart = ({cart, setCart, userDATA}) => {
                 {/* total price function */}
                 <span>${}</span>
                 <span>
-                 <IoBagCheckOutline /> Checkout
-                  <i className="fa fa-long-arrow-right ml-1" />
+                 <IoBagCheckOutline size={24} /> Checkout
                 </span>
               </button>
             </div>
