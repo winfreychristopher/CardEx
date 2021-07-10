@@ -1,8 +1,10 @@
 import React from 'react';
 import thanosImg from "../../assets/thanosCrown.jpg";
 import cardEXLogo from "../../assets/CardEX name.png";
-import { getCart, getToken } from "../../api/index";
+import { getCart, getToken, removeItemFromCart } from "../../api/index";
 // import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import { RiDeleteBin6Fill } from "react-icons/ri";
+import { IoBagCheckOutline } from 'react-icons/io5';
 import "./Cart.scss";
 import { JsonWebTokenError } from 'jsonwebtoken';
 
@@ -11,7 +13,18 @@ const Cart = ({cart, setCart, userDATA}) => {
   //   name: "Thanos Card",
   //   price: "$4,000",
   //   descrption: "",
-    
+  
+  const deleteCartItem =  async (itemID) => {
+    const TOKEN = getToken();
+    try {
+      const res = await removeItemFromCart(itemID, TOKEN);
+      console.log(res, "This is CART Componenet");
+      const updatedCart = await getCart(userDATA.id, TOKEN);
+      setCart(updatedCart);
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   // }
   console.log(cart)
@@ -42,6 +55,8 @@ const Cart = ({cart, setCart, userDATA}) => {
   // pleaseWork();
 
   // console.log(cartDivs);
+  let cartSize = cart.length;
+  let totalPrice = 0;
   const cartDivs = cart.map(function (item, index) {
     const { 
       cardId,
@@ -57,6 +72,7 @@ const Cart = ({cart, setCart, userDATA}) => {
       view_count
     } = item;
 
+    totalPrice = totalPrice + price;
     console.log(card_title)
     
      
@@ -75,10 +91,22 @@ const Cart = ({cart, setCart, userDATA}) => {
             <div className="spec" style={{fontSize: "0.8rem"}}>{description}</div>
           </div>
         </div>
-        <div className=" priceInfo d-flex flex-row align-items-center">
-          <span className="d-block"> Quantity:1</span>
-          <div className=" d-flex ml-5 font-weight-bold"><span>$ </span> {price}</div>
-          <i className="fa fa-trash-o ml-3 text-black-50" />
+        <div className="itemInfoRight row " >
+          <div>
+            <RiDeleteBin6Fill 
+              size={24} 
+              style={
+                {color: 'red', marginRight: '5px'  }
+              }
+              onClick={deleteCartItem(cardId)}
+              
+            />
+          </div>
+          <div className=" priceInfo d-flex flex-row align-items-center">
+            <span className="d-block"> Quantity:1</span>
+            <div className=" d-flex ml-5 font-weight-bold"><span>$ </span> {price}</div>
+            <i className="fa fa-trash-o ml-3 text-black-50" />
+          </div>
         </div>
       </div>
     );
@@ -87,7 +115,7 @@ const Cart = ({cart, setCart, userDATA}) => {
       return (
       <div className=" cartComponet container mt-5 p-3 rounded cart" >
         <div className=" row no-gutters">
-          <div className="col-md-8">
+          <div className=" outItemCont col-md-8">
             <div className="product-details mr-2">
               <div className="d-flex flex-row align-items-center">
                 {/* {ArrowBackIosIcon} */}
@@ -96,7 +124,7 @@ const Cart = ({cart, setCart, userDATA}) => {
               <hr />
               <h4 className=" mb-0">Shopping cart</h4>
               <div className="d-flex justify-content-between">
-                <span>You have 4 items in your cart</span>
+                <span>You have {cartSize} items in your cart</span>
                 <div className="d-flex flex-row align-items-center">
                   <span className="text-black-50">Sort by:</span>
                   <div className="price ml-2">
@@ -158,7 +186,7 @@ const Cart = ({cart, setCart, userDATA}) => {
           <div className=" ccInfoContainer col-md-5">
             <div className="payment-info">
               <div className="d-flex justify-content-between align-items-center">
-                <span>Card details</span>
+                <span >Payment Information</span>
                 <img
                   className="rounded"
                   src={cardEXLogo}
@@ -215,6 +243,7 @@ const Cart = ({cart, setCart, userDATA}) => {
               <div>
                 <label className="credit-card-label">Name on card</label>
                 <input
+                  required
                   type="text"
                   className="form-control credit-inputs"
                   placeholder="Name"
@@ -223,7 +252,9 @@ const Cart = ({cart, setCart, userDATA}) => {
               <div>
                 <label className="credit-card-label">Card number</label>
                 <input
-                  type="text"
+                  required
+                  type="number"
+                  maxLength="16"
                   className="form-control credit-inputs"
                   placeholder="0000 0000 0000 0000"
                 />
@@ -232,7 +263,8 @@ const Cart = ({cart, setCart, userDATA}) => {
                 <div className="col-md-6">
                   <label className="credit-card-label">Date</label>
                   <input
-                    type="text"
+                    required
+                    type="number"
                     className="form-control credit-inputs"
                     placeholder="12/24"
                   />
@@ -240,7 +272,9 @@ const Cart = ({cart, setCart, userDATA}) => {
                 <div className="col-md-6">
                   <label className="credit-card-label">CVV</label>
                   <input
-                    type="text"
+                    required
+                    type="number"
+                    maxLength="3"
                     className="form-control credit-inputs"
                     placeholder={342}
                   />
@@ -251,15 +285,19 @@ const Cart = ({cart, setCart, userDATA}) => {
               <div className="subPriceCont">
                 <div className=" subPriceCont d-flex justify-content-between information">
                   <span>Subtotal</span>
-                  <span>$3000.00</span>
+                  <span>$ {totalPrice}.00</span>
                 </div>
                 <div className="d-flex justify-content-between information">
                   <span>Shipping</span>
-                  <span>$20.00</span>
+                  <span>$ 9.95</span>
                 </div>
                 <div className="d-flex justify-content-between information">
-                  <span>Total(Incl. taxes)</span>
-                  <span>$3020.00</span>
+                  <span>Taxes</span>
+                  <span>$ {totalPrice + 9.95}</span>
+                </div>
+                <div className="d-flex justify-content-between information">
+                  <span>Grand Total</span>
+                  <span style={{color: '#5dff5dcc'}}>$ {totalPrice + 9.95}</span>
                 </div>
               </div>
 
@@ -270,7 +308,7 @@ const Cart = ({cart, setCart, userDATA}) => {
                 {/* total price function */}
                 <span>${}</span>
                 <span>
-                  Checkout
+                 <IoBagCheckOutline /> Checkout
                   <i className="fa fa-long-arrow-right ml-1" />
                 </span>
               </button>
