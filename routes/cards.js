@@ -75,7 +75,7 @@ cardsRouter.patch("/:id/views", async (req, res, next) => {
 });
 
 cardsRouter.patch("/:cardId", requireUser, async (req, res, next) => {
-  const { card_title, description, price, card_img } = req.body;
+  const { card_title, description, price, card_img, quantity } = req.body;
   const { cardId } = req.params;
   const cardData = {};
 
@@ -90,6 +90,9 @@ cardsRouter.patch("/:cardId", requireUser, async (req, res, next) => {
   }
   if (card_img) {
     cardData.card_img = card_img;
+  }
+  if (quantity) {
+    cardData.quantity = quantity;
   }
 
   try {

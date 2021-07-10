@@ -118,17 +118,18 @@ async function createCard({
   price,
   card_img,
   view_count,
+  quantity,
 }) {
   try {
     const {
       rows: [card],
     } = await client.query(
       `
-        INSERT INTO cards(card_title, description, price, card_img, view_count)
-        VALUES($1, $2, $3, $4, $5)
+        INSERT INTO cards(card_title, description, price, card_img, view_count, quantity)
+        VALUES($1, $2, $3, $4, $5, $6)
         RETURNING *;
         `,
-      [card_title, description, price, card_img, view_count]
+      [card_title, description, price, card_img, view_count, quantity]
     );
 
     return card;
@@ -352,8 +353,7 @@ async function createCardTag(cardId, tagId) {
   }
 }
 
-async function createCartItem(userId, cardId, quanity = 1) {
-
+async function createCartItem(userId, cardId, quantity) {
   try {
     let usersCart = await getCartByUserId(userId);
     if (usersCart === undefined) {
@@ -365,13 +365,13 @@ async function createCartItem(userId, cardId, quanity = 1) {
     console.log(usersCart.id);
     const { rows } = await client.query(
       `
-        INSERT INTO cart_products("cartId", "cardId", quanity)
+        INSERT INTO cart_products("cartId", "cardId", quantity)
         VALUES ($1, $2, $3)
         RETURNING *;
         `,
-      [usersCart.id, cardId, quanity]
+      [usersCart.id, cardId, quantity]
     );
-    
+
     // const [test] = rows;
     // console.log(test, "View Cart Test 1");
     // console.log(rows, "View Cart Test 2");
@@ -425,20 +425,23 @@ async function getCartByUserId(userId) {
 
 async function getUserCartProducts(cartId) {
   try {
-    const { rows } = await client.query(`
+    const { rows } = await client.query(
+      `
     SELECT * FROM cart_products
     WHERE "cartId"=$1;
-    `, [cartId]);
+    `,
+      [cartId]
+    );
 
-    const [test] = rows; 
+    const [test] = rows;
     console.log(test, "HERE WE GO again");
-    return rows
+    return rows;
   } catch (error) {
-    throw error
+    throw error;
   }
 }
 
-async function addCardToCart(userId, cardId) {
+async function addCardToCart(userId, cardId, quantity) {
   try {
     console.log("------Initial Post.Cart query------");
     const {
@@ -452,7 +455,7 @@ async function addCardToCart(userId, cardId) {
       [cardId]
     );
     console.log("create cart item", card);
-    await createCartItem(userId, card.id);
+    await createCartItem(userId, card.id, quantity);
     console.log("get card by user Id");
     return await getCardUserById(userId);
   } catch (error) {
@@ -494,15 +497,17 @@ async function getCardUserById(userId) {
     `,
       [userId]
     );
-    console.log(user, "I BEFORE Other")
+    console.log(user, "I BEFORE Other");
 
     if (!user) {
-      throw {
+      throw ({
         name: "UserNotFound",
         message: "Could not find a user with that id",
-      };
+      });
     }
 
+    console.log(userId, "!@#$!!!");
+    console.log("CHECK FOR ACTIVITY");
     const { rows: cards } = await client.query(
       `
       SELECT *
@@ -513,14 +518,14 @@ async function getCardUserById(userId) {
     `,
       [userId]
     );
-      console.log(cards, "SEE MEEE")
+    console.log(cards, "SEE MEEE");
     user.cart = cards;
     console.log(user.cart, "I AM H");
     console.log(cards, "I LIVE");
 
     return user;
   } catch (error) {
-    throw error;
+    throw (error, "THIS GII!!!");
   }
 }
 
@@ -595,23 +600,23 @@ async function deleteCard(cardId) {
 //   }
 // }
 
-async function createUserOrder(userId, cartId) {
-  try {
-    const { rows: order } = await client.query(
-      `
-    INSERT INTO user_order("userId", "cartId")
-    VALUES ($1, $2)
-    RETURNING *;
-    `,
-      [userId, cartId]
-    );
+// async function createUserOrder(userId, cartId) {
+//   try {
+//     const { rows: order } = await client.query(
+//       `
+//     INSERT INTO user_order("userId", "cartId")
+//     VALUES ($1, $2)
+//     RETURNING *;
+//     `,
+//       [userId, cartId]
+//     );
 
-    return order;
-  } catch (error) {
-    console.error("could not create order for user");
-    throw error;
-  }
-}
+//     return order;
+//   } catch (error) {
+//     console.error("could not create order for user");
+//     throw error;
+//   }
+// }
 
 async function getUserByIdForOrders(userId) {
   try {
@@ -800,11 +805,9 @@ module.exports = {
   getCardsById,
   getUserCartProducts,
   getCardUserById,
-  deleteCardFromCart,
   addCartToUserOrder,
   createUserOrder,
   createUserAddress,
   getAllOrders,
-  createUserOrder,
   toggleAdmin,
 };
