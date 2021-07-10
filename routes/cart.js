@@ -10,6 +10,7 @@ const {
   createCart,
   getUserById,
   createCartItem,
+  deleteCardFromCart,
 } = require("../db");
 const cardsRouter = require("./cards");
 
@@ -42,4 +43,15 @@ cartRouter.get("/:userId/:cardId", requireUser, async (req, res, next) => {
   }
 });
 
+cartRouter.delete("/:cardId", requireUser, async (req, res, next) => {
+  const { cardId } = req.params;
+  const { id } = req.user;
+
+  try {
+    const deletedCard = await deleteCardFromCart(id, cardId);
+    return deletedCard;
+  } catch (error) {
+    throw error;
+  }
+});
 module.exports = cartRouter;
