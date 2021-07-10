@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { getAllCards } from "../../api/index";
+import { ToastContainer, toast } from 'react-toastify';
 import { 
   addItemToCart, getToken, 
   getCart, getCard 
@@ -42,7 +43,7 @@ const PlayingCards = ({cards, setCards, reset,
   //   });
   // });
 
-
+  const notifyBad = (message) => { toast.error(`${message}!`, {position: toast.POSITION.TOP_LEFT})};
   const addToCartButton = document.getElementById("add-to-cart-button");
 
   const addBtnAnimation = (e) => {
@@ -63,8 +64,8 @@ const PlayingCards = ({cards, setCards, reset,
         const response = await addItemToCart(userID, itemID, TOKEN)
         console.log(response.cartContent.cart);
         const currentCart = await getCart(userID, TOKEN);
-        console.log(currentCart)
-        setCart(currentCart);
+        console.log(currentCart);
+        setCart(response.cartContent.cart);
       } else {
         let clickedCard = await getCard(itemID)
         let guestCart = [];
@@ -76,7 +77,7 @@ const PlayingCards = ({cards, setCards, reset,
       
     } catch (err) {
       console.log(err)
-      console.log("Most likely sold out")
+      notifyBad("Sorry, item appears to be Out of Stock!")
     }
   }
   
@@ -129,7 +130,7 @@ const PlayingCards = ({cards, setCards, reset,
           <button id="add-to-cart-button"
             onClick={(e) => {
               addBtnAnimation(e);
-              addToCart(8, id);
+              addToCart(userDATA.id, id);
             }}
           >
             <svg class="add-to-cart-box box-1" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="2" fill="#ffffff"/></svg>

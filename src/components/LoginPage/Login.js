@@ -6,7 +6,7 @@ import { userRegister, userLogin } from '../../api/index';
 
 import "./Login.css";
 
-const LoginPage  = ({setIsLoggedIn, setUser, notifySignup, notifyLogin}) => {
+const LoginPage  = ({setIsLoggedIn, setUser, notifySignup, notifyLogin, userDATA, setUserDATA}) => {
   // const modalSwitcher = () => {
   //   const { path }  = useLocation();
   // }
@@ -38,10 +38,11 @@ const LoginPage  = ({setIsLoggedIn, setUser, notifySignup, notifyLogin}) => {
       setErrMsgText("Welcome back " + name);
       setIsLoggedIn(true);
       setUser(res.user);
+      setUserDATA(res.user)
       notifyLogin();
       setTimeout(function() {
         history.push("/");
-      }, 2000);
+      }, 1200);
     } catch (err) {
       setErrMsgText('User does not exist, ' + err);
       console.log(err);
@@ -60,6 +61,7 @@ const LoginPage  = ({setIsLoggedIn, setUser, notifySignup, notifyLogin}) => {
         setErrMsgText("Thank you for signing up.");
         notifySignup();
         setIsLoggedIn(true);
+        setUserDATA(res.user)
         setTimeout(function() {
           history.push("/");
         }, 2000);
@@ -176,7 +178,7 @@ const LoginPage  = ({setIsLoggedIn, setUser, notifySignup, notifyLogin}) => {
                       setEmail(event.target.value);
                     }} 
                   />
-                  <label class="forms_field-label">Email</label>
+                  <label class="forms_field-label"> Email </label>
                 </div>
                 <div class="forms_field">
                   <input type="password" class="forms_field-input" required 

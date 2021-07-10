@@ -1,14 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 // import ReactDOM from 'react-dom';
-import { FcSettings } from 'react-icons/fc'
+import { BiUser } from 'react-icons/bi'
 import {clearToken, getToken } from '../../api/index';
 import { useHistory } from 'react-router-dom';
 
 
 import "./Navbar.css";
 
-const Navbar = ({isLoggedIn, setIsLoggedIn, user, logoutAnim}) => {
+const Navbar = ({isLoggedIn, setIsLoggedIn, user, logoutAnim, userDATA}) => {
 	
 
 	const history = useHistory();
@@ -48,7 +48,7 @@ const Navbar = ({isLoggedIn, setIsLoggedIn, user, logoutAnim}) => {
 						<li id="options">
 								
 									<>
-										<a href="">My Account</a>
+										<a href="#"><BiUser size={28} /> { isLoggedIn ? `${userDATA.username}` : "My Account"}</a>
 										<ul class="subnav">
 											<li><a href="#">User Profile</a></li>
 											<li><a href="#">Settings</a></li>

@@ -11,6 +11,7 @@ const {
   getUserById,
   createCartItem,
   getUserCartProducts,
+  getCardUserById,
 
 } = require("../db");
 const cardsRouter = require("./cards");
@@ -24,12 +25,15 @@ cartRouter.use((req, res, next) => {
 cartRouter.get("/:cartId", requireUser, async (req, res, next) => {
   const { cartId } = req.params;
   try {
-    const cart = await getUserCartProducts(cartId);
-    console.log(cart);
+    // Old function that only returned the List of Card ID's Not card objects
+    // const cart = await getUserCartProducts(cartId);
+    const cart = await getCardUserById(cartId)
+    console.log(cart, "ME I SEE");
     res.send({
-      message: "Success!",
-      Data: cart
-    })
+      message: "Cart retrived Successfully!",
+      data: cart
+    });
+    return cart;
   } catch (err) {
     throw err;
   }

@@ -6,7 +6,7 @@ import LeftNavBar from "./components/SideBar/SideBar.js";
 import PlayingCards from "./components/Cards/Cards";
 import Cart from "./components/Cart/Cart";
 import { LoginPage, AdminPage } from "./components/index.js";
-import { getAllCards, userLogin, getToken, parseUserToken } from "./api";
+import { getAllCards, userLogin, getToken, parseUserToken, getCart } from "./api";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -14,9 +14,11 @@ import 'react-toastify/dist/ReactToastify.css';
 import "./App.css";
 
 const App = () => {
-  useEffect(() => {
+  useEffect(async () => {
     document.title = `CardEX\u2122 - US`;
   }, []);
+
+
 
   
 
@@ -35,10 +37,10 @@ const App = () => {
   const notifySignup = () => toast.success("Sign Up Successful, redirecting to Home Page!", {
     position: toast.POSITION.TOP_CENTER
   });
-  const notifyLogin = () => toast.warn("Welcome back King or Queen, redirecting to Home Page!", {
+  const notifyLogin = () => toast.success("Welcome back King or Queen, redirecting to Home Page!", {
     position: toast.POSITION.TOP_CENTER
   });
-  const notifyLogout = () => toast.warn("Logged out Successfully, redirecting to Login Page!",{
+  const notifyLogout = () => toast.warn("Logged out Successfully, redirecting to Login Page!", {
     position: toast.POSITION.TOP_CENTER
   });
 
@@ -51,21 +53,29 @@ const App = () => {
   const [ cart, setCart ] = useState([]);
   const [userDATA, setUserDATA] = useState({});
 
-  // const parseUserToken = async () => {
-  //   try {
-  //     const { id } = jwt.verify(token, JWT_SECRET);
+  useEffect(() => {
+    async function fetchData() {
+      const response = await parseUserToken();
+      console.log(response);
+      setUserDATA(response);
+      // console.log(userDATA);
+    }
+    fetchData();
+  }, []); 
 
-  //     if (id) {
-  //       req.user = await getUserById(id);
-  //       next();
-  //     }
-  //   } catch ({ name, message }) {
-  //     next({ name, message });
-  //   }
-  // }
-
-  // (async () => { JSON.parse(localStorage.getItem("CardEXtoken"))})();
-  
+  useEffect(() => {
+    const token = localStorage.getItem("CardEXtoken")
+    if (token) {
+      setIsLoggedIn(true)
+    }
+    retrieveCards();
+    async function fetchData() {
+      const res = await getCart(userDATA.id, token);
+      console.log(res, "APP Front End");
+      setCart(res);
+    }
+    fetchData();
+  },[userDATA]);
 
   const retrieveCards = () => {
     getAllCards()
@@ -79,20 +89,6 @@ const App = () => {
       });
   };
   useEffect(() => {
-    const token = localStorage.getItem("CardEXtoken")
-    if (token) {
-      // async function name () {
-      //   const data = await parseUserToken();
-      //   console.log(data);
-      //   setUserDATA(data);
-      // }
-      // name();
-      setIsLoggedIn(true)
-      console.log(parseUserToken)
-      
-      console.log({userDATA})
-    }
-    retrieveCards();
   }, []);
 
 
@@ -109,8 +105,7 @@ const App = () => {
       <ToastContainer />
       <Switch>
         <Route exact path="/">
-        <div className="appContainer">
-        
+        <div className="appContainer">    
           <HomeBanner />
           <body className="frontContainer">
             <LeftNavBar />
@@ -119,6 +114,7 @@ const App = () => {
                 cards={cards} setCards={setCards} 
                 reset={retrieveCards} 
                 cart={cart} setCart={setCart}
+                userDATA={userDATA}
               />
             </div>
           </body>
@@ -127,15 +123,14 @@ const App = () => {
         <Route path="/register">
           <LoginPage 
             setIsLoggedIn={setIsLoggedIn} 
-            setUser={setUser} userDATA={userDATA} 
-            notifySignup={notifySignup} notifyLogin={notifyLogin} />
+            setUser={setUser} setUserDATA={setUserDATA} userDATA={userDATA} 
+            notifySignup={notifySignup} notifyLogin={notifyLogin} 
+          />
         </Route>
         <Route path="/cart">
-          <Cart cart={cart} setCart={setCart} userDATA={userDATA} />
-          
+          <Cart cart={cart} setCart={setCart} userDATA={userDATA} />         
         </Route>
         <Route path="/admin" component={AdminPage} />
-
       </Switch>
       
     </Router>
