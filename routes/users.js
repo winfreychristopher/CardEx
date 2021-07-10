@@ -18,7 +18,8 @@ usersRouter.use((req, res, next) => {
   next();
 });
 
-usersRouter.get("/", requireUser, async (req, res, next) => {
+//isAdmin Function
+usersRouter.get("/", requireAdmin, async (req, res, next) => {
   try {
     const users = await getAllUsers();
     if (req.user.admin) {
@@ -49,7 +50,7 @@ usersRouter.get("/:userId", async (req, res, next) => {
   try {
     const user = await getUserById(userId);
     if (!user) {
-      next(error);
+      next();
     } else {
       console.log(user);
       res.send(user);
