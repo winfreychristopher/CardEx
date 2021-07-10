@@ -13,7 +13,6 @@ const {
   getUserCartProducts,
   getCardUserById,
   deleteCardFromCart,
-
 } = require("../db");
 const cardsRouter = require("./cards");
 
@@ -28,21 +27,21 @@ cartRouter.get("/:cartId", requireUser, async (req, res, next) => {
   try {
     // Old function that only returned the List of Card ID's Not card objects
     // const cart = await getUserCartProducts(cartId);
-    const cart = await getCardUserById(cartId)
+    const cart = await getCardUserById(cartId);
     console.log(cart, "ME I SEE");
     res.send({
       message: "Cart retrived Successfully!",
-      data: cart
+      data: cart,
     });
     return cart;
   } catch (err) {
     throw err;
   }
-})
+});
 
 cartRouter.post("/:userId", async (req, res, next) => {
   const { userId } = req.params;
-  
+
   try {
     const addedCart = await createCart(userId);
     console.log(addedCart);
@@ -60,7 +59,7 @@ cartRouter.post("/:userId/:cardId", async (req, res, next) => {
     // const [test] = cart;
     res.send({
       message: "Successfully added Card",
-      cartContent: cart
+      cartContent: cart,
     });
   } catch (error) {
     next(error);
@@ -68,12 +67,14 @@ cartRouter.post("/:userId/:cardId", async (req, res, next) => {
 });
 
 cartRouter.delete("/:cardId", requireUser, async (req, res, next) => {
+  console.log("TESTING DELETE ROUTE ON CART!!!!");
   const { cardId } = req.params;
   const { id } = req.user;
 
   try {
+    console.log(id, cardId, "THIS IS ID ON DELETE CARD");
     const deletedCard = await deleteCardFromCart(id, cardId);
-    res.send(deletedCard);
+    res.send({ deletedCard });
   } catch (error) {
     next(error);
   }

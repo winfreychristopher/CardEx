@@ -353,7 +353,6 @@ async function createCardTag(cardId, tagId) {
 }
 
 async function createCartItem(userId, cardId, quanity = 1) {
-
   try {
     let usersCart = await getCartByUserId(userId);
     if (usersCart === undefined) {
@@ -371,7 +370,7 @@ async function createCartItem(userId, cardId, quanity = 1) {
         `,
       [usersCart.id, cardId, quanity]
     );
-    
+
     // const [test] = rows;
     // console.log(test, "View Cart Test 1");
     // console.log(rows, "View Cart Test 2");
@@ -425,16 +424,19 @@ async function getCartByUserId(userId) {
 
 async function getUserCartProducts(cartId) {
   try {
-    const { rows } = await client.query(`
+    const { rows } = await client.query(
+      `
     SELECT * FROM cart_products
     WHERE "cartId"=$1;
-    `, [cartId]);
+    `,
+      [cartId]
+    );
 
-    const [test] = rows; 
+    const [test] = rows;
     console.log(test, "HERE WE GO again");
-    return rows
+    return rows;
   } catch (error) {
-    throw error
+    throw error;
   }
 }
 
@@ -470,11 +472,10 @@ async function deleteCardFromCart(userId, cardId) {
     } = await client.query(
       `
     DELETE FROM cart_products
-    WHERE cartId = $(1) AND cardId = ($2)
+    WHERE "cartId"=$1 AND "cardId"=$2
     RETURNING *;
     `,
-      userCart[0].id,
-      cardId
+      [userCart.id, cardId]
     );
 
     return deletedCard;
@@ -496,7 +497,7 @@ async function getCardUserById(userId) {
     `,
       [userId]
     );
-    console.log(user, "I BEFORE Other")
+    console.log(user, "I BEFORE Other");
 
     if (!user) {
       throw {
@@ -515,7 +516,7 @@ async function getCardUserById(userId) {
     `,
       [userId]
     );
-      console.log(cards, "SEE MEEE")
+    console.log(cards, "SEE MEEE");
     user.cart = cards;
     console.log(user.cart, "I AM H");
     console.log(cards, "I LIVE");
