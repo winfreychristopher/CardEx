@@ -18,7 +18,6 @@ usersRouter.use((req, res, next) => {
 });
 
 usersRouter.get("/", async (req, res, next) => {
-  console.log("TESTING THIS CHRIS!!!!");
   try {
     const users = await getAllUsers();
     console.log(users);
@@ -28,18 +27,7 @@ usersRouter.get("/", async (req, res, next) => {
   }
 });
 
-usersRouter.get("/profile/me", requireUser, async (req, res, next) => {
-  console.log("I am here");
-  try {
-    console.log(req.user);
-    res.send(req.user);
-  } catch (error) {
-    next(error);
-  }
-});
-
 usersRouter.get("/:userId", async (req, res, next) => {
-  console.log("TESTING THIS CHRIS!!!!");
   const { userId } = req.params;
 
   try {
@@ -56,7 +44,7 @@ usersRouter.get("/:userId", async (req, res, next) => {
 });
 
 usersRouter.post("/register", async (req, res, next) => {
-  const { username, password, email } = req.body;
+  const { username, password } = req.body;
 
   try {
     const _user = await getUserByUsername(username);
@@ -77,7 +65,6 @@ usersRouter.post("/register", async (req, res, next) => {
       const newUser = await createUser({
         username,
         password,
-        email,
       });
       if (!newUser) {
         next({
@@ -86,7 +73,7 @@ usersRouter.post("/register", async (req, res, next) => {
         });
       } else {
         const token = jwt.sign(
-          { id: newUser.id, username: newUser.username, email: newUser.email },
+          { id: newUser.id, username: newUser.username },
           JWT_SECRET,
           { expiresIn: "1w" }
         );
@@ -123,6 +110,13 @@ usersRouter.post("/login", async (req, res, next) => {
   }
 });
 
-
+usersRouter.get("/me", requireUser, async (req, res, next) => {
+  try {
+    console.log(req.user);
+    res.send(req.user);
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = usersRouter;
