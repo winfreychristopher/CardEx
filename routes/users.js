@@ -131,7 +131,7 @@ usersRouter.post("/login", async (req, res, next) => {
 
 usersRouter.patch("/:userId", requireUser, async (req, res, next) => {
   const { userId } = req.params;
-  const { userId, Boolean } = req.body;
+  const { Boolean } = req.body;
 
   try {
     if (!req.user.admin) {
