@@ -30,10 +30,30 @@ export async function getAllCards() {
     }
 }
 
+export async function getCard(cardID) {
+    try {
+        const { data } = await axios.get(`/api/cards/${cardID}`);
+        console.log( "CARD TEST" , data)
+        return data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export async function parseUserToken() {
+    try {
+        const userData = await axios.post(`/api/users/me`);
+        console.log("BLAHHH", userData);
+        return userData;
+    } catch (err) {
+        throw err;
+    }
+}
+
 export async function getUsers() {
     try {
-        const { data } = await axios.get("/api/users")
-        console.log(data.users)
+        const { data } = await axios.get("/api/users");
+        console.log(data.users);
         return data.users;
     } catch (error) {
         throw error;      
@@ -114,7 +134,7 @@ export async function updateCard({id, count}) {
 
         return data;
     } catch (error) {
-        throw error
+        throw error;
     }
 }
 
@@ -147,17 +167,18 @@ export async function removeItemFromCart(cardId, token) {
     }
 }
 
-export async function addItemToCart(cardId, quanity, token) {
+export async function addItemToCart(userId, cardId, token, quanity) {
     try {
-        const { data } = await axios.post(`api/cart`,
-        {cardId, quanity},
-        {headers: {
-            Authorization: `Bearer ${token}`
-        }}
-        );
+        const { data } = await axios.post(`api/cart/${userId}/${cardId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
+        });
+        console.log('WE ARE IN API, BOTTOM 168', data)
         return data;
     } catch (error) {
         console.error("Error adding to cart")
         throw error;
     }
 }
+

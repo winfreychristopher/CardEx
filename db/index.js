@@ -352,13 +352,15 @@ async function createCardTag(cardId, tagId) {
   }
 }
 
-//error
 async function createCartItem(userId, cardId, quanity = 1) {
+
   try {
-    const usersCart = await getCartByUserId(userId);
-    if (usersCart === null) {
-      userCart = createCart(userId);
+    let usersCart = await getCartByUserId(userId);
+    if (usersCart === undefined) {
+      usersCart = await createCart(userId);
+      usersCart = await getCartByUserId(userId);
     }
+
     console.log(usersCart);
     console.log(usersCart.id);
     const { rows } = await client.query(
@@ -369,7 +371,11 @@ async function createCartItem(userId, cardId, quanity = 1) {
         `,
       [usersCart.id, cardId, quanity]
     );
-    console.log(rows, "THIS IS CREATECART ITEM");
+    
+    // const [test] = rows;
+    // console.log(test, "View Cart Test 1");
+    // console.log(rows, "View Cart Test 2");
+    // console.log([rows], "View Car Test 3");
     return rows;
   } catch (error) {
     console.error("could not put card into the cart");
@@ -417,9 +423,24 @@ async function getCartByUserId(userId) {
   }
 }
 
+async function getUserCartProducts(cartId) {
+  try {
+    const { rows } = await client.query(`
+    SELECT * FROM cart_products
+    WHERE "cartId"=$1;
+    `, [cartId]);
+
+    const [test] = rows; 
+    console.log(test, "HERE WE GO again");
+    return rows
+  } catch (error) {
+    throw error
+  }
+}
+
 async function addCardToCart(userId, cardId) {
   try {
-    console.log("Initial query");
+    console.log("------Initial Post.Cart query------");
     const {
       rows: [card],
     } = await client.query(
@@ -475,6 +496,7 @@ async function getCardUserById(userId) {
     `,
       [userId]
     );
+    console.log(user, "I BEFORE Other")
 
     if (!user) {
       throw {
@@ -485,16 +507,18 @@ async function getCardUserById(userId) {
 
     const { rows: cards } = await client.query(
       `
-    SELECT *
-    FROM cards
-    JOIN cart_products ON cards.ID=cart_products."cardId"
-    JOIN cart ON "cartId"="userId"
-    WHERE cart."userId"=$1;
+      SELECT *
+      FROM cards
+      JOIN cart_products ON cards.ID=cart_products."cardId"
+      JOIN cart ON "cartId"=cart.ID
+      WHERE cart."userId"=$1;
     `,
       [userId]
     );
-
+      console.log(cards, "SEE MEEE")
     user.cart = cards;
+    console.log(user.cart, "I AM H");
+    console.log(cards, "I LIVE");
 
     return user;
   } catch (error) {
@@ -705,6 +729,7 @@ module.exports = {
   getCartByUserId,
   deleteCardFromCart,
   getCardsById,
+  getUserCartProducts,
   getCardUserById,
   deleteCardFromCart,
   addCartToUserOrder,

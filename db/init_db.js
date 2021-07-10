@@ -124,7 +124,6 @@ async function buildTables() {
 }
 
 const createInitialCards = async () => {
-
     console.log("starting to create initial cards")
     try {
         const cardsToCreate = [
@@ -392,6 +391,7 @@ async function testDB() {
         console.log("created Cart:", cartTwo)
         const cartThree = await createCart(3)
         console.log("Created cart:", cartThree)
+        await createCart(4)
 
         console.log("adding card to cart")
         const addCart = await addCardToCart(2, 2)

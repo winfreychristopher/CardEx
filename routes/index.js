@@ -22,16 +22,17 @@ apiRouter.use(async (req, res, next) => {
   const prefix = "Bearer ";
   const auth = req.header("Authorization");
 
+  console.log("I AM")
   if (!auth) {
     next();
   } else if (auth.startsWith(prefix)) {
     const token = auth.slice(prefix.length);
-
+    console.log("Starting verify")
     try {
-      const { id } = jwt.verify(token, JWT_SECRET);
-
-      if (id) {
-        req.user = await getUserById(id);
+      const test = jwt.verify(token, JWT_SECRET);
+      console.log(test, "verify Yes SIr")
+      if (test.id) {
+        req.user = await getUserById(test.id);
         next();
       }
     } catch ({ name, message }) {

@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import { getAllCards } from "../../api/index";
+import { 
+  addItemToCart, getToken, 
+  getCart, getCard 
+} from "../../api/index";
 
 import "../Cards/Card.scss";
 
-const PlayingCards = ({cards, setCards, reset}) => {
+const PlayingCards = ({cards, setCards, reset, 
+  cart, setCart, userDATA, setUserDATA}) => {
   // // const cards = getAllCards();
   // let cards;
   // const getCards = async () => {
@@ -45,6 +50,34 @@ const PlayingCards = ({cards, setCards, reset}) => {
     setTimeout(function() {
       e.target.classList.remove('added');
     }, 1000);
+    console.log(e);
+  }
+
+  
+  const addToCart = async (userID, itemID) => {
+    console.log(itemID);
+    try {
+      const TOKEN = getToken();
+      console.log(userID)
+      if (TOKEN) {
+        const response = await addItemToCart(userID, itemID, TOKEN)
+        console.log(response.cartContent.cart);
+        const currentCart = await getCart(userID, TOKEN);
+        console.log(currentCart)
+        setCart(currentCart);
+      } else {
+        let clickedCard = await getCard(itemID)
+        let guestCart = [];
+        guestCart = cart;
+        guestCart.push(clickedCard);
+        setCart(guestCart)
+        console.log(guestCart)
+      }
+      
+    } catch (err) {
+      console.log(err)
+      console.log("Most likely sold out")
+    }
   }
   
   // const [isActive, setActive] = useState("false");
@@ -64,8 +97,8 @@ const PlayingCards = ({cards, setCards, reset}) => {
     } = card;
 
     return (
-      <div className="rootContainer ">
-        <div className="cardContainer" key={index}>
+      <div className="rootContainer" key={index}>
+        <div className="cardContainer" >
           <div className="imgCard col-5 m-0 px-1">
             <img className="img-fluid objectfit pointer" src={card_img} alt="Trading Card" />
           </div>
@@ -89,10 +122,15 @@ const PlayingCards = ({cards, setCards, reset}) => {
           </div>
         </div>
         <div className="cartButtons"
-          onClick={(e) => {addBtnAnimation(e)}}  
+          onClick={(e) => { 
+          
+          }}  
         >
           <button id="add-to-cart-button"
-            onClick={(e) => {addBtnAnimation(e)}}
+            onClick={(e) => {
+              addBtnAnimation(e);
+              addToCart(8, id);
+            }}
           >
             <svg class="add-to-cart-box box-1" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="2" fill="#ffffff"/></svg>
             <svg class="add-to-cart-box box-2" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="2" fill="#ffffff"/></svg>

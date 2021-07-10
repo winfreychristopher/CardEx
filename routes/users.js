@@ -17,7 +17,8 @@ usersRouter.use((req, res, next) => {
   next();
 });
 
-usersRouter.get("/", async (req, res, next) => {
+//isAdmin Function
+usersRouter.get("/", requireAdmin, async (req, res, next) => {
   try {
     const users = await getAllUsers();
     console.log(users);
@@ -33,7 +34,7 @@ usersRouter.get("/:userId", async (req, res, next) => {
   try {
     const user = await getUserById(userId);
     if (!user) {
-      next(error);
+      next();
     } else {
       console.log(user);
       res.send(user);
@@ -110,13 +111,14 @@ usersRouter.post("/login", async (req, res, next) => {
   }
 });
 
-usersRouter.get("/me", requireUser, async (req, res, next) => {
+usersRouter.post("/me", requireUser, async (req, res, next) => {
   try {
     console.log(req.user);
     res.send(req.user);
   } catch (error) {
     next(error);
   }
+
 });
 
 module.exports = usersRouter;

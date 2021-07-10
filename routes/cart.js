@@ -10,6 +10,8 @@ const {
   createCart,
   getUserById,
   createCartItem,
+  getUserCartProducts,
+
 } = require("../db");
 const cardsRouter = require("./cards");
 
@@ -19,9 +21,23 @@ cartRouter.use((req, res, next) => {
   next();
 });
 
-cartRouter.post("/:userId/:cardId", requireUser, async (req, res, next) => {
-  const { userId } = req.params;
+cartRouter.get("/:cartId", requireUser, async (req, res, next) => {
+  const { cartId } = req.params;
+  try {
+    const cart = await getUserCartProducts(cartId);
+    console.log(cart);
+    res.send({
+      message: "Success!",
+      Data: cart
+    })
+  } catch (err) {
+    throw err;
+  }
+})
 
+cartRouter.post("/:userId", async (req, res, next) => {
+  const { userId } = req.params;
+  
   try {
     const addedCart = await createCart(userId);
     console.log(addedCart);
@@ -31,15 +47,33 @@ cartRouter.post("/:userId/:cardId", requireUser, async (req, res, next) => {
   }
 });
 
-cartRouter.get("/:userId/:cardId", requireUser, async (req, res, next) => {
+cartRouter.post("/:userId/:cardId", async (req, res, next) => {
   const { userId, cardId } = req.params;
   try {
     const cart = await addCardToCart(userId, cardId);
-    console.log(cart);
-    res.send(cart);
+    // console.log(cart.cart, "YELLOW");
+    // const [test] = cart;
+    res.send({
+      message: "Successfully added Card",
+      cartContent: cart
+    });
   } catch (error) {
     next(error);
   }
 });
+
+// cartRouter.get("/:userId/:cardId", requireUser, async (req, res, next) => {
+//   const { userId, cardId } = req.params;
+//   try {
+//     const cart = await addCardToCart(userId, cardId);
+//     console.log(cart.cart, "YELLOW");
+//     res.send({
+//       message: "Successfully added Card",
+//       cartContent: cart
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 
 module.exports = cartRouter;
