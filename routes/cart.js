@@ -12,6 +12,7 @@ const {
   createCartItem,
   getUserCartProducts,
   getCardUserById,
+  deleteCardFromCart,
 
 } = require("../db");
 const cardsRouter = require("./cards");
@@ -66,18 +67,15 @@ cartRouter.post("/:userId/:cardId", async (req, res, next) => {
   }
 });
 
-// cartRouter.get("/:userId/:cardId", requireUser, async (req, res, next) => {
-//   const { userId, cardId } = req.params;
-//   try {
-//     const cart = await addCardToCart(userId, cardId);
-//     console.log(cart.cart, "YELLOW");
-//     res.send({
-//       message: "Successfully added Card",
-//       cartContent: cart
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// });
+cartRouter.delete("/:cardId", requireUser, async (req, res, next) => {
+  const { cardId } = req.params;
+  const { id } = req.user;
 
+  try {
+    const deletedCard = await deleteCardFromCart(id, cardId);
+    return deletedCard;
+  } catch (error) {
+    throw error;
+  }
+});
 module.exports = cartRouter;

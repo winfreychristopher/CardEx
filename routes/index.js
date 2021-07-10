@@ -53,11 +53,11 @@ apiRouter.use((req, res, next) => {
 const usersRouter = require("./users");
 const cardsRouter = require("./cards");
 const cartRouter = require("./cart");
-const tagsRouter = require("./tags");
+const ordersRouter = require("./order");
 
 apiRouter.use("/users", usersRouter);
 apiRouter.use("/cards", cardsRouter);
 apiRouter.use("/cart", cartRouter);
-apiRouter.use("/tags", tagsRouter);
+apiRouter.use("/orders", ordersRouter);
 
 module.exports = apiRouter;

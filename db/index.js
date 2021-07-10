@@ -65,7 +65,7 @@ async function getUserById(id) {
 }
 
 async function getUser({ username, password }) {
-  console.log(password)
+  console.log(password);
   try {
     let user = await getUserByUsername(username);
     if (bcrypt.compareSync(password, user.password)) {
@@ -672,35 +672,106 @@ async function addCartToUserOrder(userId, cardId, cartId) {
   }
 }
 
-async function createUserAddress({userId, street, state, zip_code,}) {
+async function createUserOrder(userId) {
   try {
-    await client.query(`
+    const getUserCart = await getCartByUserId(userId);
+    // console.log(getUserCart)
+    const { rows } = await client.query(
+      `
+    INSERT INTO user_order("userId", "cartId")
+    VALUES($1, $2) 
+    RETURNING *;
+    `,
+      [userId, getUserCart.id]
+    );
+
+    await client.query(
+      `
+    UPDATE cart
+    SET active=false
+    WHERE ID=$1;
+    `,
+      [getUserCart.id]
+    );
+
+    // await createCart(userId)
+    return rows;
+  } catch (error) {
+    console.error("could not create order for user");
+    throw error;
+  }
+}
+
+async function getAllOrders() {
+  try {
+    const { rows } = await client.query(`
+    SELECT user_order.ID, cards.card_title,cards.card_img,cards.price FROM user_order
+    JOIN cart ON user_order."cartId"=cart.ID
+    JOIN cart_products ON cart.ID=cart_products."cartId"
+    JOIN cards ON cart_products."cardId"=cards.ID
+    `);
+
+    return rows;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function createUserAddress({ userId, street, state, zip_code }) {
+  try {
+    await client.query(
+      `
     INSERT INTO user_address("userId", street, state, zip_code)
     VALUES($1, $2, $3, $4)
     ON CONFLICT ("userId") DO NOTHING
     RETURNING *;
-    `, [userId, street, state, zip_code])
+    `,
+      [userId, street, state, zip_code]
+    );
 
-    return await joinAddressToUser(userId)
+    return await joinAddressToUser(userId);
   } catch (error) {
-    console.error("Could not create users address")
-    throw error
+    console.error("Could not create users address");
+    throw error;
   }
 }
 
 async function joinAddressToUser(userId) {
   try {
-    const {rows: userAddress} = await client.query(`
+    const { rows: userAddress } = await client.query(
+      `
     SELECT users.id
     FROM users
     INNER JOIN user_address ON "userId" = users.id
     WHERE user_address."userId" = $1;
-    `, [userId])
+    `,
+      [userId]
+    );
 
     return userAddress;
   } catch (error) {
-    console.error("could not join address to user")
-    throw error
+    console.error("could not join address to user");
+    throw error;
+  }
+}
+
+async function toggleAdmin(userId, adminRight) {
+  try {
+    const {
+      rows: [user],
+    } = await client.query(
+      `
+      UPDATE user
+      SET admin=$2
+      WHERE id=$1
+      RETURNING *;
+    `,
+      [userId, adminRight]
+    );
+
+    return user;
+  } catch (error) {
+    throw error;
   }
 }
 
@@ -734,5 +805,8 @@ module.exports = {
   deleteCardFromCart,
   addCartToUserOrder,
   createUserOrder,
-  createUserAddress
+  createUserAddress,
+  getAllOrders,
+  createUserOrder,
+  toggleAdmin,
 };

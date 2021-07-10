@@ -11,15 +11,15 @@ const notifyBad = (message) => toast.error(`${message}`, {
 });
 
 export const clearToken = () => {
-    localStorage.removeItem("CardEXtoken")
+  localStorage.removeItem("CardEXtoken");
 };
 
 export const setToken = (token) => {
-    localStorage.setItem("CardEXtoken", token)
+  localStorage.setItem("CardEXtoken", token);
 };
 
 export const getToken = () => {
-    return localStorage.getItem("CardEXtoken")
+  return localStorage.getItem("CardEXtoken");
 };
 
 // export const loggedAdmin = () => {
@@ -31,13 +31,13 @@ export const getToken = () => {
 // }
 
 export async function getAllCards() {
-    try {
-        const { data } = await axios.get("/api/cards");
-        console.log( "EMAN" , data)
-        return data;
-    } catch (error) {
-        throw error;
-    }
+  try {
+    const { data } = await axios.get("/api/cards");
+    console.log("EMAN", data);
+    return data;
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function getCard(cardID) {
@@ -65,31 +65,31 @@ export async function parseUserToken() {
 }
 
 export async function getUsers() {
-    try {
-        const { data } = await axios.get("/api/users");
-        console.log(data.users);
-        return data.users;
-    } catch (error) {
-        throw error;      
-    }
+  try {
+    const { data } = await axios.get("/api/users");
+    console.log(data.users);
+    return data.users;
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function userLogin(username, password) {
-    console.log("API " + username, password)
-    try {
-        const { data } = await axios.post("/api/users/login", {
-            username, 
-            password,
-        });
-        console.log(data)
-        if (data.token) {  
-         setToken(data.token)
-        }
-
-        return data;
-    } catch (error) {
-        throw error;
+  console.log("API " + username, password);
+  try {
+    const { data } = await axios.post("/api/users/login", {
+      username,
+      password,
+    });
+    console.log(data);
+    if (data.token) {
+      setToken(data.token);
     }
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function userRegister(username, password, email) {
@@ -111,17 +111,17 @@ export async function userRegister(username, password, email) {
 }
 
 export async function changeAdmin(id, admin) {
-    try {
-        let updatedInfo = {
-            admin,
-        };
+  try {
+    let updatedInfo = {
+      admin,
+    };
 
-        const { data } = await axios.patch(`/api/users/${id}`, updatedInfo)
-        console.log(data)
-        return data;
-    } catch (error) {
-        throw error;
-    }
+    const { data } = await axios.patch(`/api/users/${id}`, updatedInfo);
+    console.log(data);
+    return data;
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function createCard(card_title, description, price, card_img, token) {
@@ -141,30 +141,48 @@ export async function createCard(card_title, description, price, card_img, token
     }
 }
 
-export async function updateCard({id, count}) {
-    try {
-        const data = await axios.patch(`/api/cards/${id}`, {
-            count,
-        });
+export async function updateCard({ id, count }) {
+  try {
+    const data = await axios.patch(`/api/cards/${id}`, {
+      count,
+    });
 
-        return data;
-    } catch (error) {
-        throw error;
-    }
+    return data;
+  } catch (error) {
+    throw error;
+  }
 }
 
-export async function removeItemFromCart(cardId, token) {
+//Just gives me the Cart and CardID's
+export async function getCart(id, token) {
     try {
-        const { data } = await axios.delete(`api/cart/${cardId}`, {
+        const  { data }  = await axios.get(`/api/cart/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
         });
-        return data;
+        // Old Return that Only returned CardID's not CardObjects
+        // return data.data.data;
+        return data.data.cart;
     } catch (error) {
-        console.error("Error removing card from cart")
-        throw error;
+        console.error("Error getting cart")
+        notifyBad("Error getting cart")
+        throw error
     }
+}
+
+export async function removeItemFromCart(cardId, token) {
+  try {
+    const { data } = await axios.delete(`api/cart/${cardId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return data;
+  } catch (error) {
+    console.error("Error removing card from cart");
+    throw error;
+  }
 }
 
 export async function addItemToCart(userId, cardId, token, quanity) {
@@ -182,19 +200,25 @@ export async function addItemToCart(userId, cardId, token, quanity) {
     }
 }
 
-//Just gives me the Cart and CardID's
-export async function getCart(id, token) {
-    try {
-        const  { data }  = await axios.get(`/api/cart/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        // Old Return that Only returned CardID's not CardObjects
-        // return data.data.data;
-        return data.data.cart;
-    } catch (error) {
-        console.error("Error getting cart")
-        throw error
-    }
+export async function getAllOrders() {
+  try {
+    const { data } = await axios.get(`api/orders/all`);
+    console.log(data);
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function toggleAdmin(userId, Boolean) {
+  try {
+    const { data } = await axios.patch(`api/user/${userId}`, {
+      userId,
+      Boolean,
+    });
+    console.log(data, "Sucessuflly Added Admin!");
+    return data;
+  } catch (error) {
+    throw error;
+  }
 }
