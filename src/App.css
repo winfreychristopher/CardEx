@@ -5,12 +5,15 @@
   min-height: 100vh;
 }
 
-body {
-  /* display: flex; */
+.frontContainer {
+  display: flex;
+
 }
 .cardsForSaleContainer {
   display: flex;
   flex-wrap: wrap;
   width:fit-content;
+  max-height: 80vh;
+  overflow: auto;
  
 }
