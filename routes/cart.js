@@ -13,6 +13,7 @@ const {
   getUserCartProducts,
   getCardUserById,
   deleteCardFromCart,
+
 } = require("../db");
 
 cartRouter.use((req, res, next) => {
@@ -30,18 +31,18 @@ cartRouter.get("/:userId", requireUser, async (req, res, next) => {
     console.log(cart);
     res.send({
       message: "Cart retrived Successfully!",
-      data: cart,
+      data: cart
     });
     console.log(cart);
     return cart;
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    throw err;
   }
-});
+})
 
 cartRouter.post("/:userId", async (req, res, next) => {
   const { userId } = req.params;
-
+  
   try {
     const addedCart = await createCart(userId);
     console.log(addedCart);
@@ -57,11 +58,11 @@ cartRouter.post("/:userId/:cardId", async (req, res, next) => {
   if (!quantity) { quantity = 1 }
   console.log(quantity)
   try {
-    const cart = await addCardToCart(userId, cardId, quantity);
+    const cart = await addCardToCart(userId, cardId);
     // console.log(cart.cart, "YELLOW");
     // const [test] = cart;
     res.send({
-      message: "Successfully added Card to Cart",
+      message: "Successfully added Item to Cart",
       cartContent: cart,
     });
   } catch (error) {
@@ -70,12 +71,10 @@ cartRouter.post("/:userId/:cardId", async (req, res, next) => {
 });
 
 cartRouter.delete("/:cardId", requireUser, async (req, res, next) => {
-  console.log("TESTING DELETE ROUTE ON CART!!!!");
   const { cardId } = req.params;
   const { id } = req.user;
 
   try {
-    console.log(id, cardId, "THIS IS ID ON DELETE CARD");
     const deletedCard = await deleteCardFromCart(id, cardId);
     console.log(deletedCard, "Ayy Yoo")
     res.send({

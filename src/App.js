@@ -24,6 +24,10 @@ const App = () => {
     document.title = `CardEX\u2122 - US`;
   }, []);
 
+
+
+  
+
   // useEffect(() => {
   //   if (getToken()) {
   //     setAuth(true);
@@ -85,7 +89,7 @@ const App = () => {
   const [errMsgText, setErrMsgText] = useState("");
   const [authenticate, setAuth] = useState(false);
   const [user, setUser] = useState({});
-  const [cart, setCart] = useState([]);
+  const [ cart, setCart ] = useState([]);
   const [userDATA, setUserDATA] = useState({});
   const [userTOKEN, setUserTOKEN] = useState(token);
   const sleepyyyyy = userInfo();
@@ -130,7 +134,7 @@ const App = () => {
 
   useEffect(() => {
     retrieveCards();
-    getCurrentCart(userInfo.id);
+    // getCurrentCart(userInfo.id);
     // getCart(userDATA.id, token);
     async function fetchData() {
       if (token) {
@@ -172,32 +176,9 @@ const App = () => {
         console.log(err);
       });
   };
-
-  // const getUser = () => {
-  //    aysnc function fetchUser() {
-  //     // const userInfo = await parseUserToken();
-      
-  //     const res =  await getCart(userInfo.id, token);
-  //     console.log(res, "APP Front End");
-  //     setCart(res);
-  //   }
-  //   return fetchUser();
-  // }
-
-  const getCurrentCart = (userId) => {
-    async function fetchCart() {
-      const val = await getCart(userDATA.id, userTOKEN);
-      console.log(val);
-      setCart(val);
-      return val;
-    }
-    return fetchCart();
-  }
-
-  const getCartZZZZ = async () => {
-    return await getCart(userDATA.id, userTOKEN);
-  }
-
+  useEffect(() => {
+  }, []);
+  
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -209,10 +190,10 @@ const App = () => {
 
   return (
     <Router>
-      <Navbar
-        isLoggedIn={isLoggedIn}
+      <Navbar 
+        isLoggedIn={isLoggedIn} 
         setIsLoggedIn={setIsLoggedIn}
-        user={user}
+        user={user} 
         logoutAnim={notifyLogout}
         userDATA={sleepyyyyy}
         setUserDATA={setUserDATA}
@@ -252,13 +233,15 @@ const App = () => {
             userDATA={sleepyyyyy}
             formatter={formatter} 
             userTOKEN={userTOKEN} setUserTOKEN={setUserTOKEN}
-            PLEASEcart={getCartZZZZ}
+           
           />
         </Route>
         <Route path="/admin" component={AdminPage} />
       </Switch>
+      
     </Router>
+
   );
-};
+}
 
 export default App;

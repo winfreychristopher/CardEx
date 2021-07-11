@@ -1,16 +1,14 @@
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer, toast } from 'react-toastify';
 
 //Popup Notifications
-const notifyGood = (message) =>
-  toast.success(`${message}`, {
-    position: toast.POSITION.TOP_CENTER,
-  });
+const notifyGood = (message) => toast.success(`${message}`, {
+    position: toast.POSITION.TOP_CENTER
+});
 
-const notifyBad = (message) =>
-  toast.error(`${message}`, {
-    position: toast.POSITION.TOP_CENTER,
-  });
+const notifyBad = (message) => toast.error(`${message}`, {
+    position: toast.POSITION.TOP_CENTER
+});
 
 export const clearToken = () => {
   localStorage.removeItem("CardEXtoken");
@@ -42,27 +40,27 @@ export async function getAllCards() {
 }
 
 export async function getCard(cardID) {
-  try {
-    const { data } = await axios.get(`/api/cards/${cardID}`);
-    console.log("CARD TEST", data);
-    return data;
-  } catch (error) {
-    throw error;
-  }
+    try {
+        const { data } = await axios.get(`/api/cards/${cardID}`);
+        console.log( "CARD TEST" , data)
+        return data;
+    } catch (error) {
+        throw error;
+    }
 }
 
 export async function parseUserToken() {
-  try {
-    const TOKEN = getToken();
-    const userData = await axios.get(`/api/users/profile/me`, {
-      headers: {
-        Authorization: `Bearer ${TOKEN}`,
-      },
-    });
-    return userData.data;
-  } catch (err) {
-    throw err;
-  }
+    try {
+        const TOKEN = getToken();
+        const userData = await axios.get(`/api/users/profile/me`, {
+            headers: {
+                Authorization: `Bearer ${TOKEN}`,
+            },
+        });
+        return userData.data;
+    } catch (err) {
+        throw err;
+    }
 }
 
 export async function getUsers() {
@@ -94,23 +92,21 @@ export async function userLogin(username, password) {
 }
 
 export async function userRegister(username, password, email) {
-  try {
-    const { data } = await axios.post("/api/users/register", {
-      username,
-      password,
-      email,
-    });
-    console.log(data.token);
-    if (data.token) {
-      notifyGood(
-        `You have successfully registered, ${username}. Welcome to CardEx!`
-      );
-      setToken(data.token);
+    try {
+        const { data } = await axios.post("/api/users/register", {
+            username,
+            password,
+            email,
+        });
+        console.log(data.token)
+        if (data.token) {
+            notifyGood(`You have successfully registered, ${username}. Welcome to CardEx!`);
+            setToken(data.token)
+        }
+        return data;
+    } catch (error) {
+        throw error
     }
-    return data;
-  } catch (error) {
-    throw error;
-  }
 }
 
 export async function changeAdmin(id, admin) {
@@ -127,51 +123,29 @@ export async function changeAdmin(id, admin) {
   }
 }
 
-export async function createCard(
-  card_title,
-  description,
-  price,
-  card_img,
-  token
-) {
-  try {
-    const { data } = await axios.post(
-      "/api/cards",
-      {
-        card_title,
-        description,
-        price,
-        card_img,
-        // tag_content,
-      },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    // alert("Card was successfully listed")
-    return data;
-  } catch (error) {
-    throw error;
-  }
+export async function createCard(card_title, description, price, card_img, token) {
+    try {
+        const { data } = await axios.post("/api/cards", {
+            card_title,
+            description,
+            price,
+            card_img,
+            // tag_content,
+        }, {headers: 
+            {Authorization: `Bearer ${token}`}});
+        // alert("Card was successfully listed")
+        return data;
+    } catch (error) {
+        throw error
+    }
 }
 
-export async function updateCard(id, cardData) {
-  const { card_title, description, price, card_img, quantity } = cardData;
+export async function updateCard({ id, count }) {
   try {
-    const { data } = await axios.patch(
-      `api/cards/${id}`,
-      {
-        card_title: card_title,
-        description: description,
-        price: price,
-        card_img: card_img,
-        quantity: quantity,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    console.log(data);
+    const data = await axios.patch(`/api/cards/${id}`, {
+      count,
+    });
+
     return data;
   } catch (error) {
     throw error;
