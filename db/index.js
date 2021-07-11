@@ -352,7 +352,7 @@ async function createCardTag(cardId, tagId) {
   }
 }
 
-async function createCartItem(userId, cardId, quanity = 1) {
+async function createCartItem(userId, cardId, quantity = 1) {
 
   try {
 
@@ -369,11 +369,11 @@ async function createCartItem(userId, cardId, quanity = 1) {
     console.log(usersCart.id);
     const { rows } = await client.query(
       `
-        INSERT INTO cart_products("cartId", "cardId", quanity)
+        INSERT INTO cart_products("cartId", "cardId", quantity)
         VALUES ($1, $2, $3)
         RETURNING *;
         `,
-      [usersCart.id, cardId, quanity]
+      [usersCart.id, cardId, quantity]
     );
     
     // const [test] = rows;

@@ -13,7 +13,6 @@ import {
   getAllCards,
   userLogin,
   parseUserToken,
-  getCart,
 } from "./api";
 
 
@@ -89,11 +88,10 @@ const App = () => {
   const [errMsgText, setErrMsgText] = useState("");
   const [authenticate, setAuth] = useState(false);
   const [user, setUser] = useState({});
-  const [ cart, setCart ] = useState([]);
+  const [cart, setCart] = useState([]);
   const [userDATA, setUserDATA] = useState({});
   const [userTOKEN, setUserTOKEN] = useState(token);
   const sleepyyyyy = userInfo();
-  // setUserDATA(sleepyyyyy);
   console.log(sleepyyyyy);
 
 
@@ -233,6 +231,7 @@ const App = () => {
             userDATA={sleepyyyyy}
             formatter={formatter} 
             userTOKEN={userTOKEN} setUserTOKEN={setUserTOKEN}
+            toastWarn={notifyWelcomeWarn}
            
           />
         </Route>

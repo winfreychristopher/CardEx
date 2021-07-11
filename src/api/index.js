@@ -154,22 +154,40 @@ export async function updateCard({ id, count }) {
 
 //Just gives me the Cart and CardID's
 export async function getCart(id, token) {
-  try {
-    console.log("TOP!!!");
-    const { data } = await axios.get(`/api/cart/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+  let cart;
+  fetch(`/api/cart/${id}`, {
+    method: 'get',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    }
+  })
+    .then(res => res.json())
+    .then(data => {
+      cart = data.data;
+      console.log(data.data);
+      return data.data;
+    })
+    .catch((err) => {
+      console.log('Error: ', err);
     });
-    // Old Return that Only returned CardID's not CardObjects
-    // return data.data.data;
-    console.log("BOTTOM!!!");
-    console.log(data.data)
-    return data.data;
-  } catch (error) {
-    console.error("Error getting cart");
-    throw error;
-  }
+  return cart;
+  // try {
+  //   console.log("TOP!!!");
+  //   const { data } = await axios.get(`/api/cart/${id}`, {
+  //     headers: {
+  //       Authorization: `Bearer ${token}`,
+  //     },
+  //   });
+  //   // Old Return that Only returned CardID's not CardObjects
+  //   // return data.data.data;
+  //   console.log("BOTTOM!!!");
+  //   console.log(data.data)
+  //   return data.data;
+  // } catch (error) {
+  //   console.error("Error getting cart");
+  //   throw error;
+  // }
 }
 
 export async function removeItemFromCart(cardId, token) {

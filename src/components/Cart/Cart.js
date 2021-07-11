@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import thanosImg from "../../assets/thanosCrown.jpg";
 import cardEXLogo from "../../assets/CardEX name.png";
-import { getCart, getToken, removeItemFromCart } from "../../api/index";
+import { getToken, removeItemFromCart } from "../../api/index";
 // import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import { RiDeleteBin6Fill } from "react-icons/ri";
 import { IoBagCheckOutline } from 'react-icons/io5';
 import "./Cart.scss";
 import { JsonWebTokenError } from 'jsonwebtoken';
 
-const Cart = ({cart, setCart, userDATA, formatter, userTOKEN, setUserTOKEN}) => {
+const Cart = ({cart, setCart, userDATA, formatter, userTOKEN, 
+  setUserTOKEN, toastWarn}) => {
   // const Card = {
   //   name: "Thanos Card",
   //   price: "$4,000",
@@ -24,124 +25,126 @@ const Cart = ({cart, setCart, userDATA, formatter, userTOKEN, setUserTOKEN}) => 
   //   }
   // }
   // generateCart();
-  
-  const deleteCartItem =  async (itemID) => {
-    const TOKEN = getToken();
-    try {
-      console.log(itemID)
-      const res = await removeItemFromCart(itemID, TOKEN);
-      console.log(res, "This is CART Componenet");
-      console.log(userDATA)
-      const updatedCart = await getCart(userDATA.id, TOKEN);
-      console.log("the cart", updatedCart);
-      // setCart(updatedCart);
-    } catch (err) {
-      console.log(err);
-    }
-  }
 
-
-let iBeg = [];
-const test = async () => {
-  if (userTOKEN) {
-    console.log(cart)
-    iBeg = await getCart(userDATA.id, userTOKEN);
-    console.log(cart);
-    return iBeg;
-  }
-}
-iBeg = test();
-cart = iBeg
-console.log( "AYEEE", cart, iBeg)
-
-  // }
-  // const backupCard = {
-  //   id: 8,
-  //   card_title: '1st Edition Venusaur PSA 10',
-  //   description:
-  //    '1st edition Venusaur PSA 10 gem-mint super Rare, perfect for any pokemon collector',
-  //   price: 560,
-  //   view_count: 97,
-  //   card_img: 'https://i.ebayimg.com/00/s/MTE1Mlg3Njg=/z/v3UAAOSw7bla~WOX/$_58.JPG',
-  // }
-
-  // const { id, card_title, description, price, view_count, card_img } = backupCard;
-
-  // let cartDivs = [];
-  // async function pleaseWork () {
-  //   try {
-  //     const TOKEN = getToken();
-  //     const res = await getCart(userDATA.id, TOKEN);
-  //     console.log(res, "The One N Only");
-  //     cartDivs = res;
-  //     return res;
-  //   } catch (err) {
-  //     throw err;
-  //   }
-  // }
-  // pleaseWork();
-
-  // console.log(cartDivs);
-  console.log(cart)
-  let cartSize = cart.length;
+  let cartSize = 1;
   let totalPrice = 0;
   let tax = 0.10;
   let grandTotal = 0;
 
-  const cartDivs = cart.map(function (item, index) {
-    const { 
-      cardId,
-      card_title, 
-      card_img,
-      creation_date,
-      description,
-      cartId,
-      price,
-      active,
-      quanity,
-      userId,
-      view_count,
-      quantity
-    } = item;
+  const guestCart = localStorage.getItem('CardEXGCart');
+  let parsedGCart;
+  if (guestCart) { parsedGCart = JSON.parse(guestCart); }
 
-    totalPrice = totalPrice + price;
-    grandTotal = totalPrice + (totalPrice * tax) + 9.95;
-    
-     
-    return ( 
-      <div className=" ItemContainer d-flex justify-content-between align-items-center mt-3 p-2 items rounded" key={index}>
-        <div className=" itemInfo d-flex flex-row">
-          <img
-            className="rounded"
-            src={card_img}
-            alt={card_title}
-          />
-          <div className=" itemInfo ml-2">
-            <span className="font-weight-bold d-block">
-              {card_title}  
-            </span>
-            <div className="spec" style={{fontSize: "0.8rem"}}>{description}</div>
-          </div>
-        </div>
-        <div className="itemInfoRight row " >
-          <div>
-            <RiDeleteBin6Fill
-              className="delBtn" 
-              size={24} 
-              style={{color: 'red', marginRight: '5px'  }}
-              onClick={deleteCartItem(cardId)}
-              
+  const deleteCartItem =  async (itemID) => {
+    console.log("I work")
+    if (userTOKEN) {
+      try {
+        console.log(itemID)
+        const res = await removeItemFromCart(itemID, userTOKEN);
+        console.log(res, "This is CART Componenet");
+        console.log(userDATA)
+        const updatedCart = await getCart(userDATA.id, userTOKEN);
+        console.log("the cart", updatedCart);
+        // setCart(updatedCart);
+      } catch (err) {
+        console.log(err);
+      }
+    } else if  (parsedGCart) {
+      parsedGCart = parsedGCart.filter(item => item.cardId === itemID);
+      cart = parsedGCart;
+    }
+  }
+
+  async function getCart() {
+    let cart;
+    fetch(`/api/cart/${userDATA.id}`, {
+      method: 'get',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${userTOKEN}`,
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        cart = data.data;
+        console.log(data.data);
+        setCart(data.data)
+      })
+      .catch((err) => {
+        console.log('Error: ', err);
+      });
+  }
+
+  useEffect(() => {
+    getCart()
+  }, []);
+  console.log(cart)
+
+  const backupCard = {
+    id: 8,
+    card_title: '1st Edition Venusaur PSA 10',
+    description:
+     '1st edition Venusaur PSA 10 gem-mint super Rare, perfect for any pokemon collector',
+    price: 560,
+    view_count: 97,
+    card_img: 'https://i.ebayimg.com/00/s/MTE1Mlg3Njg=/z/v3UAAOSw7bla~WOX/$_58.JPG',
+  }
+
+  const { id, card_title, description, price, view_count, card_img } = backupCard;
+
+    const cartDivs = cart.map(function (item, index) {
+      const { 
+        cardId,
+        card_title, 
+        card_img,
+        creation_date,
+        description,
+        cartId,
+        price,
+        active,
+        quanity,
+        userId,
+        view_count,
+        quantity
+      } = item;
+
+      totalPrice = totalPrice + price;
+      grandTotal = totalPrice + (totalPrice * tax) + 9.95;
+
+      return ( 
+        <div className=" ItemContainer d-flex justify-content-between align-items-center mt-3 p-2 items rounded" key={index}>
+          <div className=" itemInfo d-flex flex-row">
+            <img
+              className="rounded"
+              src={card_img}
+              alt={card_title}
             />
+            <div className=" itemInfo ml-2">
+              <span className="font-weight-bold d-block">
+                {card_title}  
+              </span>
+              <div className="spec" style={{fontSize: "0.8rem"}}>{description}</div>
+            </div>
           </div>
-          <div className=" priceInfo d-flex flex-row align-items-center">
-            <span className="d-block"> Quantity: {quantity}</span>
-            <div className=" d-flex ml-5 font-weight-bold"><span></span> {formatter.format(price)}</div>
-            <i className="fa fa-trash-o ml-3 text-black-50" />
+          <div className="itemInfoRight row " >
+            <div style={{backgroundColor: 'transparent'}}>
+              <RiDeleteBin6Fill
+                className="delBtn" 
+                size={24} 
+                style={{color: 'red', marginRight: '5px'  }}
+                // onClick={deleteCartItem(cardId)}
+              />
+            </div>
+            <div className=" priceInfo d-flex flex-row align-items-center">
+              <span className="d-block"> Quantity: {quantity}</span>
+              <div className=" d-flex ml-5 font-weight-bold"><span></span> {formatter.format(price)}</div>
+              <i className="fa fa-trash-o ml-3 text-black-50" />
+            </div>
           </div>
         </div>
-      </div>
-    );     
-  });
+      )  
+    });
+
       return (
       <div className=" cartComponet container mt-5 p-3 rounded cart" >
         {/* <div className=""> */}
@@ -186,7 +189,7 @@ console.log( "AYEEE", cart, iBeg)
                 </div>
               </div> */}
 
-              <div className="cartItemsContainer"> { cartDivs } </div>
+              <div className="cartItemsContainer"> {cartDivs} </div>
 
               {/* <div className="  d-flex justify-content-between align-items-center mt-3 p-2 items rounded">
                 <div className="d-flex flex-row">
@@ -319,15 +322,15 @@ console.log( "AYEEE", cart, iBeg)
                 </div>
                 <div className="d-flex justify-content-between information">
                   <span>Shipping</span>
-                  <span>$ 9.95</span>
+                  <span>$9.95</span>
                 </div>
                 <div className="d-flex justify-content-between information">
                   <span>Taxes</span>
-                  <span> {totalPrice > 0 ? "$ " + totalPrice * tax : ""} ({totalPrice > 0 ? tax * 100 + "%" : "-- %"}) </span>
+                  <span> {totalPrice > 0 ? "$" + totalPrice * tax : ""} ({totalPrice > 0 ? tax * 100 + "%" : "-- %"}) </span>
                 </div>
                 <div className="d-flex justify-content-between information">
                   <span>Grand Total</span>
-                  <span style={{color: '#5dff5dcc'}}>$ {formatter.format(grandTotal)}</span>
+                  <span style={{color: '#5dff5dcc'}}> {formatter.format(grandTotal)}</span>
                 </div>
               </div>
 
