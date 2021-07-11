@@ -6,14 +6,16 @@ import LeftNavBar from "./components/SideBar/SideBar.js";
 import PlayingCards from "./components/Cards/Cards";
 import Cart from "./components/Cart/Cart";
 import { LoginPage, AdminPage } from "./components/index.js";
+import { CSSTransition } from 'react-transition-group'
+import { ToastContainer, toast, cssTransition } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   getAllCards,
   userLogin,
   parseUserToken,
   getCart,
 } from "./api";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+
 
 import "./App.css";
 
@@ -34,9 +36,15 @@ const App = () => {
   //     .catch(console.error);
   // }, []);
 
+  const bounce = cssTransition({
+    enter: "animate__animated animate__bounceIn",
+    exit: "animate__animated animate__bounceOut"
+  });
+
   const notifyWelcome = (message) => {
     toast.success(message, {
       position: toast.POSITION.TOP_CENTER,
+      transition: bounce,
     });
   }
   const notifyWelcomeWarn = (message) => {
@@ -58,6 +66,20 @@ const App = () => {
     });
   
   const token = localStorage.getItem("CardEXtoken");
+  const jwt = require("jsonwebtoken");
+
+  const { REACT_APP_JWT_SECRET } = process.env;
+  
+  const userInfo = () => {
+    if (token) {
+      return jwt.verify(token, REACT_APP_JWT_SECRET);
+    }
+  } 
+  console.log(token, "ayeeee")
+  console.log(userInfo())
+  
+
+
   const [cards, setCards] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState();
   const [errMsgText, setErrMsgText] = useState("");
@@ -65,26 +87,57 @@ const App = () => {
   const [user, setUser] = useState({});
   const [cart, setCart] = useState([]);
   const [userDATA, setUserDATA] = useState({});
+  const [userTOKEN, setUserTOKEN] = useState(token);
+  const sleepyyyyy = userInfo();
+  // setUserDATA(sleepyyyyy);
+  console.log(sleepyyyyy);
 
-  // useEffect(() => {
-  //   async function fetchData() {
+
+
+
+  
+  
+  // const WelcomeFunction = async () =>{
+  //   const isPrevUser = localStorage.getItem("CardEXtoken");
+  //   console.log(isPrevUser)
+  //   // await parseUserToken()
+  //   //   .then((userInfo) => {
+  //   //     console.log(userInfo);
+  //   //     setUserDATA(userDATA);
+  //   //   })
+  //   //   .catch((err) => {
+  //   //     console.log(err);
+  //   //   });
+    
+  // }
+  // WelcomeFunction();
+  
+  useEffect(() => {
+    // async function fetchUser() {
+    //   const userInfo = await parseUserToken();
+    //   setUserDATA(userInfo);
+    //   return userInfo.id;
+    // }
+    // async function fetchCart() {
+    //   const userInfo = 
+    //   const res = await getCart(userInfo.id, token);
+    //   console.log(res, "APP Front End");
+    //   setCart(res);
       
-  //     // console.log(userDATA);
-  //   }
-  //   fetchData();
-  // }, []);
+    // }
+    // fetchCart();
+  },[]);
 
   useEffect(() => {
     retrieveCards();
+    getCurrentCart(userInfo.id);
+    // getCart(userDATA.id, token);
     async function fetchData() {
       if (token) {
         setIsLoggedIn(true);
-        const response = await parseUserToken();
-        setUserDATA(response);
-        console.log(response);
-        const res = await getCart(userDATA.id, token);
-        console.log(res, "APP Front End");
-        setCart(res);
+        // const response = await parseUserToken();
+        // setUserDATA(response);
+        // console.log(response, "AYEE YO");
       } else {
         const isPrevUser = localStorage.getItem("CardExGuest");
         if (!isPrevUser) {
@@ -112,7 +165,6 @@ const App = () => {
   const retrieveCards = () => {
     getAllCards()
       .then((card) => {
-        console.log(card);
         setCards(card);
         return card;
       })
@@ -121,6 +173,40 @@ const App = () => {
       });
   };
 
+  // const getUser = () => {
+  //    aysnc function fetchUser() {
+  //     // const userInfo = await parseUserToken();
+      
+  //     const res =  await getCart(userInfo.id, token);
+  //     console.log(res, "APP Front End");
+  //     setCart(res);
+  //   }
+  //   return fetchUser();
+  // }
+
+  const getCurrentCart = (userId) => {
+    async function fetchCart() {
+      const val = await getCart(userDATA.id, userTOKEN);
+      console.log(val);
+      setCart(val);
+      return val;
+    }
+    return fetchCart();
+  }
+
+  const getCartZZZZ = async () => {
+    return await getCart(userDATA.id, userTOKEN);
+  }
+
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  
+    // These options are needed to round to whole numbers if that's what you want.
+    minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+    maximumFractionDigits: 2, // (causes 2500.99 to be printed as $2,501)
+  });
+
   return (
     <Router>
       <Navbar
@@ -128,7 +214,7 @@ const App = () => {
         setIsLoggedIn={setIsLoggedIn}
         user={user}
         logoutAnim={notifyLogout}
-        userDATA={userDATA}
+        userDATA={sleepyyyyy}
         setUserDATA={setUserDATA}
       />
       <ToastContainer />
@@ -145,7 +231,7 @@ const App = () => {
                   reset={retrieveCards}
                   cart={cart}
                   setCart={setCart}
-                  userDATA={userDATA}
+                  userDATA={sleepyyyyy}
                 />
               </div>
             </body>
@@ -156,13 +242,18 @@ const App = () => {
             setIsLoggedIn={setIsLoggedIn}
             setUser={setUser}
             setUserDATA={setUserDATA}
-            userDATA={userDATA}
+            userDATA={sleepyyyyy}
             notifySignup={notifySignup}
             notifyLogin={notifyLogin}
           />
         </Route>
         <Route path="/cart">
-          <Cart cart={cart} setCart={setCart} userDATA={userDATA} />
+          <Cart cart={cart} setCart={setCart} 
+            userDATA={sleepyyyyy}
+            formatter={formatter} 
+            userTOKEN={userTOKEN} setUserTOKEN={setUserTOKEN}
+            PLEASEcart={getCartZZZZ}
+          />
         </Route>
         <Route path="/admin" component={AdminPage} />
       </Switch>

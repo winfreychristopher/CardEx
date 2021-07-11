@@ -8,11 +8,22 @@ import { IoBagCheckOutline } from 'react-icons/io5';
 import "./Cart.scss";
 import { JsonWebTokenError } from 'jsonwebtoken';
 
-const Cart = ({cart, setCart, userDATA}) => {
+const Cart = ({cart, setCart, userDATA, formatter, userTOKEN, setUserTOKEN}) => {
   // const Card = {
   //   name: "Thanos Card",
   //   price: "$4,000",
   //   descrption: "",
+
+  // const generateCart = async () => {
+  //   console.log(userDATA.username)
+  //   if (userDATA.id) {
+  //     const res = await getCart(userDATA, userTOKEN);
+  //     console.log(res)
+  //     setCart(res);
+  //     console.log(cart)
+  //   }
+  // }
+  // generateCart();
   
   const deleteCartItem =  async (itemID) => {
     const TOKEN = getToken();
@@ -20,24 +31,30 @@ const Cart = ({cart, setCart, userDATA}) => {
       console.log(itemID)
       const res = await removeItemFromCart(itemID, TOKEN);
       console.log(res, "This is CART Componenet");
+      console.log(userDATA)
       const updatedCart = await getCart(userDATA.id, TOKEN);
+      console.log("the cart", updatedCart);
       // setCart(updatedCart);
     } catch (err) {
       console.log(err);
     }
   }
 
-  var formatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  
-    // These options are needed to round to whole numbers if that's what you want.
-    minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
-    maximumFractionDigits: 2, // (causes 2500.99 to be printed as $2,501)
-  });
+
+let iBeg = [];
+const test = async () => {
+  if (userTOKEN) {
+    console.log(cart)
+    iBeg = await getCart(userDATA.id, userTOKEN);
+    console.log(cart);
+    return iBeg;
+  }
+}
+iBeg = test();
+cart = iBeg
+console.log( "AYEEE", cart, iBeg)
 
   // }
-  console.log(cart)
   // const backupCard = {
   //   id: 8,
   //   card_title: '1st Edition Venusaur PSA 10',
@@ -65,6 +82,7 @@ const Cart = ({cart, setCart, userDATA}) => {
   // pleaseWork();
 
   // console.log(cartDivs);
+  console.log(cart)
   let cartSize = cart.length;
   let totalPrice = 0;
   let tax = 0.10;
@@ -88,7 +106,6 @@ const Cart = ({cart, setCart, userDATA}) => {
 
     totalPrice = totalPrice + price;
     grandTotal = totalPrice + (totalPrice * tax) + 9.95;
-    console.log(card_title)
     
      
     return ( 
@@ -112,6 +129,7 @@ const Cart = ({cart, setCart, userDATA}) => {
               className="delBtn" 
               size={24} 
               style={{color: 'red', marginRight: '5px'  }}
+              onClick={deleteCartItem(cardId)}
               
             />
           </div>

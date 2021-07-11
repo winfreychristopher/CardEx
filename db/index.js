@@ -355,6 +355,10 @@ async function createCardTag(cardId, tagId) {
 
 async function createCartItem(userId, cardId, quantity) {
   try {
+
+
+
+
     let usersCart = await getCartByUserId(userId);
     if (usersCart === undefined) {
       usersCart = await createCart(userId);
@@ -454,7 +458,7 @@ async function addCardToCart(userId, cardId, quantity) {
         `,
       [cardId]
     );
-    console.log("create cart item", card);
+    console.log("create cart item", card); 
     await createCartItem(userId, card.id, quantity);
     console.log("get card by user Id");
     return await getCardUserById(userId);
@@ -487,27 +491,6 @@ async function deleteCardFromCart(userId, cardId) {
 
 async function getCardUserById(userId) {
   try {
-    const {
-      rows: [user],
-    } = await client.query(
-      `
-    SELECT users.ID
-    FROM users
-    WHERE id=$1
-    `,
-      [userId]
-    );
-    console.log(user, "I BEFORE Other");
-
-    if (!user) {
-      throw ({
-        name: "UserNotFound",
-        message: "Could not find a user with that id",
-      });
-    }
-
-    console.log(userId, "!@#$!!!");
-    console.log("CHECK FOR ACTIVITY");
     const { rows: cards } = await client.query(
       `
       SELECT *
@@ -518,14 +501,9 @@ async function getCardUserById(userId) {
     `,
       [userId]
     );
-    console.log(cards, "SEE MEEE");
-    user.cart = cards;
-    console.log(user.cart, "I AM H");
-    console.log(cards, "I LIVE");
-
-    return user;
+    return cards;
   } catch (error) {
-    throw (error, "THIS GII!!!");
+    throw (error);
   }
 }
 

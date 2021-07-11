@@ -30,10 +30,15 @@ apiRouter.use(async (req, res, next) => {
     if (token !== null) {
       console.log(token)
       try {
-        const test = jwt.verify(token, JWT_SECRET);
-        if (test.id) {
-          req.user = await getUserById(test.id);
+        const userInfo = jwt.verify(token, JWT_SECRET);
+        if (userInfo) {
+          req.user = await getUserById(userInfo.id);
           next();
+        } else {
+          next({ 
+            name: 'Error 747: Bad Token', 
+            message: 'Please Relog for a fresh Authorization Token.' 
+          });
         }
       } catch ({ name, message }) {
         console.log(message, "YA SEE")

@@ -190,7 +190,8 @@ export async function getCart(id, token) {
     // Old Return that Only returned CardID's not CardObjects
     // return data.data.data;
     console.log("BOTTOM!!!");
-    return data.data.cart;
+    console.log(data.data)
+    return data.data;
   } catch (error) {
     console.error("Error getting cart");
     throw error;
@@ -218,7 +219,7 @@ export async function addItemToCart(userId, cardId, token) {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log("WE ARE IN API, BOTTOM 168", data);
+
     return data;
   } catch (error) {
     console.error("Error adding to cart");

@@ -32,23 +32,21 @@
 // }
 
 .cartComponet {
-    /* display: flex; */
     flex-flow: row wrap;
     transform: scale(1.04);
-    /* height: 73vh; */
     width: 100vw;
     display: flex;
-    /* flex-direction: column; */
     justify-content: center;
     overflow: auto;
     height: -moz-fit-content;
     height: fit-content;
     width: fit-content !important;
     padding: 30px;
+    background-color: #f8f9fa00;
 
   .cartPgTitle {
     font-family: 'Tourney', cursive;
-    text-shadow: 1px 2px 2px #f73e25;
+    text-shadow: 2px 2px 2px #f73e25;
     margin-bottom: 4px;
     text-align: center;
     font-size: 2rem;
@@ -63,10 +61,14 @@
     align-items: center;
   }
   .cartsubInfo {
-    font-family: 'Source Sans Pro', sans-serif;
-    font-size: larger;
+    font-family: "Source Sans Pro", sans-serif;
+    font-size: 1rem;
     margin-bottom: 6px;
-    
+    color: #faab02;
+    text-shadow: 1px 2px 4px black;
+    background-color: #22222269;
+    padding: 10px;
+    align-items: center; 
   }
 }
 

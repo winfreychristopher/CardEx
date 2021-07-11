@@ -55,24 +55,24 @@ const PlayingCards = ({cards, setCards, reset,
   }
 
   
-  const addToCart = async (userID, itemID, quantity = 1) => {
+  const addToCart = async (user, itemID, quantity = 1) => {
     console.log(itemID);
     try {
       const TOKEN = getToken();
       if (TOKEN) {
-        const response = await addItemToCart(userID, itemID, TOKEN, quantity)
+        const response = await addItemToCart(user.id, itemID, TOKEN, quantity)
         console.log(response.cartContent.cart);
-        const currentCart = await getCart(userID, TOKEN);
+        const currentCart = await getCart(user.id, TOKEN);
         console.log(currentCart);
-        setCart(response.cartContent.cart);
+        setCart(currentCart);
       } else {
         let clickedCard = await getCard(itemID);
         let guestCart = [];
         guestCart = cart;
         guestCart.push(clickedCard);
-        setCart(guestCart)
+        console.log(guestCart, "I'm In CARDS")
+        setCart(guestCart);
         localStorage.setItem("CardEXGCart", JSON.stringify(guestCart));
-        console.log(guestCart)
       }
       
     } catch (err) {
@@ -131,7 +131,7 @@ const PlayingCards = ({cards, setCards, reset,
           <button id="add-to-cart-button"
             onClick={(e) => {
               addBtnAnimation(e);
-              addToCart(userDATA.id, id);
+              addToCart(userDATA, id);
             }}
           >
             <svg class="add-to-cart-box box-1" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="2" fill="#ffffff"/></svg>

@@ -95,8 +95,7 @@ async function buildTables() {
                 "cartId" INTEGER REFERENCES cart(ID),
                 "cardId" INTEGER REFERENCES cards(ID),
                 quantity INTEGER NOT NULL,
-                active BOOLEAN DEFAULT TRUE,
-                UNIQUE("cartId", "cardId")
+                active BOOLEAN DEFAULT TRUE
             );
             CREATE TABLE order_cards(
                 ID SERIAL PRIMARY KEY,

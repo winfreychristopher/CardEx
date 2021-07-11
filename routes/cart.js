@@ -14,7 +14,6 @@ const {
   getCardUserById,
   deleteCardFromCart,
 } = require("../db");
-const cardsRouter = require("./cards");
 
 cartRouter.use((req, res, next) => {
   console.log("A request is being made to /cart");
@@ -28,11 +27,12 @@ cartRouter.get("/:userId", requireUser, async (req, res, next) => {
     // Old function that only returned the List of Card ID's Not card objects
     // const cart = await getUserCartProducts(cartId);
     const cart = await getCardUserById(userId);
-    console.log(cart, "ME I SEE");
+    console.log(cart);
     res.send({
       message: "Cart retrived Successfully!",
       data: cart,
     });
+    console.log(cart);
     return cart;
   } catch (error) {
     next(error);
@@ -61,7 +61,7 @@ cartRouter.post("/:userId/:cardId", async (req, res, next) => {
     // console.log(cart.cart, "YELLOW");
     // const [test] = cart;
     res.send({
-      message: "Successfully added Card",
+      message: "Successfully added Card to Cart",
       cartContent: cart,
     });
   } catch (error) {
