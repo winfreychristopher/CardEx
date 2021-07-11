@@ -167,6 +167,7 @@ const App = () => {
   const retrieveCards = () => {
     getAllCards()
       .then((card) => {
+        console.log(card)
         setCards(card);
         return card;
       })

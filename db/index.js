@@ -118,17 +118,18 @@ async function createCard({
   price,
   card_img,
   view_count,
+  quantity,
 }) {
   try {
     const {
       rows: [card],
     } = await client.query(
       `
-        INSERT INTO cards(card_title, description, price, card_img, view_count)
-        VALUES($1, $2, $3, $4, $5)
+        INSERT INTO cards(card_title, description, price, card_img, view_count, quantity)
+        VALUES($1, $2, $3, $4, $5, $6)
         RETURNING *;
         `,
-      [card_title, description, price, card_img, view_count]
+      [card_title, description, price, card_img, view_count, quantity]
     );
 
     return card;
@@ -355,10 +356,6 @@ async function createCardTag(cardId, tagId) {
 async function createCartItem(userId, cardId, quantity = 1) {
 
   try {
-
-
-
-
     let usersCart = await getCartByUserId(userId);
     if (usersCart === undefined) {
       usersCart = await createCart(userId);
@@ -474,17 +471,39 @@ async function deleteCardFromCart(userId, cardId) {
     } = await client.query(
       `
         DELETE FROM cart_products
-        WHERE "cartId"=$1 AND "cardId"=$2
+        WHERE "cartId"=$1 AND "id"=$2
         RETURNING *;
       `, [userCart.id, cardId]
     );
-
+      console.log(deletedCard)
     return deletedCard;
   } catch (error) {
     console.error("Could not delete card");
     throw error;
   }
 }
+
+// async function deleteCardFromCart(userId, cardId) {
+//   try {
+//     const userCart = await getCartByUserId(userId);
+//     console.log("USER CART", userCart);
+//     const {
+//       rows: [deletedCard],
+//     } = await client.query(
+//       `
+//     DELETE FROM cart_products
+//     WHERE cartId = $(1) AND cardId = ($2)
+//     RETURNING *;
+//     `,
+//       userCart[0].id,
+//       cardId
+//     );
+//     return deletedCard;
+//   } catch (error) {
+//     console.error("Could not delete card");
+//     throw error;
+//   }
+// }
 
 async function getCardUserById(userId) {
   try {
@@ -498,6 +517,7 @@ async function getCardUserById(userId) {
     `,
       [userId]
     );
+    console.log("I AM THE GOOD DAYTA", cards)
     return cards;
   } catch (error) {
     throw (error);
@@ -552,28 +572,6 @@ async function deleteCard(cardId) {
     throw error;
   }
 }
-
-// async function deleteCardFromCart(userId, cardId) {
-//   try {
-//     const userCart = await getCartByUserId(userId);
-//     console.log("USER CART", userCart);
-//     const {
-//       rows: [deletedCard],
-//     } = await client.query(
-//       `
-//     DELETE FROM cart_products
-//     WHERE cartId = $(1) AND cardId = ($2)
-//     RETURNING *;
-//     `,
-//       userCart[0].id,
-//       cardId
-//     );
-//     return deletedCard;
-//   } catch (error) {
-//     console.error("Could not delete card");
-//     throw error;
-//   }
-// }
 
 async function createUserOrder(userId, cartId) {
   try {

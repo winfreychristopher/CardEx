@@ -36,16 +36,13 @@ const Cart = ({cart, setCart, userDATA, formatter, userTOKEN,
   if (guestCart) { parsedGCart = JSON.parse(guestCart); }
 
   const deleteCartItem =  async (itemID) => {
-    console.log("I work")
     if (userTOKEN) {
       try {
         console.log(itemID)
         const res = await removeItemFromCart(itemID, userTOKEN);
         console.log(res, "This is CART Componenet");
-        console.log(userDATA)
-        const updatedCart = await getCart(userDATA.id, userTOKEN);
-        console.log("the cart", updatedCart);
-        // setCart(updatedCart);
+        let updatedCart = cart.filter(item => item.cardId !== itemID);
+        setCart(updatedCart);
       } catch (err) {
         console.log(err);
       }
@@ -107,6 +104,7 @@ const Cart = ({cart, setCart, userDATA, formatter, userTOKEN,
         view_count,
         quantity
       } = item;
+      console.log(cart)
 
       totalPrice = totalPrice + price;
       grandTotal = totalPrice + (totalPrice * tax) + 9.95;
@@ -132,7 +130,9 @@ const Cart = ({cart, setCart, userDATA, formatter, userTOKEN,
                 className="delBtn" 
                 size={24} 
                 style={{color: 'red', marginRight: '5px'  }}
-                // onClick={deleteCartItem(cardId)}
+                onClick={
+                  () => {deleteCartItem(cardId)}
+                }
               />
             </div>
             <div className=" priceInfo d-flex flex-row align-items-center">

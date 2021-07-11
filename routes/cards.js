@@ -46,8 +46,18 @@ cardsRouter.get("/:cardId", async (req, res, next) => {
 });
 
 cardsRouter.post("/", requireUser, async (req, res, next) => {
-  const { card_title, description, price, card_img, view_count } = req.body;
+  // Math.floor(Math.random() * 100 );
+  const { 
+    card_title, 
+    description, price, 
+    card_img, view_count, 
+    quantity,
+  } = req.body;
   const cardData = {};
+  let ranNum;
+  if (!quantity) {
+    ranNum = Math.floor(Math.random() * 100);
+  }
 
   try {
     cardData.card_title = card_title;
@@ -55,6 +65,7 @@ cardsRouter.post("/", requireUser, async (req, res, next) => {
     cardData.price = price;
     cardData.card_img = card_img;
     cardData.view_count = view_count;
+    ranNum ? cardData.quantity = ranNum : cardData.quantity = quantity;
 
     const card = await createCard(cardData);
     res.send(card);
