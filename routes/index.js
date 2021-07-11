@@ -19,6 +19,7 @@ apiRouter.get("/health", async (req, res, next) => {
 });
 
 apiRouter.use(async (req, res, next) => {
+
   const prefix = "Bearer ";
   const auth = req.header("Authorization");
 
@@ -26,20 +27,27 @@ apiRouter.use(async (req, res, next) => {
     next();
   } else if (auth.startsWith(prefix)) {
     const token = auth.slice(prefix.length);
-    try {
-      const test = jwt.verify(token, JWT_SECRET);
-      if (test.id) {
-        req.user = await getUserById(test.id);
-        next();
+    if (token !== null) {
+      console.log(token)
+      try {
+        const test = jwt.verify(token, JWT_SECRET);
+        if (test.id) {
+          req.user = await getUserById(test.id);
+          next();
+        }
+      } catch ({ name, message }) {
+        console.log(message, "YA SEE")
+        next({ name, message });
       }
-    } catch ({ name, message }) {
-      next({ name, message });
+    } else {
+
+      next({
+        name: "TokenError",
+        message: `Authorization starts with ${prefix} but followed by empty string.`,
+      });
+
     }
-  } else {
-    next({
-      name: "AuthorizationHeaderError",
-      message: `Authorization token must start with ${prefix}`,
-    });
+      
   }
 });
 

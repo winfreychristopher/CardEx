@@ -9,7 +9,6 @@ import { LoginPage, AdminPage } from "./components/index.js";
 import {
   getAllCards,
   userLogin,
-  getToken,
   parseUserToken,
   getCart,
 } from "./api";
@@ -35,6 +34,16 @@ const App = () => {
   //     .catch(console.error);
   // }, []);
 
+  const notifyWelcome = (message) => {
+    toast.success(message, {
+      position: toast.POSITION.TOP_CENTER,
+    });
+  }
+  const notifyWelcomeWarn = (message) => {
+    toast.warn(message, {
+      position: toast.POSITION.TOP_CENTER,
+    });
+  }
   const notifySignup = () =>
     toast.success("Sign Up Successful, redirecting to Home Page!", {
       position: toast.POSITION.TOP_CENTER,
@@ -47,7 +56,8 @@ const App = () => {
     toast.warn("Logged out Successfully, redirecting to Login Page!", {
       position: toast.POSITION.TOP_CENTER,
     });
-
+  
+  const token = localStorage.getItem("CardEXtoken");
   const [cards, setCards] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState();
   const [errMsgText, setErrMsgText] = useState("");
@@ -56,26 +66,45 @@ const App = () => {
   const [cart, setCart] = useState([]);
   const [userDATA, setUserDATA] = useState({});
 
-  useEffect(() => {
-    async function fetchData() {
-      const response = await parseUserToken();
-      console.log(response);
-      setUserDATA(response);
-      // console.log(userDATA);
-    }
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   async function fetchData() {
+      
+  //     // console.log(userDATA);
+  //   }
+  //   fetchData();
+  // }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem("CardEXtoken");
-    if (token) {
-      setIsLoggedIn(true);
-    }
+
     retrieveCards();
     async function fetchData() {
-      const res = await getCart(userDATA.id, token);
-      console.log(res, "APP Front End");
-      setCart(res);
+      if (token) {
+        setIsLoggedIn(true);
+        const response = await parseUserToken();
+        setUserDATA(response);
+        const res = await getCart(userDATA.id, token);
+        console.log(res, "APP Front End");
+        setCart(res);
+      } else {
+        const isPrevUser = localStorage.getItem("CardExGuest");
+        if (!isPrevUser) {
+          notifyWelcome(
+            `Welcome, to the Nation's largest Card Trading platform! 
+              Founded in 2021 in the heart of Baton Rouge, LA!`
+          );
+          notifyWelcomeWarn(
+            `Our site is still going through some Home Improvements but we 
+            look forward to serving you the best we can progress.`
+          );
+          const guestToken = 'Thank you for visting CardEX-US';
+          localStorage.setItem("CardExGuest", guestToken);
+        }
+        const guestCart = localStorage.getItem("CardEXGCart");
+        const parsedCart = JSON.parse(guestCart);
+        if (guestCart) {
+          setCart(parsedCart);
+        }
+      }
     }
     fetchData();
   }, [userDATA]);
@@ -91,7 +120,6 @@ const App = () => {
         console.log(err);
       });
   };
-  useEffect(() => {}, []);
 
   return (
     <Router>

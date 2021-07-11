@@ -35,7 +35,6 @@ export const getToken = () => {
 export async function getAllCards() {
   try {
     const { data } = await axios.get("/api/cards");
-    console.log("EMAN", data);
     return data;
   } catch (error) {
     throw error;
@@ -194,7 +193,6 @@ export async function getCart(id, token) {
     return data.data.cart;
   } catch (error) {
     console.error("Error getting cart");
-    notifyBad("Error getting cart");
     throw error;
   }
 }

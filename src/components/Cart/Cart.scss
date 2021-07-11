@@ -2,6 +2,8 @@
 @import "../../../node_modules/bootstrap/scss/grid";
 @import "../../../node_modules/bootstrap/scss/utilities/spacing";
 @import "../../../node_modules/bootstrap/scss/reboot";
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,300;0,400;0,600;0,700;1,200;1,300;1,400;1,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Tourney:ital,wght@0,200;0,300;0,400;1,200&display=swap');
 
 
 // .cartContainer {
@@ -30,28 +32,76 @@
 // }
 
 .cartComponet {
-  display: flex;
-  flex-flow: row wrap;
-  transform: scale(1.1);
-  height: 73vh;
-  width: 100vw;
+    /* display: flex; */
+    flex-flow: row wrap;
+    transform: scale(1.04);
+    /* height: 73vh; */
+    width: 100vw;
+    display: flex;
+    /* flex-direction: column; */
+    justify-content: center;
+    overflow: auto;
+    height: -moz-fit-content;
+    height: fit-content;
+    width: fit-content !important;
+    padding: 30px;
+
+  .cartPgTitle {
+    font-family: 'Tourney', cursive;
+    text-shadow: 1px 2px 2px #f73e25;
+    margin-bottom: 4px;
+    text-align: center;
+    font-size: 2rem;
+  }
   
   .cartItemsContainer {
     overflow: auto;
     height: 58vh;
+    display: flex;
+    flex-flow: column nowrap;
+    /* justify-content: center; */
+    align-items: center;
+  }
+  .cartsubInfo {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: larger;
+    border-bottom: 2px rgba(0, 0, 0, 0.137) solid;
+    
   }
 }
 
 .payment-info {
-  background: rgba(33, 33, 34, 0.849);
+  // background: rgba(33, 33, 34, 0.849);
+  // padding: 10px;
+  // border-radius: 6px;
+  // color: #fff;
+  // font-weight: bold;
+  // justify-self: flex-end;
+  // width: 73vw;
+  // padding: 20px;
+  // justify-self: center;
+  // align-self: center;
+  // margin-left: 5vw;
+  // margin-top: 30px;
+  // margin-bottom: 100px;
+  background: rgba(33, 33, 34, 0.89);
   padding: 10px;
-  border-radius: 6px;
+  border-radius: 8px;
   color: #fff;
   font-weight: bold;
-  justify-self: flex-end;
+  /* justify-self: flex-end; */
+  /* width: 73vw; */
+  padding: 20px;
+  justify-self: center;
+  align-self: center;
 }
 .product-details {
-  padding: 15px
+  display: flex;
+  flex-direction: column;
+  justify-content:space-around;
+  padding: 35px;
+  width: fit-content;
+  width: 84vw;
 }
 
 .cart {
@@ -64,6 +114,7 @@
   -webkit-box-shadow: 5px 5px 15px -2px rgba(0, 0, 0, 0.42);
   box-shadow: 5px 5px 15px -2px rgba(0, 0, 0, 0.42)
 }
+
 
 .ItemContainer {
   border-bottom: 2px rgba(0, 0, 0, 0.205) solid;

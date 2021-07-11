@@ -59,7 +59,6 @@ const PlayingCards = ({cards, setCards, reset,
     console.log(itemID);
     try {
       const TOKEN = getToken();
-      console.log(userID)
       if (TOKEN) {
         const response = await addItemToCart(userID, itemID, TOKEN)
         console.log(response.cartContent.cart);
@@ -67,11 +66,12 @@ const PlayingCards = ({cards, setCards, reset,
         console.log(currentCart);
         setCart(response.cartContent.cart);
       } else {
-        let clickedCard = await getCard(itemID)
+        let clickedCard = await getCard(itemID);
         let guestCart = [];
         guestCart = cart;
         guestCart.push(clickedCard);
         setCart(guestCart)
+        localStorage.setItem("CardEXGCart", JSON.stringify(guestCart));
         console.log(guestCart)
       }
       
@@ -94,7 +94,8 @@ const PlayingCards = ({cards, setCards, reset,
       description,
       id,
       price,
-      view_count
+      view_count,
+      quantity
     } = card;
 
     return (
@@ -118,7 +119,7 @@ const PlayingCards = ({cards, setCards, reset,
                   <div >${price}</div>
                 </h4>
               </div>
-              <div className="row m-0 p-0 font-weight-bold">1 in stock</div>
+              <div className="row m-0 p-0 font-weight-bold">{quantity} in stock</div>
             </div>
           </div>
         </div>

@@ -73,7 +73,8 @@ const Cart = ({cart, setCart, userDATA}) => {
       active,
       quanity,
       userId,
-      view_count
+      view_count,
+      quantity
     } = item;
 
     totalPrice = totalPrice + price;
@@ -105,7 +106,7 @@ const Cart = ({cart, setCart, userDATA}) => {
             />
           </div>
           <div className=" priceInfo d-flex flex-row align-items-center">
-            <span className="d-block"> Quantity:1</span>
+            <span className="d-block"> Quantity: {quantity}</span>
             <div className=" d-flex ml-5 font-weight-bold"><span>$ </span> {price}</div>
             <i className="fa fa-trash-o ml-3 text-black-50" />
           </div>
@@ -115,21 +116,21 @@ const Cart = ({cart, setCart, userDATA}) => {
   });
       return (
       <div className=" cartComponet container mt-5 p-3 rounded cart" >
-        <div className=" row no-gutters">
-          <div className=" outItemCont col-md-8">
+        {/* <div className=""> */}
+          <div className=" outItemCont">
             <div className="product-details mr-2">
               <div className="d-flex flex-row align-items-center">
                 {/* {ArrowBackIosIcon} */}
                 <span className=" contShopping ml-2"><a href="/">Continue Shopping</a></span>
               </div>
               <hr />
-              <h4 className=" mb-0">Shopping cart</h4>
-              <div className="d-flex justify-content-between">
-                <span>You have {cartSize} items in your cart</span>
+              <h4 className="cartPgTitle">{userDATA === "" ? userDATA.username : "Guest"}'s Shopping cart</h4>
+              <div className=" cartsubInfo d-flex justify-content-between ">
+                <span>You have <b>{cartSize}</b> items in your cart</span>
                 <div className="d-flex flex-row align-items-center">
                   <span className="text-black-50">Sort by:</span>
                   <div className="price ml-2">
-                    <span className="mr-1">Price</span>
+                    <span className="mr-4">Price</span>
                     <i className="fa fa-angle-down" />
                   </div>
                 </div>
@@ -184,7 +185,7 @@ const Cart = ({cart, setCart, userDATA}) => {
           </div>
 
           {/* Checkout Card Info */}
-          <div className=" ccInfoContainer col-md-5">
+          <div className=" ccInfoContainer">
             <div className="payment-info">
               <div className="d-flex justify-content-between align-items-center">
                 <span >Payment Information</span>
@@ -314,7 +315,7 @@ const Cart = ({cart, setCart, userDATA}) => {
               </button>
             </div>
           </div>
-        </div>
+        {/* </div> */}
       </div>   
     );
   // });
