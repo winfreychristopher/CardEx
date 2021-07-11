@@ -55,12 +55,12 @@ const PlayingCards = ({cards, setCards, reset,
   }
 
   
-  const addToCart = async (userID, itemID) => {
+  const addToCart = async (userID, itemID, quantity = 1) => {
     console.log(itemID);
     try {
       const TOKEN = getToken();
       if (TOKEN) {
-        const response = await addItemToCart(userID, itemID, TOKEN)
+        const response = await addItemToCart(userID, itemID, TOKEN, quantity)
         console.log(response.cartContent.cart);
         const currentCart = await getCart(userID, TOKEN);
         console.log(currentCart);

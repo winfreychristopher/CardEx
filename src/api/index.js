@@ -211,7 +211,7 @@ export async function removeItemFromCart(cardId, token) {
   }
 }
 
-export async function addItemToCart(userId, cardId, token, quanity) {
+export async function addItemToCart(userId, cardId, token) {
   try {
     const { data } = await axios.post(`api/cart/${userId}/${cardId}`, {
       headers: {

@@ -53,7 +53,9 @@ cartRouter.post("/:userId", async (req, res, next) => {
 
 cartRouter.post("/:userId/:cardId", async (req, res, next) => {
   const { userId, cardId } = req.params;
-  const { quantity } = req.body;
+  let { quantity } = req.body;
+  if (!quantity) { quantity = 1 }
+  console.log(quantity)
   try {
     const cart = await addCardToCart(userId, cardId, quantity);
     // console.log(cart.cart, "YELLOW");

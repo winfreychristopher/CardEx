@@ -75,13 +75,13 @@ const App = () => {
   // }, []);
 
   useEffect(() => {
-
     retrieveCards();
     async function fetchData() {
       if (token) {
         setIsLoggedIn(true);
         const response = await parseUserToken();
         setUserDATA(response);
+        console.log(response);
         const res = await getCart(userDATA.id, token);
         console.log(res, "APP Front End");
         setCart(res);
@@ -107,7 +107,7 @@ const App = () => {
       }
     }
     fetchData();
-  }, [userDATA]);
+  }, []);
 
   const retrieveCards = () => {
     getAllCards()

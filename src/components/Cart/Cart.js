@@ -27,6 +27,15 @@ const Cart = ({cart, setCart, userDATA}) => {
     }
   }
 
+  var formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  
+    // These options are needed to round to whole numbers if that's what you want.
+    minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+    maximumFractionDigits: 2, // (causes 2500.99 to be printed as $2,501)
+  });
+
   // }
   console.log(cart)
   // const backupCard = {
@@ -99,7 +108,8 @@ const Cart = ({cart, setCart, userDATA}) => {
         </div>
         <div className="itemInfoRight row " >
           <div>
-            <RiDeleteBin6Fill 
+            <RiDeleteBin6Fill
+              className="delBtn" 
               size={24} 
               style={{color: 'red', marginRight: '5px'  }}
               
@@ -107,7 +117,7 @@ const Cart = ({cart, setCart, userDATA}) => {
           </div>
           <div className=" priceInfo d-flex flex-row align-items-center">
             <span className="d-block"> Quantity: {quantity}</span>
-            <div className=" d-flex ml-5 font-weight-bold"><span>$ </span> {price}</div>
+            <div className=" d-flex ml-5 font-weight-bold"><span></span> {formatter.format(price)}</div>
             <i className="fa fa-trash-o ml-3 text-black-50" />
           </div>
         </div>
@@ -285,9 +295,9 @@ const Cart = ({cart, setCart, userDATA}) => {
               <hr className="line" />
 
               <div className="subPriceCont">
-                <div className=" subPriceCont d-flex justify-content-between information">
+                <div className=" d-flex justify-content-between information">
                   <span>Subtotal</span>
-                  <span>$ {totalPrice}.00</span>
+                  <span> {formatter.format(totalPrice)}</span>
                 </div>
                 <div className="d-flex justify-content-between information">
                   <span>Shipping</span>
@@ -295,11 +305,11 @@ const Cart = ({cart, setCart, userDATA}) => {
                 </div>
                 <div className="d-flex justify-content-between information">
                   <span>Taxes</span>
-                  <span> {totalPrice > 0 ? tax + "%" : "-- %"} </span>
+                  <span> {totalPrice > 0 ? "$ " + totalPrice * tax : ""} ({totalPrice > 0 ? tax * 100 + "%" : "-- %"}) </span>
                 </div>
                 <div className="d-flex justify-content-between information">
                   <span>Grand Total</span>
-                  <span style={{color: '#5dff5dcc'}}>$ {grandTotal}</span>
+                  <span style={{color: '#5dff5dcc'}}>$ {formatter.format(grandTotal)}</span>
                 </div>
               </div>
 
