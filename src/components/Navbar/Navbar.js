@@ -4,11 +4,15 @@ import { Link } from 'react-router-dom';
 import { BiUser } from 'react-icons/bi'
 import {clearToken, getToken } from '../../api/index';
 import { useHistory } from 'react-router-dom';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 
 
 import "./Navbar.css";
 
-const Navbar = ({isLoggedIn, setIsLoggedIn, user, logoutAnim, userDATA}) => {
+const Navbar = ({isLoggedIn, setIsLoggedIn, 
+	user, logoutAnim, userDATA,
+	cart
+}) => {
 	
 
 	const history = useHistory();
@@ -28,7 +32,7 @@ const Navbar = ({isLoggedIn, setIsLoggedIn, user, logoutAnim, userDATA}) => {
 		}
 
     return (
-			<div className="navbarContainer">
+			<div className="navbarContainer sticky-top">
 				<ul class="nav">
 						{/* <li id="settings">
 							<a href="#"> <FcSettings /> </a>
@@ -63,7 +67,7 @@ const Navbar = ({isLoggedIn, setIsLoggedIn, user, logoutAnim, userDATA}) => {
 								
 						</li>
 						<li id="options" className="cartList">
-							<a href="/cart">Cart</a>
+							<a href="/cart"> {cart.length} <ShoppingCartIcon /> Cart</a>
 							<ul class="subnav cart">
 							</ul>
 						</li>

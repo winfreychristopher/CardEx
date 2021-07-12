@@ -70,18 +70,18 @@ cartRouter.post("/:userId/:cardId", async (req, res, next) => {
   }
 });
 
-cartRouter.delete("/:cardId", requireUser, async (req, res, next) => {
-  const { cardId } = req.params;
+cartRouter.delete("/:itemId", requireUser, async (req, res, next) => {
+  const { itemId } = req.params;
   const { id } = req.user;
 
   try {
-    const deletedCard = await deleteCardFromCart(id, cardId);
+    const deletedCard = await deleteCardFromCart(id, itemId);
     console.log(deletedCard, "Ayy Yoo")
     res.send({
       data: deletedCard, 
       message: "I AM"});
   } catch (error) {
-    next(error, id, "Witness me");
+    next(error, "Witness me");
   }
 });
 

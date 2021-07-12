@@ -136,6 +136,13 @@ const createInitialCards = async () => {
                 card_img: "https://th.bing.com/th/id/R4ec8fb7fe602023e56a0950eab2b69c6?rik=fF8DNf3Q%2bOblsQ&pid=ImgRaw"
             },
             {
+                card_title: "Thanos - Boss Edition",
+                description: "You could not live with your own failure. And where did that bring you? Back to me.",
+                price: "34.99",
+                view_count: "453",
+                card_img: "https://wallpapercave.com/wp/wp4220291.jpg",
+            },
+            {
                 card_title: "Fleer 1988 Reggie Miller Rookie Card",
                 description: "Good condition Reggie Miller Rookie Card Rare PSA 9",
                 price: "300",

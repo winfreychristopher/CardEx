@@ -19,25 +19,9 @@ import {
 import "./App.css";
 
 const App = () => {
-  useEffect(async () => {
+  useEffect(() => {
     document.title = `CardEX\u2122 - US`;
   }, []);
-
-
-
-  
-
-  // useEffect(() => {
-  //   if (getToken()) {
-  //     setAuth(true);
-  //   }
-  //   userLogin()
-  //     .then((response) => response.json())
-  //     .then((result) => {
-  //       console.log(result);
-  //     })
-  //     .catch(console.error);
-  // }, []);
 
   const bounce = cssTransition({
     enter: "animate__animated animate__bounceIn",
@@ -196,6 +180,7 @@ const App = () => {
         logoutAnim={notifyLogout}
         userDATA={sleepyyyyy}
         setUserDATA={setUserDATA}
+        cart={cart}
       />
       <ToastContainer />
       <Switch>
@@ -212,6 +197,7 @@ const App = () => {
                   cart={cart}
                   setCart={setCart}
                   userDATA={sleepyyyyy}
+                  formatter={formatter}
                 />
               </div>
             </body>

@@ -9,7 +9,7 @@ import {
 import "../Cards/Card.scss";
 
 const PlayingCards = ({cards, setCards, reset, 
-  cart, setCart, userDATA, setUserDATA}) => {
+  cart, setCart, userDATA, setUserDATA, formatter}) => {
   // // const cards = getAllCards();
   // let cards;
   // const getCards = async () => {
@@ -61,10 +61,7 @@ const PlayingCards = ({cards, setCards, reset,
       const TOKEN = getToken();
       if (TOKEN) {
         const response = await addItemToCart(user.id, itemID, TOKEN, quantity)
-        console.log(response.cartContent.cart);
-        const currentCart = await getCart(user.id, TOKEN);
-        console.log(currentCart);
-        setCart(currentCart);
+        setCart(response.cartContent);
       } else {
         let clickedCard = await getCard(itemID);
         let guestCart = [];
@@ -80,11 +77,6 @@ const PlayingCards = ({cards, setCards, reset,
       notifyBad("Sorry, item appears to be Out of Stock!")
     }
   }
-  
-  // const [isActive, setActive] = useState("false");
-  // const handleToggle = () => {
-  //   setActive(!isActive);
-  // };
 
   return cards.map((card, index) => {
     const { 
@@ -109,17 +101,20 @@ const PlayingCards = ({cards, setCards, reset,
             <div className="desc"> "{description}" </div>
             
             <div className="itemInfo ">
-              <div>Stock-ID #: <i>0000{id}</i></div>
+              <div>Stock-ID #: <i>000{id}</i></div>
               <div>Watchers: <b>{view_count}</b></div>   
               {/* <li>Listing Date: <span>{creation_date}</span></li> */} 
             </div>
             <div className=" prices ">
               <div className="col ">
                 <h4 className="m-0 font-weight-bold">
-                  <div >${price}</div>
+                  <div >{formatter.format(price)}</div>
                 </h4>
               </div>
-              <div className="row m-0 p-0 font-weight-bold">{quantity} in stock</div>
+              <div 
+                className="row m-0 p-0 font-weight-bold stockTextContainer"
+                style={{color: 'green', fontSize: '1rem'}}
+              >In stock</div>
             </div>
           </div>
         </div>

@@ -5,8 +5,8 @@ import { getToken, removeItemFromCart } from "../../api/index";
 // import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import { RiDeleteBin6Fill } from "react-icons/ri";
 import { IoBagCheckOutline } from 'react-icons/io5';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import "./Cart.scss";
-import { JsonWebTokenError } from 'jsonwebtoken';
 
 const Cart = ({cart, setCart, userDATA, formatter, userTOKEN, 
   setUserTOKEN, toastWarn}) => {
@@ -26,22 +26,18 @@ const Cart = ({cart, setCart, userDATA, formatter, userTOKEN,
   // }
   // generateCart();
 
-  let cartSize = 1;
-  let totalPrice = 0;
-  let tax = 0.10;
-  let grandTotal = 0;
-
   const guestCart = localStorage.getItem('CardEXGCart');
   let parsedGCart;
   if (guestCart) { parsedGCart = JSON.parse(guestCart); }
 
   const deleteCartItem =  async (itemID) => {
+    console.log("here", userDATA)
     if (userTOKEN) {
       try {
-        console.log(itemID)
         const res = await removeItemFromCart(itemID, userTOKEN);
-        console.log(res, "This is CART Componenet");
-        let updatedCart = cart.filter(item => item.cardId !== itemID);
+        console.log(res, "Hello")
+        toastWarn(`Success! Item has been removed.`);
+        let updatedCart = cart.filter(item => item.id !== itemID);
         setCart(updatedCart);
       } catch (err) {
         console.log(err);
@@ -53,7 +49,7 @@ const Cart = ({cart, setCart, userDATA, formatter, userTOKEN,
   }
 
   async function getCart() {
-    let cart;
+
     fetch(`/api/cart/${userDATA.id}`, {
       method: 'get',
       headers: {
@@ -71,23 +67,14 @@ const Cart = ({cart, setCart, userDATA, formatter, userTOKEN,
         console.log('Error: ', err);
       });
   }
-
   useEffect(() => {
     getCart()
   }, []);
   console.log(cart)
 
-  const backupCard = {
-    id: 8,
-    card_title: '1st Edition Venusaur PSA 10',
-    description:
-     '1st edition Venusaur PSA 10 gem-mint super Rare, perfect for any pokemon collector',
-    price: 560,
-    view_count: 97,
-    card_img: 'https://i.ebayimg.com/00/s/MTE1Mlg3Njg=/z/v3UAAOSw7bla~WOX/$_58.JPG',
-  }
-
-  const { id, card_title, description, price, view_count, card_img } = backupCard;
+  let totalPrice = 0;
+  let tax = 0.10;
+  let grandTotal = 0;
 
     const cartDivs = cart.map(function (item, index) {
       const { 
@@ -102,7 +89,8 @@ const Cart = ({cart, setCart, userDATA, formatter, userTOKEN,
         quanity,
         userId,
         view_count,
-        quantity
+        quantity,
+        id
       } = item;
       console.log(cart)
 
@@ -110,7 +98,7 @@ const Cart = ({cart, setCart, userDATA, formatter, userTOKEN,
       grandTotal = totalPrice + (totalPrice * tax) + 9.95;
 
       return ( 
-        <div className=" ItemContainer d-flex justify-content-between align-items-center mt-3 p-2 items rounded" key={index}>
+        <div className=" ItemContainer d-flex justify-content-between align-items-center mt-3 items rounded" key={index}>
           <div className=" itemInfo d-flex flex-row">
             <img
               className="rounded"
@@ -131,7 +119,7 @@ const Cart = ({cart, setCart, userDATA, formatter, userTOKEN,
                 size={24} 
                 style={{color: 'red', marginRight: '5px'  }}
                 onClick={
-                  () => {deleteCartItem(cardId)}
+                  () => {deleteCartItem(id)}
                 }
               />
             </div>
@@ -152,12 +140,16 @@ const Cart = ({cart, setCart, userDATA, formatter, userTOKEN,
             <div className="product-details mr-2">
               <div className="d-flex flex-row align-items-center">
                 {/* {ArrowBackIosIcon} */}
-                <span className=" contShopping ml-2"><a href="/">Continue Shopping</a></span>
+                <span className=" contShopping ml-2 p-2" 
+                  style={{backgroundColor: '#22222269', borderRadius: "10px"}}
+                ><a href="/"
+                style={{fontSize: '1rem', fontWeight: 'bold', color: '#faab02', textShadow: '1px 2px 4px black'}}
+                > <ArrowBackIosIcon /> Continue Shopping</a></span>
               </div>
               <hr />
               <h4 className="cartPgTitle">{userDATA === "" ? userDATA.username : "Guest"}'s Shopping cart</h4>
               <div className=" cartsubInfo d-flex justify-content-between ">
-                <span>You have <b>{cartSize}</b> items in your cart</span>
+                <span>You have <b>{cartDivs.length}</b> items in your cart</span>
                 <div className="d-flex flex-row align-items-center">
                   <span className="text-black-50">Sort by:</span>
                   <div className="price ml-2">

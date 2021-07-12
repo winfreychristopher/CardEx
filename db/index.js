@@ -112,13 +112,13 @@ async function createGuest({ email, name }) {
   }
 }
 
+//Can Update Quanity Here and Key Values.
 async function createCard({
   card_title,
   description,
   price,
   card_img,
   view_count,
-  quantity,
 }) {
   try {
     const {
@@ -126,10 +126,10 @@ async function createCard({
     } = await client.query(
       `
         INSERT INTO cards(card_title, description, price, card_img, view_count, quantity)
-        VALUES($1, $2, $3, $4, $5, $6)
+        VALUES($1, $2, $3, $4, $5)
         RETURNING *;
         `,
-      [card_title, description, price, card_img, view_count, quantity]
+      [card_title, description, price, card_img, view_count]
     );
 
     return card;
@@ -462,7 +462,7 @@ async function addCardToCart(userId, cardId, quantity) {
   }
 }
 
-async function deleteCardFromCart(userId, cardId) {
+async function deleteCardFromCart(userId, itemId) {
   try {
     const userCart = await getCartByUserId(userId);
     console.log("USER CART", userCart);
@@ -473,7 +473,7 @@ async function deleteCardFromCart(userId, cardId) {
         DELETE FROM cart_products
         WHERE "cartId"=$1 AND "id"=$2
         RETURNING *;
-      `, [userCart.id, cardId]
+      `, [userCart.id, itemId]
     );
       console.log(deletedCard)
     return deletedCard;
@@ -505,11 +505,12 @@ async function deleteCardFromCart(userId, cardId) {
 //   }
 // }
 
+//GEt CART by User ID
 async function getCardUserById(userId) {
   try {
     const { rows: cards } = await client.query(
       `
-      SELECT *
+      SELECT *, cart_products.* 
       FROM cards
       JOIN cart_products ON cards.ID=cart_products."cardId"
       JOIN cart ON "cartId"=cart.ID
@@ -517,7 +518,6 @@ async function getCardUserById(userId) {
     `,
       [userId]
     );
-    console.log("I AM THE GOOD DAYTA", cards)
     return cards;
   } catch (error) {
     throw (error);

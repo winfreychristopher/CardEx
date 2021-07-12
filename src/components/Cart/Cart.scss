@@ -113,7 +113,7 @@
   justify-content:space-around;
   padding: 35px;
   width: fit-content;
-  width: 84vw;
+  width: 60vw;
 }
 
 .cart {
@@ -130,11 +130,12 @@
 
 .ItemContainer {
   border-bottom: 2px rgba(0, 0, 0, 0.205) solid;
-  background-color: antiquewhite;
+  background-color: #f4f1eeb5;;
   box-shadow: 2px 3px 7px rgba(0, 0, 0, 0.329);
   transition: all .4s ease-in-out;
   margin-left: 5px;
-  width: 95%;
+  width: 93%;
+  padding: 15px;
   // &:hover {
   //   box-shadow: 9px 3px 7px rgba(230, 161, 13, 0.418); 
   // }

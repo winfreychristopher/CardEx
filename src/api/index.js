@@ -190,15 +190,16 @@ export async function getCart(id, token) {
   // }
 }
 
-export async function removeItemFromCart(cardId, token) {
+export async function removeItemFromCart(itemId, token) {
   try {
-    const { data } = await axios.delete(`api/cart/${cardId}`, {
+    const { data } = await axios.delete(`api/cart/${itemId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
     return data;
   } catch (error) {
+    notifyBad(error);
     console.error("Error removing card from cart");
     throw error;
   }
