@@ -42,7 +42,6 @@ cartRouter.get("/:userId", requireUser, async (req, res, next) => {
 
 cartRouter.post("/:userId", async (req, res, next) => {
   const { userId } = req.params;
-  
   try {
     const addedCart = await createCart(userId);
     console.log(addedCart);

@@ -126,7 +126,7 @@ const Cart = ({cart, setCart, userDATA, formatter, userTOKEN,
               />
             </div>
             <div className=" priceInfo d-flex flex-row align-items-center">
-              <span className="d-block"> Quantity: {quantity}</span>
+              <span className="d-block"> Quantity: {1}</span>
               <div className=" d-flex ml-5 font-weight-bold"><span></span> {formatter.format(price)}</div>
               <i className="fa fa-trash-o ml-3 text-black-50" />
             </div>
