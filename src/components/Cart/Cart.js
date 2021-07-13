@@ -43,20 +43,23 @@ const Cart = ({cart, setCart, userDATA, formatter, userTOKEN,
         console.log(err);
       }
     } else if  (parsedGCart) {
-      parsedGCart = parsedGCart.filter(item => item.cardId === itemID);
-      cart = parsedGCart;
+      parsedGCart = parsedGCart.filter(item => item.id !== itemID);
+      console.log(parsedGCart)
+      const newGuestCart = JSON.stringify(parsedGCart)
+      localStorage.setItem("CardEXGCart", newGuestCart);
+      setCart(parsedGCart)
     }
   }
 
   async function getCart() {
-
-    fetch(`/api/cart/${userDATA.id}`, {
-      method: 'get',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${userTOKEN}`,
-      }
-    })
+    if (userDATA) {
+      fetch(`/api/cart/${userDATA.id}`, {
+        method: 'get',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${userTOKEN}`,
+        }
+      })
       .then(res => res.json())
       .then(data => {
         cart = data.data;
@@ -66,6 +69,7 @@ const Cart = ({cart, setCart, userDATA, formatter, userTOKEN,
       .catch((err) => {
         console.log('Error: ', err);
       });
+    }
   }
   useEffect(() => {
     getCart()
@@ -142,7 +146,7 @@ const Cart = ({cart, setCart, userDATA, formatter, userTOKEN,
                   style={{backgroundColor: '#22222269', borderRadius: "10px"}}
                 ><a href="/"
                 style={{fontSize: '1rem', fontWeight: 'bold', color: '#faab02', textShadow: '1px 2px 4px black'}}
-                > <ArrowBackIosIcon /> Continue Shopping</a></span>
+                > <ArrowBackIosIcon /> Continue Shopping </a></span>
               </div>
               <hr />
               <h4 className="cartPgTitle">{userDATA === "" ? userDATA.username : "Guest"}'s Shopping cart</h4>

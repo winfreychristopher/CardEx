@@ -59,8 +59,6 @@ cartRouter.post("/:userId/:cardId", async (req, res, next) => {
   console.log(quantity)
   try {
     const cart = await addCardToCart(userId, cardId);
-    // console.log(cart.cart, "YELLOW");
-    // const [test] = cart;
     res.send({
       message: "Successfully added Item to Cart",
       cartContent: cart,

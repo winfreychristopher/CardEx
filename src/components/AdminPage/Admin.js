@@ -6,6 +6,7 @@ import CreateCard from "./createCard";
 import AllOrders from "./orders";
 
 const AdminPage = () => {
+  
   return (
     <>
       <h1> Admin Future Form Page </h1>

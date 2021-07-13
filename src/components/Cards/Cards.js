@@ -57,18 +57,16 @@ const PlayingCards = ({cards, setCards, reset,
         notifyGood('Nice! Product has successfully been added to cart 👉')
       } else {
         let clickedCard = await getCard(itemID);
-        let guestCart = [];
-        guestCart = cart;
-        guestCart.push(clickedCard);
-        console.log(guestCart, "I'm In CARDS")
-        setCart(guestCart);
-        notifyGood('Product has successfully been added to cart, Thank You! 😁👍')
-        localStorage.setItem("CardEXGCart", JSON.stringify(guestCart));
+        cart.push(clickedCard);
+        localStorage.setItem("CardEXGCart", JSON.stringify(cart));
+        setCart(cart);
+        notifyGood('Product has successfully been added to cart, Thank You! 😁👍');
       }
-      
+      console.log(cart)
     } catch (err) {
       console.log(err)
-      notifyBad("Sorry, item appears to be Out of Stock!")
+      notifyBad(err);
+      notifyBad("Sorry, item appears to be Out of Stock!");
     }
   }
 
@@ -97,12 +95,12 @@ const PlayingCards = ({cards, setCards, reset,
             <div className="itemInfo ">
               <div>Stock-ID #: <i>000{id}</i></div>
               <div>Watchers: <b>{view_count}</b></div>   
-              {/* <li>Listing Date: <span>{creation_date}</span></li> */} 
+              {/* <li>Listing Date: <span>{creation_date}</span></li> */}
             </div>
             <div className=" prices ">
               <div className="col ">
                 <h4 className="m-0 font-weight-bold">
-                  <div >{formatter.format(price)}</div>
+                  <div> {formatter.format(price)} </div>
                 </h4>
               </div>
               <div 
@@ -112,11 +110,7 @@ const PlayingCards = ({cards, setCards, reset,
             </div>
           </div>
         </div>
-        <div className="cartButtons"
-          onClick={(e) => { 
-          
-          }}  
-        >
+        <div className="cartButtons">
           <button id="add-to-cart-button"
             onClick={(e) => {
               addBtnAnimation(e);
