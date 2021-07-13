@@ -64,8 +64,10 @@ async function buildTables() {
                 description VARCHAR(255) NOT NULL,
                 price INT NULL,
                 view_count INT NULL,
+                quantity NOT NULL,
                 card_img TEXT NOT NULL,
                 creation_date DATE NOT NULL DEFAULT CURRENT_DATE
+
             );
             CREATE TABLE tags(
                 ID SERIAL PRIMARY KEY,
@@ -91,11 +93,10 @@ async function buildTables() {
             );
             CREATE TABLE cart_products(
                 ID SERIAL PRIMARY KEY,
-                "cartId" INT REFERENCES cart(ID),
-                "cardId" INT REFERENCES cards(ID),
-                quanity INTEGER NOT NULL,
-                active BOOLEAN DEFAULT TRUE,
-                UNIQUE("cartId", "cardId")
+                "cartId" INTEGER REFERENCES cart(ID),
+                "cardId" INTEGER REFERENCES cards(ID),
+                quantity INTEGER NOT NULL,
+                active BOOLEAN DEFAULT TRUE
             );
             CREATE TABLE order_cards(
                 ID SERIAL PRIMARY KEY,
@@ -133,6 +134,13 @@ const createInitialCards = async () => {
                 price: "1200",
                 view_count: "25",
                 card_img: "https://th.bing.com/th/id/R4ec8fb7fe602023e56a0950eab2b69c6?rik=fF8DNf3Q%2bOblsQ&pid=ImgRaw"
+            },
+            {
+                card_title: "Thanos - Boss Edition",
+                description: "You could not live with your own failure. And where did that bring you? Back to me.",
+                price: "34.99",
+                view_count: "453",
+                card_img: "https://wallpapercave.com/wp/wp4220291.jpg",
             },
             {
                 card_title: "Fleer 1988 Reggie Miller Rookie Card",

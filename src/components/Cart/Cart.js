@@ -1,134 +1,157 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import thanosImg from "../../assets/thanosCrown.jpg";
 import cardEXLogo from "../../assets/CardEX name.png";
-import { getCart, getToken, removeItemFromCart } from "../../api/index";
+import { getToken, removeItemFromCart } from "../../api/index";
 // import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import { RiDeleteBin6Fill } from "react-icons/ri";
 import { IoBagCheckOutline } from 'react-icons/io5';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import "./Cart.scss";
-import { JsonWebTokenError } from 'jsonwebtoken';
 
-const Cart = ({cart, setCart, userDATA}) => {
+const Cart = ({cart, setCart, userDATA, formatter, userTOKEN, 
+  setUserTOKEN, toastWarn}) => {
   // const Card = {
   //   name: "Thanos Card",
   //   price: "$4,000",
   //   descrption: "",
-  
+
+  // const generateCart = async () => {
+  //   console.log(userDATA.username)
+  //   if (userDATA.id) {
+  //     const res = await getCart(userDATA, userTOKEN);
+  //     console.log(res)
+  //     setCart(res);
+  //     console.log(cart)
+  //   }
+  // }
+  // generateCart();
+
+  const guestCart = localStorage.getItem('CardEXGCart');
+  let parsedGCart;
+  if (guestCart) { parsedGCart = JSON.parse(guestCart); }
+
   const deleteCartItem =  async (itemID) => {
-    const TOKEN = getToken();
-    try {
-      const res = await removeItemFromCart(itemID, TOKEN);
-      console.log(res, "This is CART Componenet");
-      const updatedCart = await getCart(userDATA.id, TOKEN);
-      setCart(updatedCart);
-    } catch (err) {
-      console.log(err);
+    console.log("here", userDATA)
+    if (userTOKEN) {
+      try {
+        const res = await removeItemFromCart(itemID, userTOKEN);
+        console.log(res, "Hello")
+        toastWarn(`Success! Item has been removed.`);
+        let updatedCart = cart.filter(item => item.id !== itemID);
+        setCart(updatedCart);
+      } catch (err) {
+        console.log(err);
+      }
+    } else if  (parsedGCart) {
+      parsedGCart = parsedGCart.filter(item => item.cardId === itemID);
+      cart = parsedGCart;
     }
   }
 
-  // }
-  console.log(cart)
-  // const backupCard = {
-  //   id: 8,
-  //   card_title: '1st Edition Venusaur PSA 10',
-  //   description:
-  //    '1st edition Venusaur PSA 10 gem-mint super Rare, perfect for any pokemon collector',
-  //   price: 560,
-  //   view_count: 97,
-  //   card_img: 'https://i.ebayimg.com/00/s/MTE1Mlg3Njg=/z/v3UAAOSw7bla~WOX/$_58.JPG',
-  // }
+  async function getCart() {
 
-  // const { id, card_title, description, price, view_count, card_img } = backupCard;
+    fetch(`/api/cart/${userDATA.id}`, {
+      method: 'get',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${userTOKEN}`,
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        cart = data.data;
+        console.log(data.data);
+        setCart(data.data)
+      })
+      .catch((err) => {
+        console.log('Error: ', err);
+      });
+  }
+  useEffect(() => {
+    getCart()
+  }, []);
 
-  // let cartDivs = [];
-  // async function pleaseWork () {
-  //   try {
-  //     const TOKEN = getToken();
-  //     const res = await getCart(userDATA.id, TOKEN);
-  //     console.log(res, "The One N Only");
-  //     cartDivs = res;
-  //     return res;
-  //   } catch (err) {
-  //     throw err;
-  //   }
-  // }
-  // pleaseWork();
-
-  // console.log(cartDivs);
-  let cartSize = cart.length;
   let totalPrice = 0;
-  const cartDivs = cart.map(function (item, index) {
-    const { 
-      cardId,
-      card_title, 
-      card_img,
-      creation_date,
-      description,
-      cartId,
-      price,
-      active,
-      quanity,
-      userId,
-      view_count
-    } = item;
+  let tax = 0.10;
+  let grandTotal = 0;
 
-    totalPrice = totalPrice + price;
-    console.log(card_title)
-    
-     
-    return ( 
-      <div className=" ItemContainer d-flex justify-content-between align-items-center mt-3 p-2 items rounded" key={index + 1}>
-        <div className=" itemInfo d-flex flex-row">
-          <img
-            className="rounded"
-            src={card_img}
-            alt={card_title}
-          />
-          <div className=" itemInfo ml-2">
-            <span className="font-weight-bold d-block">
-              {card_title}  
-            </span>
-            <div className="spec" style={{fontSize: "0.8rem"}}>{description}</div>
-          </div>
-        </div>
-        <div className="itemInfoRight row " >
-          <div>
-            <RiDeleteBin6Fill 
-              size={24} 
-              style={
-                {color: 'red', marginRight: '5px'  }
-              }
-              onClick={deleteCartItem(cardId)}
-              
+    const cartDivs = cart.map(function (item, index) {
+      const { 
+        cardId,
+        card_title, 
+        card_img,
+        creation_date,
+        description,
+        cartId,
+        price,
+        active,
+        quanity,
+        userId,
+        view_count,
+        quantity,
+        id
+      } = item;
+
+      totalPrice = totalPrice + price;
+      grandTotal = totalPrice + (totalPrice * tax) + 9.95;
+
+      return ( 
+        <div className=" ItemContainer d-flex justify-content-between align-items-center mt-3 items rounded" key={index}>
+          <div className=" itemInfo d-flex flex-row">
+            <img
+              className="rounded"
+              src={card_img}
+              alt={card_title}
             />
+            <div className=" itemInfo ml-2">
+              <span className="font-weight-bold d-block">
+                {card_title}  
+              </span>
+              <div className="spec" style={{fontSize: "0.8rem"}}>{description}</div>
+            </div>
           </div>
-          <div className=" priceInfo d-flex flex-row align-items-center">
-            <span className="d-block"> Quantity:1</span>
-            <div className=" d-flex ml-5 font-weight-bold"><span>$ </span> {price}</div>
-            <i className="fa fa-trash-o ml-3 text-black-50" />
+          <div className="itemInfoRight row " >
+            <div style={{backgroundColor: 'transparent'}}>
+              <RiDeleteBin6Fill
+                className="delBtn" 
+                size={24} 
+                style={{color: 'red', marginRight: '5px'  }}
+                onClick={
+                  () => {deleteCartItem(id)}
+                }
+              />
+            </div>
+            <div className=" priceInfo d-flex flex-row align-items-center">
+              <span className="d-block"> Quantity: {quantity}</span>
+              <div className=" d-flex ml-5 font-weight-bold"><span></span> {formatter.format(price)}</div>
+              <i className="fa fa-trash-o ml-3 text-black-50" />
+            </div>
           </div>
         </div>
-      </div>
-    );
-      
+      )  
     });
+
       return (
       <div className=" cartComponet container mt-5 p-3 rounded cart" >
-        <div className=" row no-gutters">
-          <div className=" outItemCont col-md-8">
+        {/* <div className=""> */}
+          <div className=" outItemCont">
             <div className="product-details mr-2">
               <div className="d-flex flex-row align-items-center">
                 {/* {ArrowBackIosIcon} */}
-                <span className=" contShopping ml-2"><a href="/">Continue Shopping</a></span>
+                <span className=" contShopping ml-2 p-2" 
+                  style={{backgroundColor: '#22222269', borderRadius: "10px"}}
+                ><a href="/"
+                style={{fontSize: '1rem', fontWeight: 'bold', color: '#faab02', textShadow: '1px 2px 4px black'}}
+                > <ArrowBackIosIcon /> Continue Shopping</a></span>
               </div>
               <hr />
-              <h4 className=" mb-0">Shopping cart</h4>
-              <div className="d-flex justify-content-between">
-                <span>You have {cartSize} items in your cart</span>
+              <h4 className="cartPgTitle">{userDATA === "" ? userDATA.username : "Guest"}'s Shopping cart</h4>
+              <div className=" cartsubInfo d-flex justify-content-between ">
+                <span>You have <b>{cartDivs.length}</b> items in your cart</span>
                 <div className="d-flex flex-row align-items-center">
                   <span className="text-black-50">Sort by:</span>
                   <div className="price ml-2">
-                    <span className="mr-1">Price</span>
+                    <span className="mr-4">Price</span>
                     <i className="fa fa-angle-down" />
                   </div>
                 </div>
@@ -156,7 +179,7 @@ const Cart = ({cart, setCart, userDATA}) => {
                 </div>
               </div> */}
 
-              <div className="cartItemsContainer"> { cartDivs } </div>
+              <div className="cartItemsContainer"> {cartDivs} </div>
 
               {/* <div className="  d-flex justify-content-between align-items-center mt-3 p-2 items rounded">
                 <div className="d-flex flex-row">
@@ -183,7 +206,7 @@ const Cart = ({cart, setCart, userDATA}) => {
           </div>
 
           {/* Checkout Card Info */}
-          <div className=" ccInfoContainer col-md-5">
+          <div className=" ccInfoContainer">
             <div className="payment-info">
               <div className="d-flex justify-content-between align-items-center">
                 <span >Payment Information</span>
@@ -283,21 +306,21 @@ const Cart = ({cart, setCart, userDATA}) => {
               <hr className="line" />
 
               <div className="subPriceCont">
-                <div className=" subPriceCont d-flex justify-content-between information">
+                <div className=" d-flex justify-content-between information">
                   <span>Subtotal</span>
-                  <span>$ {totalPrice}.00</span>
+                  <span> {formatter.format(totalPrice)}</span>
                 </div>
                 <div className="d-flex justify-content-between information">
                   <span>Shipping</span>
-                  <span>$ 9.95</span>
+                  <span>$9.95</span>
                 </div>
                 <div className="d-flex justify-content-between information">
                   <span>Taxes</span>
-                  <span>$ {totalPrice + 9.95}</span>
+                  <span> {totalPrice > 0 ? "$" + totalPrice * tax : ""} ({totalPrice > 0 ? tax * 100 + "%" : "-- %"}) </span>
                 </div>
                 <div className="d-flex justify-content-between information">
                   <span>Grand Total</span>
-                  <span style={{color: '#5dff5dcc'}}>$ {totalPrice + 9.95}</span>
+                  <span style={{color: '#5dff5dcc'}}> {formatter.format(grandTotal)}</span>
                 </div>
               </div>
 
@@ -308,13 +331,12 @@ const Cart = ({cart, setCart, userDATA}) => {
                 {/* total price function */}
                 <span>${}</span>
                 <span>
-                 <IoBagCheckOutline /> Checkout
-                  <i className="fa fa-long-arrow-right ml-1" />
+                 <IoBagCheckOutline size={24} /> Checkout
                 </span>
               </button>
             </div>
           </div>
-        </div>
+        {/* </div> */}
       </div>   
     );
   // });

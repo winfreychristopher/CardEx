@@ -33,7 +33,6 @@ export const getToken = () => {
 export async function getAllCards() {
   try {
     const { data } = await axios.get("/api/cards");
-    console.log("EMAN", data);
     return data;
   } catch (error) {
     throw error;
@@ -155,49 +154,70 @@ export async function updateCard({ id, count }) {
 
 //Just gives me the Cart and CardID's
 export async function getCart(id, token) {
-    try {
-        const  { data }  = await axios.get(`/api/cart/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        // Old Return that Only returned CardID's not CardObjects
-        // return data.data.data;
-        return data.data.cart;
-    } catch (error) {
-        console.error("Error getting cart")
-        notifyBad("Error getting cart")
-        throw error
+  let cart;
+  fetch(`/api/cart/${id}`, {
+    method: 'get',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
     }
+  })
+    .then(res => res.json())
+    .then(data => {
+      cart = data.data;
+      console.log(data.data);
+      return data.data;
+    })
+    .catch((err) => {
+      console.log('Error: ', err);
+    });
+  return cart;
+  // try {
+  //   console.log("TOP!!!");
+  //   const { data } = await axios.get(`/api/cart/${id}`, {
+  //     headers: {
+  //       Authorization: `Bearer ${token}`,
+  //     },
+  //   });
+  //   // Old Return that Only returned CardID's not CardObjects
+  //   // return data.data.data;
+  //   console.log("BOTTOM!!!");
+  //   console.log(data.data)
+  //   return data.data;
+  // } catch (error) {
+  //   console.error("Error getting cart");
+  //   throw error;
+  // }
 }
 
-export async function removeItemFromCart(cardId, token) {
+export async function removeItemFromCart(itemId, token) {
   try {
-    const { data } = await axios.delete(`api/cart/${cardId}`, {
+    const { data } = await axios.delete(`api/cart/${itemId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
     return data;
   } catch (error) {
+    notifyBad(error);
     console.error("Error removing card from cart");
     throw error;
   }
 }
 
-export async function addItemToCart(userId, cardId, token, quanity) {
-    try {
-        const { data } = await axios.post(`api/cart/${userId}/${cardId}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            },
-        });
-        console.log('WE ARE IN API, BOTTOM 168', data)
-        return data;
-    } catch (error) {
-        console.error("Error adding to cart")
-        throw error;
-    }
+export async function addItemToCart(userId, cardId, token) {
+  try {
+    const { data } = await axios.post(`api/cart/${userId}/${cardId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return data;
+  } catch (error) {
+    console.error("Error adding to cart");
+    throw error;
+  }
 }
 
 export async function getAllOrders() {

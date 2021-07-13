@@ -9,7 +9,7 @@ import {
 import "../Cards/Card.scss";
 
 const PlayingCards = ({cards, setCards, reset, 
-  cart, setCart, userDATA, setUserDATA}) => {
+  cart, setCart, userDATA, setUserDATA, formatter, notifyGood}) => {
   // // const cards = getAllCards();
   // let cards;
   // const getCards = async () => {
@@ -33,17 +33,9 @@ const PlayingCards = ({cards, setCards, reset,
   const handleReset = () => {
     reset();
   };
-  
-  // document.querySelectorAll('.add-to-cart-button').forEach(function(addToCartButton) {
-  //   addToCartButton.addEventListener('click', function() {
-  //       addToCartButton.classList.add('added');
-  //       setTimeout(function(){
-  //           addToCartButton.classList.remove('added');
-  //       }, 2000);
-  //   });
-  // });
 
   const notifyBad = (message) => { toast.error(`${message}!`, {position: toast.POSITION.TOP_LEFT})};
+  
   const addToCartButton = document.getElementById("add-to-cart-button");
 
   const addBtnAnimation = (e) => {
@@ -55,24 +47,23 @@ const PlayingCards = ({cards, setCards, reset,
   }
 
   
-  const addToCart = async (userID, itemID) => {
+  const addToCart = async (user, itemID, quantity = 1) => {
     console.log(itemID);
     try {
       const TOKEN = getToken();
-      console.log(userID)
       if (TOKEN) {
-        const response = await addItemToCart(userID, itemID, TOKEN)
-        console.log(response.cartContent.cart);
-        const currentCart = await getCart(userID, TOKEN);
-        console.log(currentCart);
-        setCart(response.cartContent.cart);
+        const response = await addItemToCart(user.id, itemID, TOKEN, quantity)
+        setCart(response.cartContent);
+        notifyGood('Nice! Product has successfully been added to cart 👉')
       } else {
-        let clickedCard = await getCard(itemID)
+        let clickedCard = await getCard(itemID);
         let guestCart = [];
         guestCart = cart;
         guestCart.push(clickedCard);
-        setCart(guestCart)
-        console.log(guestCart)
+        console.log(guestCart, "I'm In CARDS")
+        setCart(guestCart);
+        notifyGood('Product has successfully been added to cart, Thank You! 😁👍')
+        localStorage.setItem("CardEXGCart", JSON.stringify(guestCart));
       }
       
     } catch (err) {
@@ -80,11 +71,6 @@ const PlayingCards = ({cards, setCards, reset,
       notifyBad("Sorry, item appears to be Out of Stock!")
     }
   }
-  
-  // const [isActive, setActive] = useState("false");
-  // const handleToggle = () => {
-  //   setActive(!isActive);
-  // };
 
   return cards.map((card, index) => {
     const { 
@@ -94,7 +80,8 @@ const PlayingCards = ({cards, setCards, reset,
       description,
       id,
       price,
-      view_count
+      view_count,
+      quantity
     } = card;
 
     return (
@@ -108,17 +95,20 @@ const PlayingCards = ({cards, setCards, reset,
             <div className="desc"> "{description}" </div>
             
             <div className="itemInfo ">
-              <div>Stock-ID #: <i>0000{id}</i></div>
+              <div>Stock-ID #: <i>000{id}</i></div>
               <div>Watchers: <b>{view_count}</b></div>   
               {/* <li>Listing Date: <span>{creation_date}</span></li> */} 
             </div>
             <div className=" prices ">
               <div className="col ">
                 <h4 className="m-0 font-weight-bold">
-                  <div >${price}</div>
+                  <div >{formatter.format(price)}</div>
                 </h4>
               </div>
-              <div className="row m-0 p-0 font-weight-bold">1 in stock</div>
+              <div 
+                className="row m-0 p-0 font-weight-bold stockTextContainer"
+                style={{color: 'green', fontSize: '1rem'}}
+              >In stock</div>
             </div>
           </div>
         </div>
@@ -130,7 +120,7 @@ const PlayingCards = ({cards, setCards, reset,
           <button id="add-to-cart-button"
             onClick={(e) => {
               addBtnAnimation(e);
-              addToCart(userDATA.id, id);
+              addToCart(userDATA, id);
             }}
           >
             <svg class="add-to-cart-box box-1" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="2" fill="#ffffff"/></svg>

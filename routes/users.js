@@ -37,7 +37,6 @@ usersRouter.get("/", requireAdmin, async (req, res, next) => {
 
 usersRouter.get("/profile/me", requireUser, async (req, res, next) => {
   try {
-    console.log(req.user);
     res.send(req.user);
   } catch (error) {
     next(error);

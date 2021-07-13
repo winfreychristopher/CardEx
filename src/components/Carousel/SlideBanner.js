@@ -11,7 +11,6 @@ import paniniCardImg from "../../assets/Panini Card-Banner.jpg";
 import shinnyPokeImg from "../../assets/shinning Fates pokemon-banner.jpg";
 
 const HomeBanner = (props) => {
-	console.log(props)
 	return (
 		<div className="CarouselContainer">
 			<Carousel>
@@ -48,7 +47,7 @@ const HomeBanner = (props) => {
 						<p></p>
 					</Carousel.Caption>
 				</Carousel.Item>
-				<Carousel.Item>
+				{/* <Carousel.Item>
 					<img
 						className="visa d-block w-100"
 						src={visaCCBannerImg}
@@ -58,7 +57,7 @@ const HomeBanner = (props) => {
 						<h3> We Accept all forms of payment, including PayPal</h3>
 						<div className="subMSG"><h6>"Bitcoin, DogeCoin, Money Order and Cash App"</h6></div>
 					</Carousel.Caption>
-				</Carousel.Item>
+				</Carousel.Item> */}
 				<Carousel.Item>
 					<img
 						className="d-block w-100"

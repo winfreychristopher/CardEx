@@ -16,6 +16,14 @@
     padding-right: 10px;
     align-items: center;
     margin-top: 10px;
+
+    .stockTextContainer {
+      color: green;
+      font-size: 1rem;
+      justify-content: space-around;
+      text-align: center;
+      line-height: 0.8;
+    }
   }
 }
 .cardContainer {

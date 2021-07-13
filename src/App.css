@@ -13,8 +13,11 @@
   display: flex;
   flex-wrap: wrap;
   width: fit-content;
-  flex-direction: ;
-  max-height: 80vh;
+  max-height: 100vh;
   overflow: auto;
  
+}
+
+.Toastify {
+  font-size: larger;
 }
