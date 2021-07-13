@@ -70,7 +70,6 @@ const Cart = ({cart, setCart, userDATA, formatter, userTOKEN,
   useEffect(() => {
     getCart()
   }, []);
-  console.log(cart)
 
   let totalPrice = 0;
   let tax = 0.10;
@@ -92,7 +91,6 @@ const Cart = ({cart, setCart, userDATA, formatter, userTOKEN,
         quantity,
         id
       } = item;
-      console.log(cart)
 
       totalPrice = totalPrice + price;
       grandTotal = totalPrice + (totalPrice * tax) + 9.95;

@@ -9,7 +9,7 @@ import {
 import "../Cards/Card.scss";
 
 const PlayingCards = ({cards, setCards, reset, 
-  cart, setCart, userDATA, setUserDATA, formatter}) => {
+  cart, setCart, userDATA, setUserDATA, formatter, notifyGood}) => {
   // // const cards = getAllCards();
   // let cards;
   // const getCards = async () => {
@@ -33,17 +33,9 @@ const PlayingCards = ({cards, setCards, reset,
   const handleReset = () => {
     reset();
   };
-  
-  // document.querySelectorAll('.add-to-cart-button').forEach(function(addToCartButton) {
-  //   addToCartButton.addEventListener('click', function() {
-  //       addToCartButton.classList.add('added');
-  //       setTimeout(function(){
-  //           addToCartButton.classList.remove('added');
-  //       }, 2000);
-  //   });
-  // });
 
   const notifyBad = (message) => { toast.error(`${message}!`, {position: toast.POSITION.TOP_LEFT})};
+  
   const addToCartButton = document.getElementById("add-to-cart-button");
 
   const addBtnAnimation = (e) => {
@@ -62,6 +54,7 @@ const PlayingCards = ({cards, setCards, reset,
       if (TOKEN) {
         const response = await addItemToCart(user.id, itemID, TOKEN, quantity)
         setCart(response.cartContent);
+        notifyGood('Nice! Product has successfully been added to cart 👉')
       } else {
         let clickedCard = await getCard(itemID);
         let guestCart = [];
@@ -69,6 +62,7 @@ const PlayingCards = ({cards, setCards, reset,
         guestCart.push(clickedCard);
         console.log(guestCart, "I'm In CARDS")
         setCart(guestCart);
+        notifyGood('Product has successfully been added to cart, Thank You! 😁👍')
         localStorage.setItem("CardEXGCart", JSON.stringify(guestCart));
       }
       

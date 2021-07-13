@@ -31,7 +31,6 @@ const App = () => {
   const notifyWelcome = (message) => {
     toast.success(message, {
       position: toast.POSITION.TOP_CENTER,
-      transition: bounce,
     });
   }
   const notifyWelcomeWarn = (message) => {
@@ -62,11 +61,7 @@ const App = () => {
       return jwt.verify(token, REACT_APP_JWT_SECRET);
     }
   } 
-  console.log(token, "ayeeee")
-  console.log(userInfo())
   
-
-
   const [cards, setCards] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState();
   const [errMsgText, setErrMsgText] = useState("");
@@ -76,12 +71,7 @@ const App = () => {
   const [userDATA, setUserDATA] = useState({});
   const [userTOKEN, setUserTOKEN] = useState(token);
   const sleepyyyyy = userInfo();
-  console.log(sleepyyyyy);
 
-
-
-
-  
   
   // const WelcomeFunction = async () =>{
   //   const isPrevUser = localStorage.getItem("CardEXtoken");
@@ -151,7 +141,6 @@ const App = () => {
   const retrieveCards = () => {
     getAllCards()
       .then((card) => {
-        console.log(card)
         setCards(card);
         return card;
       })
@@ -181,6 +170,8 @@ const App = () => {
         userDATA={sleepyyyyy}
         setUserDATA={setUserDATA}
         cart={cart}
+        cards={cards} setCards={setCards}
+        resetCards={retrieveCards}
       />
       <ToastContainer />
       <Switch>
@@ -198,6 +189,7 @@ const App = () => {
                   setCart={setCart}
                   userDATA={sleepyyyyy}
                   formatter={formatter}
+                  notifyGood={notifyWelcome}
                 />
               </div>
             </body>
