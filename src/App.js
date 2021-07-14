@@ -72,48 +72,20 @@ const App = () => {
   const [userTOKEN, setUserTOKEN] = useState(token);
   const sleepyyyyy = userInfo();
 
-  
-  // const WelcomeFunction = async () =>{
-  //   const isPrevUser = localStorage.getItem("CardEXtoken");
-  //   console.log(isPrevUser)
-  //   // await parseUserToken()
-  //   //   .then((userInfo) => {
-  //   //     console.log(userInfo);
-  //   //     setUserDATA(userDATA);
-  //   //   })
-  //   //   .catch((err) => {
-  //   //     console.log(err);
-  //   //   });
-    
-  // }
-  // WelcomeFunction();
-  
-  useEffect(() => {
-    // async function fetchUser() {
-    //   const userInfo = await parseUserToken();
-    //   setUserDATA(userInfo);
-    //   return userInfo.id;
-    // }
-    // async function fetchCart() {
-    //   const userInfo = 
-    //   const res = await getCart(userInfo.id, token);
-    //   console.log(res, "APP Front End");
-    //   setCart(res);
-      
-    // }
-    // fetchCart();
-  },[]);
+  const getStoredCart = () => {
+    const guestCart = localStorage.getItem("CardEXGCart");
+    const parsedCart = JSON.parse(guestCart);
+    if (guestCart) {
+      setCart(parsedCart);
+    }
+  }
 
   useEffect(() => {
     retrieveCards();
-    // getCurrentCart(userInfo.id);
-    // getCart(userDATA.id, token);
     async function fetchData() {
       if (token) {
         setIsLoggedIn(true);
-        // const response = await parseUserToken();
-        // setUserDATA(response);
-        // console.log(response, "AYEE YO");
+        getStoredCart();
       } else {
         const isPrevUser = localStorage.getItem("CardExGuest");
         if (!isPrevUser) {
@@ -128,11 +100,7 @@ const App = () => {
           const guestToken = 'Thank you for visting CardEX-US';
           localStorage.setItem("CardExGuest", guestToken);
         }
-        const guestCart = localStorage.getItem("CardEXGCart");
-        const parsedCart = JSON.parse(guestCart);
-        if (guestCart) {
-          setCart(parsedCart);
-        }
+        getStoredCart();
       }
     }
     fetchData();
@@ -148,8 +116,6 @@ const App = () => {
         console.log(err);
       });
   };
-  useEffect(() => {
-  }, []);
   
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -185,8 +151,7 @@ const App = () => {
                   cards={cards}
                   setCards={setCards}
                   reset={retrieveCards}
-                  cart={cart}
-                  setCart={setCart}
+                  cart={cart} setCart={setCart}
                   userDATA={sleepyyyyy}
                   formatter={formatter}
                   notifyGood={notifyWelcome}

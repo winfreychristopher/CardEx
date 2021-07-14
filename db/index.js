@@ -119,6 +119,7 @@ async function createCard({
   price,
   card_img,
   view_count,
+  quantity
 }) {
   try {
     const {
@@ -126,10 +127,10 @@ async function createCard({
     } = await client.query(
       `
         INSERT INTO cards(card_title, description, price, card_img, view_count, quantity)
-        VALUES($1, $2, $3, $4, $5)
+        VALUES($1, $2, $3, $4, $5, $6)
         RETURNING *;
-        `,
-      [card_title, description, price, card_img, view_count]
+      `,
+      [card_title, description, price, card_img, view_count, quantity]
     );
 
     return card;

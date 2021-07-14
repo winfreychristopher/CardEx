@@ -26,6 +26,9 @@ const Navbar = (
 	}
 
 	const [searchTerm, setSearchTerm] = useState("");
+	useEffect(() => {
+		
+	}, [cart]);
 
   const handleSearch = (event) => {
 		event.preventDefault();
