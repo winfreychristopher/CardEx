@@ -683,10 +683,10 @@ async function addCartToUserOrder(userId, cardId, cartId) {
 async function getAllOrders() {
   try {
     const { rows } = await client.query(`
-    SELECT user_order.ID, cards.card_title,cards.card_img,cards.price FROM user_order
-    JOIN cart ON user_order."cartId"=cart.ID
-    JOIN cart_products ON cart.ID=cart_products."cartId"
-    JOIN cards ON cart_products."cardId"=cards.ID
+      SELECT user_order.ID, cards.card_title,cards.card_img,cards.price FROM user_order
+      JOIN cart ON user_order."cartId"=cart.ID
+      JOIN cart_products ON cart.ID=cart_products."cartId"
+      JOIN cards ON cart_products."cardId"=cards.ID
     `);
 
     return rows;
