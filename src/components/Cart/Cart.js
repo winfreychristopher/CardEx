@@ -10,21 +10,6 @@ import "./Cart.scss";
 
 const Cart = ({cart, setCart, userDATA, formatter, userTOKEN, 
   setUserTOKEN, toastWarn}) => {
-  // const Card = {
-  //   name: "Thanos Card",
-  //   price: "$4,000",
-  //   descrption: "",
-
-  // const generateCart = async () => {
-  //   console.log(userDATA.username)
-  //   if (userDATA.id) {
-  //     const res = await getCart(userDATA, userTOKEN);
-  //     console.log(res)
-  //     setCart(res);
-  //     console.log(cart)
-  //   }
-  // }
-  // generateCart();
 
   const guestCart = localStorage.getItem('CardEXGCart');
   let parsedGCart;

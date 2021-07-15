@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { updateOrderStatus } from "../../api";
+import './Admin.scss';
 
 const OrderCard = ({ order }) => {
   const { id, products } = order;

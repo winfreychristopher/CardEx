@@ -64,7 +64,7 @@ cardsRouter.post("/", requireUser, async (req, res, next) => {
     cardData.description = description;
     cardData.price = price;
     cardData.card_img = card_img;
-    cardData.view_count = view_count;
+    cardData.view_count = view_count ? view_count : 1;
     ranNum ? cardData.quantity = ranNum : cardData.quantity = quantity;
 
     const card = await createCard(cardData);

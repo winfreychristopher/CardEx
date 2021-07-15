@@ -1,9 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-import "./Admin.css";
 import CreateCard from "./createCard";
 import AllOrders from "./orders";
+import './Admin.scss';
 
 const AdminPage = () => {
   

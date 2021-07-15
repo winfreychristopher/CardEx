@@ -81,12 +81,13 @@ const App = () => {
   }
 
   useEffect(() => {
+    userInfo();
     retrieveCards();
     async function fetchData() {
       if (token) {
         setIsLoggedIn(true);
-        getStoredCart();
       } else {
+        getStoredCart();
         const isPrevUser = localStorage.getItem("CardExGuest");
         if (!isPrevUser) {
           notifyWelcome(
@@ -100,7 +101,6 @@ const App = () => {
           const guestToken = 'Thank you for visting CardEX-US';
           localStorage.setItem("CardExGuest", guestToken);
         }
-        getStoredCart();
       }
     }
     fetchData();
@@ -175,13 +175,11 @@ const App = () => {
             userDATA={sleepyyyyy}
             formatter={formatter} 
             userTOKEN={userTOKEN} setUserTOKEN={setUserTOKEN}
-            toastWarn={notifyWelcomeWarn}
-           
+            toastWarn={notifyWelcomeWarn}         
           />
         </Route>
         <Route path="/admin" component={AdminPage} />
-      </Switch>
-      
+      </Switch>     
     </Router>
 
   );

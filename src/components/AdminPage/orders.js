@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getAllOrders } from "../../api";
-import OrderCard from "./OrderCard";
-import "./Admin.css";
+import OrderCard from "./orderCard";
+import './Admin.scss';
 
 const AllOrders = () => {
   const [orders, setOrders] = useState([]);

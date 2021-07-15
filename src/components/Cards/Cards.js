@@ -60,7 +60,7 @@ const PlayingCards = ({cards, setCards, reset,
         cart.push(clickedCard);
         localStorage.setItem("CardEXGCart", JSON.stringify(cart));
         setCart(cart);
-        notifyGood('Product has successfully been added to cart, Thank You! 😁👍');
+        notifyGood('Product Guest has successfully been added to cart, Thank You! 😁👍');
       }
       console.log(cart)
     } catch (err) {
