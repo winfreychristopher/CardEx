@@ -10,9 +10,8 @@ const AdminPage = () => {
   return (
     <>
       <h1> Admin Future Form Page </h1>
-      <h1>Create/Patch new Card Listing</h1>
+      <h1>Create New Card Listing</h1>
       <CreateCard />
-      <h1> Customer Order List</h1>
       <AllOrders />
     </>
   );

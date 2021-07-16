@@ -8,7 +8,31 @@ h1 {
 
 img {
   // height: 250px;
-  width: 150px;
+  // width: 150px;
+}
+
+.adminOrders {
+  width: 30vw !important;
+  min-width: 337px;
+}
+
+.order-container {
+  display: flex;
+  flex-wrap: wrap;
+  width: fit-content;
+  max-height: 100vh;
+  overflow: auto;
+  justify-items: center;
+  padding: 10px;
+  padding-left: 35px;
+}
+
+.orderDate {
+  color: brown;
+  font-weight: bold;
+  text-decoration: none !important;
+  margin-bottom: 0px !important;
+  margin-top: 10px !important;
 }
 
 .cardInput {

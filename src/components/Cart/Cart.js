@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import thanosImg from "../../assets/thanosCrown.jpg";
 import cardEXLogo from "../../assets/CardEX name.png";
-import { getToken, removeItemFromCart } from "../../api/index";
+import { getToken, removeItemFromCart, checkoutCart } from "../../api/index";
 // import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import { RiDeleteBin6Fill } from "react-icons/ri";
 import { IoBagCheckOutline } from 'react-icons/io5';
@@ -9,7 +9,7 @@ import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import "./Cart.scss";
 
 const Cart = ({cart, setCart, userDATA, formatter, userTOKEN, 
-  setUserTOKEN, toastWarn}) => {
+  setUserTOKEN, toastWarn, toastGood}) => {
 
   const guestCart = localStorage.getItem('CardEXGCart');
   let parsedGCart;
@@ -48,7 +48,7 @@ const Cart = ({cart, setCart, userDATA, formatter, userTOKEN,
       .then(res => res.json())
       .then(data => {
         cart = data.data;
-        console.log(data.data);
+        console.log(data, "I AM #1");
         setCart(data.data)
       })
       .catch((err) => {
@@ -60,10 +60,24 @@ const Cart = ({cart, setCart, userDATA, formatter, userTOKEN,
     getCart()
   }, []);
 
+  async function checkout() {
+    try {
+      console.log(userDATA)
+      const res = await checkoutCart(userDATA.id);
+      console.log("WE WON!", res);
+      toastGood(`💖Thank you, for your Order! 🎉🥂🎁`);
+
+    } catch (err) {
+      console.log(err);
+      toastWarn(`${err}`)
+    }
+  }
+
   let totalPrice = 0;
   let tax = 0.10;
   let grandTotal = 0;
 
+    console.log(cart, "BEFORE");
     const cartDivs = cart.map(function (item, index) {
       const { 
         cardId,
@@ -80,6 +94,7 @@ const Cart = ({cart, setCart, userDATA, formatter, userTOKEN,
         quantity,
         id
       } = item;
+      console.log(item,"<--ID")
 
       totalPrice = totalPrice + price;
       grandTotal = totalPrice + (totalPrice * tax) + 9.95;
@@ -316,6 +331,9 @@ const Cart = ({cart, setCart, userDATA, formatter, userTOKEN,
               <button
                 className="btn btn-primary btn-block d-flex justify-content-between mt-3"
                 type="button"
+                onClick={
+                  () => {checkout()}
+                }
               >
                 {/* total price function */}
                 <span>${}</span>

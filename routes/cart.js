@@ -13,6 +13,9 @@ const {
   getUserCartProducts,
   getCardUserById,
   deleteCardFromCart,
+  getUserCart,
+  getAllOrders,
+  checkoutCart,
 
 } = require("../db");
 
@@ -25,58 +28,67 @@ cartRouter.use((req, res, next) => {
 cartRouter.get("/:userId", requireUser, async (req, res, next) => {
   const { userId } = req.params;
   try {
-    // Old function that only returned the List of Card ID's Not card objects
-    // const cart = await getUserCartProducts(cartId);
-    const cart = await getCardUserById(userId);
+    const cart = await getUserCart(userId);
     console.log(cart);
     res.send({
       message: "Cart retrived Successfully!",
       data: cart
     });
     console.log(cart);
-    return cart;
   } catch (err) {
     throw err;
   }
 })
 
-cartRouter.post("/:userId", async (req, res, next) => {
-  const { userId } = req.params;
-  try {
-    const addedCart = await createCart(userId);
-    console.log(addedCart);
-    res.send(addedCart);
-  } catch (error) {
-    next(error);
-  }
-});
+// cartRouter.post("/:userId", async (req, res, next) => {
+//   const { userId } = req.params;
+//   try {
+//     const addedCart = await createCart(userId);
+//     console.log(addedCart);
+//     res.send(addedCart);
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 
-cartRouter.post("/:userId/:cardId", async (req, res, next) => {
-  const { userId, cardId } = req.params;
-  let { quantity } = req.body;
+cartRouter.post("/", async (req, res, next) => {
+  let { quantity, userId, cardId } = req.body;
   if (!quantity) { quantity = 1 }
-  console.log(quantity)
   try {
-    const cart = await addCardToCart(userId, cardId);
+    const cart = await createCartItem(userId, cardId);
+    const currentCart = await getUserCart(userId);
     res.send({
-      message: "Successfully added Item to Cart",
-      cartContent: cart,
+      data: cart,
+      activeCart: currentCart,
+      message: "Successfully added Item to Cart"
     });
   } catch (error) {
     next(error);
   }
 });
 
+cartRouter.patch("/checkout/:userId", async (req, res, next) => {
+  const { userId } = req.params;
+  try {
+    const completedCart = await checkoutCart(userId);
+    res.send({
+      data: completedCart,
+      message: "Success, Checkout compelete! Check Orders for more info."
+    })
+  } catch (err) {
+    next(err);
+  }
+});
+
 cartRouter.delete("/:itemId", requireUser, async (req, res, next) => {
   const { itemId } = req.params;
-  const { id } = req.user;
 
   try {
-    const deletedCard = await deleteCardFromCart(id, itemId);
-    console.log(deletedCard, "Ayy Yoo")
+    const deletedCard = await deleteCardFromCart(itemId);
+    console.log(deletedCard, "IN ROUTES cart")
     res.send({
       data: deletedCard, 
-      message: "I AM"});
+      message: `successfully deleted from cart.`});
   } catch (error) {
     next(error, "Witness me");
   }

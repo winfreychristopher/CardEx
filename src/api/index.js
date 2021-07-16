@@ -207,24 +207,53 @@ export async function removeItemFromCart(itemId, token) {
 
 export async function addItemToCart(userId, cardId, token) {
   try {
-    const { data } = await axios.post(`api/cart/${userId}/${cardId}`, {
+    fetch(`api/cart`, {
+      method: 'POST',
       headers: {
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
+      body: JSON.stringify({
+        userId: userId,
+        cardId: cardId
+      }),
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data, "FACTSSSSSS");
+      return data.cartContent;
     });
 
-    return data;
   } catch (error) {
     console.error("Error adding to cart");
     throw error;
   }
 }
 
-export async function getAllOrders() {
+export async function checkoutCart(userId) {
   try {
-    const { data } = await axios.get(`api/orders/all`);
+    const data = await axios.patch(`api/cart/checkout/${userId}`);
     console.log(data);
     return data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getAllOrders(TOKEN) {
+  try {
+    fetch(`api/orders/all`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${TOKEN}`,
+      },
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data.data, "FACTSSSSSS");
+      return data.data;
+    });
   } catch (error) {
     throw error;
   }
