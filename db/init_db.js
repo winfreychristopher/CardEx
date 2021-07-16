@@ -2,19 +2,12 @@ const {
   client,
   createUser,
   createCard,
-  createTags,
-  getTagByContent,
-  createCardTag,
   createGuest,
   createCartItem,
   addCardToCart,
   getAllCards,
   getAllUsers,
-  addTagsToCards,
-  getAllCardTags,
-  getAllCardsWithTags,
   deleteCard,
-  getAllTags,
   createCart,
   addCartToUserOrder,
   createUserOrder,
@@ -31,13 +24,9 @@ async function buildTables() {
         DROP TABLE IF EXISTS img;
         DROP TABLE IF EXISTS user_address;
         DROP TABLE IF EXISTS order_cards;
-        DROP TABLE IF EXISTS cart_products;
         DROP TABLE IF EXISTS user_order;
         DROP TABLE IF EXISTS cart;
-        DROP TABLE IF EXISTS card_tags;
-        DROP TABLE IF EXISTS tags;
         DROP TABLE IF EXISTS cards;
-        DROP TABLE IF EXISTS guests;
         DROP TABLE IF EXISTS users;
         `);
     console.log("finished dropping tables");
@@ -52,57 +41,24 @@ async function buildTables() {
                 admin BOOLEAN DEFAULT FALSE,
                 UNIQUE(username, email)
             );
-            CREATE TABLE guests(
-                id SERIAL PRIMARY KEY,
-                email VARCHAR(255) UNIQUE NOT NULL,
-                name VARCHAR(255) NOT NULL,
-                UNIQUE(email)
-            );
             CREATE TABLE cards(
-                ID SERIAL PRIMARY KEY,
-                card_title VARCHAR(255) NOT NULL,
-                description VARCHAR(255) NOT NULL,
-                price INTEGER NOT NULL,
-                view_count INTEGER NOT NULL,
-                card_img VARCHAR(255) NOT NULL,
-                creation_date DATE NOT NULL DEFAULT CURRENT_DATE,
-                quantity INTEGER NOT NULL,
-                active BOOLEAN DEFAULT TRUE
-            );
-            CREATE TABLE tags(
-                ID SERIAL PRIMARY KEY,
-                tag_content VARCHAR(255) UNIQUE NOT NULL
-            );
-            CREATE TABLE card_tags(
-                ID SERIAL PRIMARY KEY,
-                "cardId" INTEGER REFERENCES cards(ID) NOT NULL,
-                "tagId" INTEGER REFERENCES tags(ID) NOT NULL,
-                UNIQUE ("cardId", "tagId")
+              ID SERIAL PRIMARY KEY,
+              card_title VARCHAR(255) NOT NULL,
+              description VARCHAR(255) NOT NULL,
+              price INTEGER NOT NULL,
+              view_count INTEGER NOT NULL,
+              card_img VARCHAR(255) NOT NULL,
+              creation_date DATE NOT NULL DEFAULT CURRENT_DATE,
+              quantity INTEGER NOT NULL,
+              active BOOLEAN DEFAULT TRUE
             );
             CREATE TABLE cart(
-                ID SERIAL PRIMARY KEY,
-                "userId" INTEGER REFERENCES users(ID),
-                active BOOLEAN DEFAULT TRUE,
-                UNIQUE("userId")
-            );
-            CREATE TABLE user_order(
-                ID SERIAL PRIMARY KEY,
-                "userId" INTEGER REFERENCES users(ID),
-                "cartId" INTEGER REFERENCES cart(ID),
-                UNIQUE ("userId", "cartId")
-            );
-            CREATE TABLE cart_products(
-                ID SERIAL PRIMARY KEY,
-                "cartId" INTEGER REFERENCES cart(ID),
-                "cardId" INTEGER REFERENCES cards(ID),
-                quantity INTEGER NOT NULL,
-                active BOOLEAN DEFAULT TRUE
-            );
-            CREATE TABLE order_cards(
-                ID SERIAL PRIMARY KEY,
-                "orderId" INTEGER REFERENCES user_order(ID),
-                "cardId" INTEGER REFERENCES cards(ID),
-                quantity INTEGER NOT NULL
+              ID SERIAL PRIMARY KEY,
+              "cardId" INTEGER REFERENCES cards(ID),
+              quantity INTEGER NOT NULL,
+              "cartStatus" BOOLEAN NOT NULL,
+              "userId" INTEGER NOT NULL,
+              "orderDate" DATE NOT NULL DEFAULT CURRENT_DATE
             );
             CREATE TABLE user_address(
                 ID SERIAL PRIMARY KEY,
@@ -354,63 +310,12 @@ const createInitialUsers = async () => {
   }
 };
 
-const createInitialTags = async () => {
-  console.log("Creating Initial Tags");
-  try {
-    //Basketball has tagID=1, pokemon has tagId=2 and so on
-    await createTags("Basketball");
-    await createTags("Pokemon");
-    await createTags("Football");
-    await createTags("Magic");
-    await createTags("Baseball");
-    await createTags("Super Rare");
-    console.log("tags created:");
-    console.log("finished creating tags");
-  } catch (error) {
-    throw error;
-  }
-};
-
-const createInitialCardTags = async () => {
-  console.log("creating cards with tags");
-  try {
-    await createCardTag(1, 1);
-    await createCardTag(1, 6);
-    await createCardTag(2, 1);
-    await createCardTag(3, 2);
-    await createCardTag(4, 2);
-    await createCardTag(5, 3);
-    await createCardTag(6, 3);
-    await createCardTag(7, 2);
-    await createCardTag(8, 2);
-    await createCardTag(9, 1);
-    await createCardTag(10, 3);
-    await createCardTag(11, 1);
-    await createCardTag(12, 1);
-    await createCardTag(13, 3);
-    await createCardTag(14, 2);
-    await createCardTag(15, 4);
-    await createCardTag(16, 4);
-    await createCardTag(17, 4);
-    await createCardTag(18, 3);
-    const cardTag = await createCardTag(2, 1);
-    console.log("Tag Results:");
-    console.log(cardTag);
-
-    console.log("finished adding tags to cards");
-  } catch (error) {
-    throw error;
-  }
-};
-
 async function rebuildDB() {
   try {
     client.connect();
     await buildTables();
     await createInitialCards();
     await createInitialUsers();
-    await createInitialTags();
-    await createInitialCardTags();
   } catch (error) {
     throw error;
   }
@@ -428,29 +333,13 @@ async function testDB() {
     const users = await getAllUsers();
     console.log("Results:", users);
 
-    console.log("getting all tags");
-    const theTags = await getAllTags();
-    console.log("Results:", theTags);
-
-    console.log("creating intital cart");
-    const cart = await createCart(1);
-    console.log("created Cart:", cart);
-    const cartTwo = await createCart(2);
-    console.log("created Cart:", cartTwo);
-    const cartThree = await createCart(3);
-    console.log("Created cart:", cartThree);
-
     console.log("adding card to cart");
-    const addCart = await addCardToCart(2, 2);
+    const addCart = await createCartItem(2, 2);
     console.log("Cart Results:", addCart);
-    const addCartTwo = await addCardToCart(3, 1);
+    const addCartTwo = await createCartItem(3, 1);
     console.log("Cart Two Results:", addCartTwo);
-    const addCartThree = await addCardToCart(3, 5);
+    const addCartThree = await createCartItem(3, 5);
     console.log("Cart Three Results:", addCartThree);
-
-    console.log("adding cart item to the order sheet");
-    const order = await createUserOrder(2, 2);
-    console.log("Order:", order);
 
     console.log("calling createUserAddress");
     const userAddress = await createUserAddress({
@@ -460,18 +349,6 @@ async function testDB() {
       zip_code: "38655",
     });
     console.log("Address Results:", userAddress);
-
-    // console.log("getting all card tags")
-    // const cardTags = await getAllCardsWithTags()
-    // console.log("Results:", cardTags)
-
-    // console.log("adding tags to cards")
-    // const cardTags = await createCardTag(1, 1)
-    // console.log("Results:", cardTags)
-
-    // console.log("creating cart item for user 1")
-    // const cartItemOne = await createCart(1)
-    // console.log("Results:", cartItemOne)
 
     console.log("Finished database tests");
   } catch (error) {

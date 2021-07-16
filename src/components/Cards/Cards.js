@@ -10,34 +10,12 @@ import "../Cards/Card.scss";
 
 const PlayingCards = ({cards, setCards, reset, 
   cart, setCart, userDATA, setUserDATA, formatter, notifyGood}) => {
-  // // const cards = getAllCards();
-  // let cards;
-  // const getCards = async () => {
-  //   try {
-  //     cards = await getAllCards();
-  //     console.log(cards + "I'M HERERE")
-  //   } catch (err) {
-  //     console.log(err)
-  //   }
-  // }
-  // getCards();
-
-  const handleTags = async (tagName) => {
-    try {
-      const tagReturn = await getAllCards(tagName);
-      setCards(tagReturn);
-    } catch (err) {
-      console.err(err);
-    }
-  };
   const handleReset = () => {
     reset();
   };
 
   const notifyBad = (message) => { toast.error(`${message}!`, {position: toast.POSITION.TOP_LEFT})};
   
-  const addToCartButton = document.getElementById("add-to-cart-button");
-
   const addBtnAnimation = (e) => {
     e.target.classList.add('added');
     setTimeout(function() {
@@ -46,21 +24,40 @@ const PlayingCards = ({cards, setCards, reset,
     console.log(e);
   }
 
-  
-  const addToCart = async (user, itemID, quantity = 1) => {
-    console.log(itemID);
+  const addToCart = async (user, cardId, quantity = 1) => {
+    console.log(cardId);
+    console.log(user.id)
     try {
       const TOKEN = getToken();
       if (TOKEN) {
-        const response = await addItemToCart(user.id, itemID, TOKEN, quantity)
-        setCart(response.cartContent);
+          try {
+            fetch(`api/cart`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${TOKEN}`,
+              },
+              body: JSON.stringify({
+                userId: user.id,
+                cardId: cardId
+              }),
+            })
+            .then((res) => res.json())
+            .then((data) => {
+              console.log(data);
+              setCart(data.activeCart);
+            });   
+          } catch (error) {
+            console.error("Error adding to cart");
+            throw error;
+          }
         notifyGood('Nice! Product has successfully been added to cart 👉')
       } else {
-        let clickedCard = await getCard(itemID);
+        let clickedCard = await getCard(cardId);
         cart.push(clickedCard);
         localStorage.setItem("CardEXGCart", JSON.stringify(cart));
         setCart(cart);
-        notifyGood('Product has successfully been added to cart, Thank You! 😁👍');
+        notifyGood('Product Guest has successfully been added to cart, Thank You! 😁👍');
       }
       console.log(cart)
     } catch (err) {

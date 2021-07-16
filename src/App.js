@@ -6,6 +6,11 @@ import LeftNavBar from "./components/SideBar/SideBar.js";
 import PlayingCards from "./components/Cards/Cards";
 import Cart from "./components/Cart/Cart";
 import { LoginPage, AdminPage } from "./components/index.js";
+import CreateCard from "./components/AdminPage/createCard.js";
+import OrderCard from "./components/AdminPage/orderCard";
+import AllOrders from "./components/AdminPage/orders.js";
+
+
 import { CSSTransition } from 'react-transition-group'
 import { ToastContainer, toast, cssTransition } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -81,12 +86,13 @@ const App = () => {
   }
 
   useEffect(() => {
+    userInfo();
     retrieveCards();
     async function fetchData() {
       if (token) {
         setIsLoggedIn(true);
-        getStoredCart();
       } else {
+        getStoredCart();
         const isPrevUser = localStorage.getItem("CardExGuest");
         if (!isPrevUser) {
           notifyWelcome(
@@ -100,7 +106,6 @@ const App = () => {
           const guestToken = 'Thank you for visting CardEX-US';
           localStorage.setItem("CardExGuest", guestToken);
         }
-        getStoredCart();
       }
     }
     fetchData();
@@ -175,13 +180,20 @@ const App = () => {
             userDATA={sleepyyyyy}
             formatter={formatter} 
             userTOKEN={userTOKEN} setUserTOKEN={setUserTOKEN}
-            toastWarn={notifyWelcomeWarn}
-           
+            toastWarn={notifyWelcomeWarn} toastGood={notifyWelcome}        
           />
         </Route>
-        <Route path="/admin" component={AdminPage} />
-      </Switch>
-      
+        <Route path="/admin">
+          <h1 style={{backgroundColor: 'red'}}> Admin Page </h1>
+          <h1>Create New Card Listing</h1>
+          <CreateCard />
+          <AllOrders 
+            userTOKEN={userTOKEN} 
+            formatter={formatter} 
+          />
+          <h1>No More Orders</h1>
+        </Route>
+      </Switch>     
     </Router>
 
   );

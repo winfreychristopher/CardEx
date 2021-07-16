@@ -354,55 +354,44 @@ async function createCardTag(cardId, tagId) {
   }
 }
 
-async function createCartItem(userId, cardId, quantity = 1) {
+//new cart function
+async function createCartItem(userId, cardId, quantity = 1, cartStatus = true) {
 
   try {
-    let usersCart = await getCartByUserId(userId);
-    if (usersCart === undefined) {
-      usersCart = await createCart(userId);
-      usersCart = await getCartByUserId(userId);
-    }
-
-    console.log(usersCart);
-    console.log(usersCart.id);
-    const { rows } = await client.query(
+    const { rows: [cart] } = await client.query(
       `
-        INSERT INTO cart_products("cartId", "cardId", quantity)
-        VALUES ($1, $2, $3)
+        INSERT INTO cart("cardId", quantity, "cartStatus", "userId")
+        VALUES ($1, $2, $3, $4)
         RETURNING *;
         `,
-      [usersCart.id, cardId, quantity]
+      [cardId, quantity, cartStatus, userId]
     );
-    
-    // const [test] = rows;
-    // console.log(test, "View Cart Test 1");
-    // console.log(rows, "View Cart Test 2");
-    // console.log([rows], "View Car Test 3");
-    return rows;
+    console.log(cart, "LOOKFO")
+    return cart;
   } catch (error) {
     console.error("could not put card into the cart");
     throw error;
   }
 }
 
-async function createCart(userId) {
-  try {
-    const { rows } = await client.query(
-      `
-        INSERT INTO cart("userId")
-        VALUES ($1)
-        ON CONFLICT ("userId") DO NOTHING
-        RETURNING *;
-        `,
-      [userId]
-    );
+// async function createCart(userId) {
+//   try {
+//     const { rows } = await client.query(
+//       `
+//         INSERT INTO cart("userId")
+//         VALUES ($1)
+//         ON CONFLICT ("userId") DO NOTHING
+//         RETURNING *;
+//         `,
+//       [userId]
+//     );
 
-    return rows;
-  } catch (error) {
-    console.error("couldn't create cart item");
-    throw error;
-  }
-}
+//     return rows;
+//   } catch (error) {
+//     console.error("couldn't create cart item");
+//     throw error;
+//   }
+// }
 
 async function getCartByUserId(userId) {
   try {
@@ -411,7 +400,6 @@ async function getCartByUserId(userId) {
     } = await client.query(
       `
         SELECT * FROM cart
-
         WHERE "userId"=$1 AND active=true;
 
         `,
@@ -425,58 +413,56 @@ async function getCartByUserId(userId) {
   }
 }
 
-async function getUserCartProducts(cartId) {
-  try {
-    const { rows } = await client.query(`
-    SELECT * FROM cart_products
-    WHERE "cartId"=$1;
-    `, [cartId]);
+// async function getUserCartProducts(cartId) {
+//   try {
+//     const { rows } = await client.query(`
+//     SELECT * FROM cart_products
+//     WHERE "cartId"=$1;
+//     `, [cartId]);
 
-    const [test] = rows; 
-    console.log(test, "HERE WE GO again");
-    return rows
-  } catch (error) {
-    throw error
-  }
-}
+//     const [test] = rows; 
+//     console.log(test, "HERE WE GO again");
+//     return rows
+//   } catch (error) {
+//     throw error
+//   }
+// }
 
-async function addCardToCart(userId, cardId, quantity) {
-  try {
-    console.log("------Initial Post.Cart query------");
-    const {
-      rows: [card],
-    } = await client.query(
-      `
-        SELECT *
-        FROM cards
-        WHERE id=$1;
-        `,
-      [cardId]
-    );
-    console.log("create cart item", card); 
-    await createCartItem(userId, card.id, quantity);
-    console.log("get card by user Id");
-    return await getCardUserById(userId);
-  } catch (error) {
-    console.error("couldn't add cart item for user");
-    throw error;
-  }
-}
+// async function addCardToCart(userId, cardId, quantity) {
+//   try {
+//     console.log("------Initial Post.Cart query------");
+//     const {
+//       rows: [card],
+//     } = await client.query(
+//       `
+//         SELECT *
+//         FROM cards
+//         WHERE id=$1;
+//         `,
+//       [cardId]
+//     );
+//     console.log("create cart item", card); 
+//     await createCartItem(userId, card.id, quantity);
+//     console.log("get card by user Id");
+//   } catch (error) {
+//     console.error("couldn't add cart item for user");
+//     throw error;
+//   }
+// }
 
-async function deleteCardFromCart(userId, itemId) {
+//new cart function
+async function deleteCardFromCart(itemId) {
   try {
-    const userCart = await getCartByUserId(userId);
-    console.log("USER CART", userCart);
     const {
       rows: [deletedCard],
     } = await client.query(
       `
-        DELETE FROM cart_products
-        WHERE "cartId"=$1 AND "id"=$2
+        DELETE FROM cart
+        WHERE "id"=$1
         RETURNING *;
-      `, [userCart.id, itemId]
+      `, [itemId]
     );
-      console.log(deletedCard)
+      console.log(deletedCard, "Eman Test")
     return deletedCard;
   } catch (error) {
     console.error("Could not delete card");
@@ -506,24 +492,7 @@ async function deleteCardFromCart(userId, itemId) {
 //   }
 // }
 
-//GEt CART by User ID
-async function getCardUserById(userId) {
-  try {
-    const { rows: cards } = await client.query(
-      `
-      SELECT *, cart_products.* 
-      FROM cards
-      JOIN cart_products ON cards.ID=cart_products."cardId"
-      JOIN cart ON "cartId"=cart.ID
-      WHERE cart."userId"=$1;
-    `,
-      [userId]
-    );
-    return cards;
-  } catch (error) {
-    throw (error);
-  }
-}
+
 
 async function updateViewCount(cardId, count) {
   try {
@@ -543,27 +512,14 @@ async function updateViewCount(cardId, count) {
   }
 }
 
+//new cart function
 async function deleteCard(cardId) {
   try {
-    await client.query(
-      `
-    DELETE FROM card_tags
-    WHERE "cardId"=$1
-    `,
-      [cardId]
-    );
-
-    await client.query(
-      `
-      DELETE FROM cart_products
-      WHERE "cardId"=$1
-    `,
-      [cardId]
-    );
     const { rows } = await client.query(
       `
-    DELETE FROM cards
+    UPDATE cards
     WHERE id=$1
+    SET active = false
     RETURNING *;
     `,
       [cardId]
@@ -680,14 +636,18 @@ async function addCartToUserOrder(userId, cardId, cartId) {
 //   }
 // }
 
+//new cart function
+
 async function getAllOrders() {
   try {
     const { rows } = await client.query(`
-    SELECT user_order.ID, cards.card_title,cards.card_img,cards.price FROM user_order
-    JOIN cart ON user_order."cartId"=cart.ID
-    JOIN cart_products ON cart.ID=cart_products."cartId"
-    JOIN cards ON cart_products."cardId"=cards.ID
+      SELECT *, cart.* 
+      FROM cards
+      JOIN cart ON cards.ID=cart."cardId"
+      WHERE "cartStatus" = false;
     `);
+
+
 
     return rows;
   } catch (error) {
@@ -695,6 +655,70 @@ async function getAllOrders() {
   }
 }
 
+//new cart function
+async function getUserCart(userId) {
+  try {
+    const { rows } = await client.query(`
+      SELECT *, cart.*
+      FROM cards
+      JOIN cart ON cards.ID=cart."cardId"
+      WHERE "userId" = $1 AND "cartStatus"=true;
+    `, [userId]);
+    console.log(rows, "IN DB");
+    return rows;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function getInactiveUserCart(userId) {
+  try {
+    const { rows } = await client.query(`
+      SELECT *, cart.*
+      FROM cards
+      JOIN cart ON cards.ID=cart."cardId"
+      WHERE "userId" = $1 AND "cartStatus"=false;
+    `, [userId]);
+    console.log(rows, "IN DB");
+    return rows;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function checkoutCart(userId) {
+  try {
+    const { rows } = await client.query(`
+      UPDATE cart 
+      SET "cartStatus"=false
+      WHERE "userId" = $1
+      RETURNING *;
+    `, [userId]);
+    console.log(rows, "IN DB");
+    return rows;
+  } catch (error) {
+    throw error;
+  }
+}
+
+//GEt CART by User ID
+// async function getCardUserById(userId) {
+//   try {
+//     const { rows: cards } = await client.query(
+//       `
+//       SELECT *, cart_products.* 
+//       FROM cards
+//       JOIN cart_products ON cards.ID=cart_products."cardId"
+//       JOIN cart ON "cartId"=cart.ID
+//       WHERE cart."userId"=$1;
+//     `,
+//       [userId]
+//     );
+//     return cards;
+//   } catch (error) {
+//     throw (error);
+//   }
+// }
 async function createUserAddress({ userId, street, state, zip_code }) {
   try {
     await client.query(
@@ -717,7 +741,7 @@ async function createUserAddress({ userId, street, state, zip_code }) {
 async function joinAddressToUser(userId) {
   try {
     const { rows: userAddress } = await client.query(
-      `
+    `
     SELECT users.id
     FROM users
     INNER JOIN user_address ON "userId" = users.id
@@ -755,6 +779,7 @@ async function toggleAdmin(userId, adminRight) {
 
 module.exports = {
   client,
+  checkoutCart,
   createUser,
   createCard,
   createTags,
@@ -764,7 +789,7 @@ module.exports = {
   getUser,
   getUserById,
   createCartItem,
-  addCardToCart,
+  // addCardToCart,
   getAllCards,
   patchCards,
   getAllUsers,
@@ -774,15 +799,17 @@ module.exports = {
   getAllCardsWithTags,
   deleteCard,
   updateViewCount,
-  createCart,
+  // createCart,
   getCartByUserId,
   deleteCardFromCart,
   getCardsById,
-  getUserCartProducts,
-  getCardUserById,
+  // getUserCartProducts,
+  // getCardUserById,
   addCartToUserOrder,
   createUserOrder,
   createUserAddress,
   getAllOrders,
   toggleAdmin,
+  getUserCart,
+  getInactiveUserCart
 };
